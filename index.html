@@ -1,0 +1,602 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{color-scheme:light} body{margin:0} img{max-width:100%} [hidden]{display:none!important}</style>
+<title>상조 5사 홈페이지 벤치마크</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: 단일 컬럼 보고서. 본문은 44rem 측정폭, 표·차트는 66rem까지 넓힘. 좌측 정렬, 섹션 번호는 보고서 목차 순서를 뜻함 */
+:root{
+  --paper:#f4f6f5;
+  --surface:#fcfcfb;
+  --ink:#1a1d1d;
+  --ink-2:#434d4c;
+  --muted:#66706f;
+  --line:#d4dad9;
+  --line-soft:#e5e9e8;
+  --accent:#24446e;
+  --accent-soft:#e2e8f0;
+  --pre:#2a78d6;
+  --post:#eb6834;
+  --good:#1f7a4d;
+  --bad:#b4442c;
+  --f-display:"Gowun Batang","Nanum Myeongjo","AppleMyungjo","Batang",serif;
+  --f-body:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --paper:#111413; --surface:#1a1a19; --ink:#e7eae9; --ink-2:#bcc4c3; --muted:#8f9998;
+    --line:#333a39; --line-soft:#262b2a; --accent:#a9c0e6; --accent-soft:#1b2431;
+    --pre:#3987e5; --post:#d95926; --good:#6cc597; --bad:#ec8f78;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --paper:#111413; --surface:#1a1a19; --ink:#e7eae9; --ink-2:#bcc4c3; --muted:#8f9998;
+  --line:#333a39; --line-soft:#262b2a; --accent:#a9c0e6; --accent-soft:#1b2431;
+  --pre:#3987e5; --post:#d95926; --good:#6cc597; --bad:#ec8f78;
+}
+
+*{box-sizing:border-box}
+body{
+  background:var(--paper); color:var(--ink);
+  font-family:var(--f-body); font-size:16px; line-height:1.75;
+  word-break:keep-all; overflow-wrap:break-word;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--accent); text-underline-offset:3px; text-decoration-thickness:1px}
+a:focus-visible, button:focus-visible{outline:2px solid var(--accent); outline-offset:3px; border-radius:4px}
+.wrap{
+  max-width:66rem; margin:0 auto;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));
+  padding-right:max(16px, env(safe-area-inset-right, 0px));
+  padding-block:56px 96px;
+  display:flex; flex-direction:column; gap:72px;
+}
+.prose{max-width:44rem}
+h1,h2,h3,h4{text-wrap:balance; margin:0}
+p{margin:0}
+ul{margin:0; padding:0; list-style:none}
+.mono{font-family:var(--f-mono); font-variant-numeric:tabular-nums}
+
+/* ── Header ── */
+.doc-head{display:flex; flex-direction:column; gap:20px; padding-bottom:32px; border-bottom:1px solid var(--line)}
+.eyebrow{font-size:13px; font-weight:600; letter-spacing:.08em; color:var(--muted)}
+.doc-head h1{font-family:var(--f-display); font-weight:700; font-size:clamp(30px, 5vw, 42px); line-height:1.3; letter-spacing:-.01em}
+.lede{font-size:17px; color:var(--ink-2); max-width:44rem}
+.meta{display:flex; flex-wrap:wrap; gap:8px 32px; margin:0}
+.meta div{display:flex; flex-direction:column}
+.meta dt{font-size:12px; letter-spacing:.06em; color:var(--muted)}
+.meta dd{margin:0; font-size:14.5px; font-weight:500}
+
+/* ── Section scaffolding ── */
+section{display:flex; flex-direction:column; gap:24px}
+.sec-head{display:flex; align-items:baseline; gap:14px}
+.sec-num{font-family:var(--f-mono); font-size:14px; color:var(--muted)}
+.sec-head h2{font-family:var(--f-display); font-weight:700; font-size:clamp(23px, 3.4vw, 28px); line-height:1.35}
+.sec-intro{color:var(--ink-2); max-width:44rem}
+.note{font-size:13.5px; color:var(--muted); max-width:52rem; line-height:1.65}
+
+/* ── Summary ── */
+.summary{background:var(--accent-soft); border-radius:12px; padding:28px clamp(18px, 4vw, 36px); display:flex; flex-direction:column; gap:16px}
+.summary h2{font-family:var(--f-display); font-size:22px}
+.summary ol{margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:14px; counter-reset:s}
+.summary li{display:grid; grid-template-columns:1.6rem 1fr; gap:4px; max-width:52rem; counter-increment:s}
+.summary li::before{content:counter(s); font-family:var(--f-mono); font-size:13px; color:var(--accent); padding-top:3px}
+.summary strong{font-weight:600}
+
+/* ── Tables ── */
+.table-wrap{overflow-x:auto; border:1px solid var(--line); border-radius:10px; background:var(--surface)}
+table{border-collapse:collapse; width:100%; font-size:14px; line-height:1.6}
+.t-compare{min-width:920px}
+.t-select{min-width:640px}
+.t-rate{min-width:720px}
+.t-split{min-width:620px}
+th,td{padding:12px 14px; text-align:left; vertical-align:top; border-bottom:1px solid var(--line-soft)}
+tr:last-child th, tr:last-child td{border-bottom:0}
+thead th{font-size:13px; font-weight:600; color:var(--ink); background:var(--surface); border-bottom:1px solid var(--line); white-space:nowrap}
+tbody th{font-weight:600; color:var(--muted); font-size:13px; white-space:nowrap; width:8.5rem}
+.type{display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:500; color:var(--muted)}
+.type::before{content:""; width:8px; height:8px; border-radius:50%; background:var(--c)}
+.pre{--c:var(--pre)} .post{--c:var(--post)}
+.num{font-family:var(--f-mono); font-variant-numeric:tabular-nums; white-space:nowrap}
+
+/* rating dots */
+.t-rate td{vertical-align:middle; white-space:nowrap}
+.t-rate td.total{font-family:var(--f-mono); font-weight:500}
+.dots{display:inline-flex; gap:4px; margin-right:8px; vertical-align:-1px}
+.dots i{width:9px; height:9px; border-radius:50%; border:1.5px solid var(--line); display:block}
+.dots i.on{background:var(--ink); border-color:var(--ink)}
+.score{font-family:var(--f-mono); font-size:13px; color:var(--muted)}
+.criteria{display:grid; grid-template-columns:repeat(auto-fit, minmax(15rem, 1fr)); gap:10px 28px; font-size:13.5px; color:var(--ink-2)}
+.criteria b{color:var(--ink); font-weight:600}
+
+/* ── Price dot plot ── */
+.chart{border:1px solid var(--line); border-radius:10px; background:var(--surface); padding:20px clamp(14px, 3vw, 24px) 16px; display:flex; flex-direction:column; gap:12px}
+.chart h3{font-size:16px; font-weight:600}
+.legend{display:flex; flex-wrap:wrap; gap:6px 22px; font-size:13px; color:var(--ink-2)}
+.legend span{display:inline-flex; align-items:center; gap:8px}
+.legend span::before{content:""; width:11px; height:11px; border-radius:50%; background:var(--c)}
+.chart-scroll{overflow-x:auto}
+.dotplot{min-width:640px; padding:30px 28px 0 0}
+.dp-row{display:grid; grid-template-columns:9.5rem 1fr; align-items:center; min-height:58px}
+.dp-label{display:flex; flex-direction:column; line-height:1.35; padding-right:12px}
+.dp-label strong{font-size:14px; font-weight:600}
+.dp-label span{font-size:12px; color:var(--muted)}
+.dp-track{position:relative; height:58px;
+  background-image:linear-gradient(to right, var(--line-soft) 1px, transparent 1px);
+  background-size:calc(100% / 7) 100%;
+  border-right:1px solid var(--line-soft)}
+.dp-track::after{content:""; position:absolute; left:0; right:0; top:50%; height:1px; background:var(--line)}
+.dp-dot{position:absolute; top:50%; width:26px; height:26px; margin:-13px 0 0 -13px; padding:0; border:0; background:transparent; cursor:pointer; z-index:1; color:inherit; font:inherit}
+.dp-dot::before{content:""; position:absolute; inset:7px; border-radius:50%; background:var(--c); box-shadow:0 0 0 2px var(--surface)}
+.dp-val{position:absolute; top:23px; left:50%; transform:translateX(-50%); font-family:var(--f-mono); font-size:11.5px; color:var(--ink-2); line-height:1}
+.dp-tip{position:absolute; bottom:27px; left:50%; transform:translateX(-50%); white-space:nowrap; background:var(--ink); color:var(--paper); font-size:12.5px; line-height:1.4; padding:6px 10px; border-radius:6px; opacity:0; pointer-events:none; transition:opacity .12s ease; z-index:3}
+.dp-dot.r .dp-tip{left:auto; right:0; transform:none}
+.dp-dot.l .dp-tip{left:0; transform:none}
+.dp-dot:hover, .dp-dot:focus-visible{z-index:4}
+.dp-dot:hover .dp-tip, .dp-dot:focus-visible .dp-tip{opacity:1}
+.dp-axis{display:grid; grid-template-columns:9.5rem 1fr; height:30px}
+.dp-axis-track{position:relative}
+.dp-axis-track span{position:absolute; top:6px; transform:translateX(-50%); font-family:var(--f-mono); font-size:11.5px; color:var(--muted)}
+.dp-axis-title{font-size:12px; color:var(--muted); align-self:center}
+
+/* ── Two-column split ── */
+.split{display:grid; grid-template-columns:repeat(auto-fit, minmax(19rem, 1fr)); gap:16px 32px}
+.trend{display:flex; flex-direction:column; gap:6px}
+.trend h3{font-size:17px; font-weight:600; line-height:1.5}
+.trend p{color:var(--ink-2); font-size:15px}
+
+/* ── Company profiles ── */
+.co-list{display:flex; flex-direction:column; gap:56px}
+.co{display:flex; flex-direction:column; gap:20px; border-top:2px solid var(--ink); padding-top:24px}
+.co-head{display:flex; flex-wrap:wrap; align-items:baseline; gap:8px 16px}
+.co-head h3{font-family:var(--f-display); font-weight:700; font-size:26px; line-height:1.3}
+.badge{display:inline-flex; align-items:center; gap:7px; font-size:13px; font-weight:500; color:var(--ink-2); border:1px solid var(--line); border-radius:999px; padding:2px 11px 2px 9px; background:var(--surface)}
+.badge::before{content:""; width:8px; height:8px; border-radius:50%; background:var(--c)}
+.co-url{font-family:var(--f-mono); font-size:13px}
+.verdict{font-family:var(--f-display); font-size:19px; line-height:1.6; max-width:46rem}
+.facts{display:grid; grid-template-columns:7.5rem 1fr; gap:12px 24px; margin:0; max-width:52rem}
+.facts dt{font-size:13.5px; font-weight:600; color:var(--muted); padding-top:2px}
+.facts dd{margin:0; font-size:15px}
+.pc{display:grid; grid-template-columns:repeat(auto-fit, minmax(17rem, 1fr)); gap:16px 36px; max-width:58rem}
+.pc h4{font-size:14px; font-weight:600; margin-bottom:8px}
+.pc ul{display:flex; flex-direction:column; gap:7px}
+.pc li{display:grid; grid-template-columns:1.1rem 1fr; font-size:14.5px; line-height:1.65}
+.pc li::before{font-family:var(--f-mono); font-weight:500}
+.plus li::before{content:"+"; color:var(--good)}
+.minus li::before{content:"−"; color:var(--bad)}
+.metrics{display:flex; flex-wrap:wrap; gap:4px 18px; font-family:var(--f-mono); font-size:12.5px; color:var(--muted); padding-top:12px; border-top:1px dashed var(--line); font-variant-numeric:tabular-nums}
+
+/* ── Recommendations ── */
+.recs{counter-reset:r; display:grid; grid-template-columns:repeat(auto-fit, minmax(20rem, 1fr)); gap:0 36px}
+.recs li{counter-increment:r; display:grid; grid-template-columns:2rem 1fr; gap:2px 0; padding:16px 0; border-top:1px solid var(--line)}
+.recs li::before{content:counter(r, decimal-leading-zero); font-family:var(--f-mono); font-size:13px; color:var(--accent); padding-top:3px; grid-row:span 2}
+.recs b{font-weight:600; font-size:15.5px}
+.recs span{font-size:14px; color:var(--ink-2)}
+
+/* ── Method & sources ── */
+.method{display:grid; grid-template-columns:repeat(auto-fit, minmax(20rem, 1fr)); gap:24px 40px}
+.method h3{font-size:15px; font-weight:600; margin-bottom:8px}
+.method ul{display:flex; flex-direction:column; gap:6px; font-size:14px; color:var(--ink-2)}
+.method li{padding-left:14px; position:relative}
+.method li::before{content:""; position:absolute; left:0; top:.8em; width:5px; height:1px; background:var(--muted)}
+
+@media (max-width:560px){
+  .facts{grid-template-columns:1fr; gap:2px}
+  .facts dd{margin-bottom:10px}
+  .wrap{gap:56px; padding-block:36px 72px}
+}
+@media (prefers-reduced-motion:reduce){ .dp-tip{transition:none} }
+</style>
+
+</head>
+<body>
+<div class="wrap">
+
+<header class="doc-head">
+  <p class="eyebrow">상조 홈페이지 벤치마킹 보고서</p>
+  <h1>상조 5사 홈페이지 분석<br>선불제 2곳 · 후불제 3곳</h1>
+  <p class="lede">선수금 상위 선불제 2곳과 시장 노출이 큰 후불제 3곳의 홈페이지를 직접 방문해 첫 화면, 메뉴 구조, 상품·가격 공개 방식, 신뢰 장치, 상담 동선, 기술 상태를 비교했습니다.</p>
+  <dl class="meta">
+    <div><dt>조사일</dt><dd>2026년 11월 12일</dd></div>
+    <div><dt>대상</dt><dd>웅진프리드라이프 · 교원라이프 · 고이 · 효누리 · 더불어상조</dd></div>
+    <div><dt>방식</dt><dd>Chrome 데스크톱 직접 방문 (메인·상품·신뢰 페이지)</dd></div>
+  </dl>
+</header>
+
+<div class="summary" aria-labelledby="sum-h">
+  <h2 id="sum-h">핵심 요약</h2>
+  <ol>
+    <li><span><strong>선불제 대형사는 첫 화면에서 장례보다 라이프케어를 팝니다.</strong> 웅진프리드라이프의 첫 배너는 삼성생명 제휴 건강케어 구독이고, 교원라이프는 웨딩·유학·영어캠프·가전 혜택을 앞세웁니다. 상조 상품은 전환서비스 묶음으로 포장됩니다.</span></li>
+    <li><span><strong>후불제는 가격 자체가 메시지입니다.</strong> 세 곳 모두 상품명과 메뉴에 총액(만 원)을 그대로 쓰고, 고이는 첫 화면 전체가 장례 비용 견적 폼입니다.</span></li>
+    <li><span><strong>선불과 후불의 경계가 흐려지고 있습니다.</strong> 교원라이프는 납입금 없는 전액 후불 상품 '내상조 그대로'를 팔고, 고이는 월 100원 상조와 계약금 상품으로 선불의 장점(가격 고정)을 가져왔습니다.</span></li>
+    <li><span><strong>신뢰를 증명하는 방식이 다릅니다.</strong> 선불제는 은행 지급보증·자산 규모·감사보고서·수상으로, 후불제는 정찰제·미사용 품목 공제·환불 보장·후기 수·실시간 부고 현황으로 신뢰를 보여줍니다.</span></li>
+    <li><span><strong>공통 약점은 고령 이용자 접근성과 정보 최신성입니다.</strong> 화면 확대 금지(교원), 1024px 고정폭 PC 사이트(프리드), 이미지 대체텍스트 누락이 흔하고, 재무 수치(프리드)와 공지(더불어)가 2024년에 멈춰 있습니다.</span></li>
+  </ol>
+</div>
+
+<section aria-labelledby="s1">
+  <div class="sec-head"><span class="sec-num">1</span><h2 id="s1">조사 대상과 선정 기준</h2></div>
+  <p class="sec-intro">공정거래위원회 공시는 고객에게 돈을 미리 받는 선불식 업체만 대상이라, 후불제는 공식 순위가 없습니다. 선불제는 공시 선수금 순위로, 후불제는 투자 유치·언론 노출·브랜드 활동 등 시장 가시성으로 골랐습니다.</p>
+  <div class="table-wrap">
+    <table class="t-select">
+      <thead><tr><th>구분</th><th>회사</th><th>홈페이지</th><th>선정 근거</th></tr></thead>
+      <tbody>
+        <tr><td><span class="type pre">선불제</span></td><td><b>웅진프리드라이프</b></td><td class="num"><a href="https://www.preedlife.com" target="_blank" rel="noopener">preedlife.com</a></td><td>선수금 1위, <span class="num">2조 9,734억</span> 원 (2026년 3월 말 공시 인용)</td></tr>
+        <tr><td><span class="type pre">선불제</span></td><td><b>교원라이프</b></td><td class="num"><a href="https://www.kyowonlife.co.kr" target="_blank" rel="noopener">kyowonlife.co.kr</a></td><td>선수금 2위, <span class="num">1조 7,369억</span> 원 (같은 기준)</td></tr>
+        <tr><td><span class="type post">후불제</span></td><td><b>고이 (고이장례연구소)</b></td><td class="num"><a href="https://www.goifuneral.co.kr" target="_blank" rel="noopener">goifuneral.co.kr</a></td><td>누적 투자 약 <span class="num">120억</span> 원(시리즈 A), 후불제 견적 비교·정찰제로 언론 노출 최다</td></tr>
+        <tr><td><span class="type post">후불제</span></td><td><b>효누리</b></td><td class="num"><a href="https://hyonuri.com" target="_blank" rel="noopener">hyonuri.com</a></td><td>후불제 상조 검색 상위 노출, 2025~2026 신뢰만족도 1위 브랜드(후불제 부문) 수상 표기</td></tr>
+        <tr><td><span class="type post">후불제</span></td><td><b>더불어상조</b></td><td class="num"><a href="https://www.thesangjo.com" target="_blank" rel="noopener">thesangjo.com</a></td><td>2003년 설립, 연 300여 건, '전국 통합 공무원 상조'라는 단체 고객 포지셔닝</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="note">선수금 수치는 공정위 공시를 인용한 2차 자료 기준입니다. 같은 시기 보도에 따르면 웅진프리드라이프 선수금은 4월 기준 3조 원을 넘었습니다. 최종 수치는 공정위 '선불식 할부거래사업자 정보공개'에서 확인하는 것이 정확합니다.</p>
+</section>
+
+<section aria-labelledby="s2">
+  <div class="sec-head"><span class="sec-num">2</span><h2 id="s2">한눈에 비교</h2></div>
+  <div class="table-wrap">
+    <table class="t-compare">
+      <thead>
+        <tr><th></th>
+          <th>웅진프리드라이프<br><span class="type pre">선불제</span></th>
+          <th>교원라이프<br><span class="type pre">선불제</span></th>
+          <th>고이<br><span class="type post">후불제</span></th>
+          <th>효누리<br><span class="type post">후불제</span></th>
+          <th>더불어상조<br><span class="type post">후불제</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><th scope="row">첫 화면 주제</th><td>삼성생명 제휴 건강케어 구독 배너, 카카오 채널 이벤트</td><td>이용후기·수상·가전·웨딩 슬라이더와 퀵메뉴 6개</td><td>장례 비용 견적 폼 (지역·조문객 수·긴급도)</td><td>국화 사진 슬라이더와 상담신청 버튼</td><td>설립 연도·연간 장례 건수, 전화 안내</td></tr>
+        <tr><th scope="row">대표 상품 (만 원)</th><td class="num">360 · 450 · 540 · 600</td><td class="num">349 · 399 · 449 · 499 외</td><td class="num">159 · 289 · 389</td><td class="num">100 · 220 · 420</td><td class="num">290 · 360 · 470</td></tr>
+        <tr><th scope="row">가격 공개 위치</th><td>상품명뿐. 상세 페이지 본문에 총액·월 납입액 텍스트 없음</td><td>상세 페이지에 총액·월 납입액·품목표 텍스트로 공개</td><td>메인과 상품 페이지에 정찰 가격</td><td>메인 하단에 상품별 가격과 구성</td><td>메뉴 이름 자체가 가격, 상세에 품목표</td></tr>
+        <tr><th scope="row">주 상담 동선</th><td>카카오 1:1 상담톡, 챗봇, 가입문의 고정 바</td><td>긴급장례상담·상품상담·계약조회 분리, 온라인 가입</td><td>견적 폼 → 상품 추천, 체크리스트 신청, 채팅</td><td>상담신청(네이버 예약), 톡톡, 카카오 채널</td><td>대표번호와 휴대폰 번호 상시 노출</td></tr>
+        <tr><th scope="row">신뢰 장치</th><td>제1금융권 8개 은행 지급보증·예치, 자산·환급의무액, 감사보고서</td><td>KS-SQI 1위 등 수상, 감사보고서, 당일 후기</td><td>정찰제, 미사용 품목 100% 공제, 불만족 시 환불, 후기 3,074건</td><td>수상·ISO·여성기업 인증, 실시간 부고·상담 현황</td><td>설립 23년차, 품목표에 원산지 표기</td></tr>
+        <tr><th scope="row">화면 방식</th><td>1024px 고정폭 PC + 별도 모바일 사이트</td><td>반응형, 화면 확대 금지 설정</td><td>모바일 우선 단일 컬럼</td><td>반응형</td><td>반응형 (Bootstrap)</td></tr>
+        <tr><th scope="row">첫 방문 측정</th><td class="num">5.3MB · 1.7초</td><td class="num">16.5MB · 19.8초</td><td class="num">1.6MB · 2.5초</td><td class="num">5.0MB · 2.1초</td><td class="num">3.4MB · 1.6초</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="note">첫 방문 측정값은 캐시 없이 한 번 잰 전송량과 onload 시간으로 참고용입니다. 네트워크 상태에 따라 달라집니다.</p>
+</section>
+
+<section aria-labelledby="s3">
+  <div class="sec-head"><span class="sec-num">3</span><h2 id="s3">상품 가격대</h2></div>
+  <div class="chart">
+    <h3>홈페이지에 공개된 대표 상품 금액</h3>
+    <div class="legend">
+      <span class="pre">선불제 · 월 분할 납입 총액</span>
+      <span class="post">후불제 · 장례 후 일시 결제액</span>
+    </div>
+    <div class="chart-scroll">
+      <div class="dotplot" id="dotplot" role="group" aria-label="회사별 대표 상품 금액 점 그래프, 단위 만 원"></div>
+    </div>
+  </div>
+  <p class="note">선불제 금액은 10~20년에 걸쳐 나눠 내는 총액(만기 후 해약 시 환급 조건 있음)이고, 후불제는 장례 때 한 번에 내는 금액입니다. 포함 품목과 인력 구성이 서로 달라 금액만으로 우열을 비교할 수는 없습니다. 웅진프리드라이프와 교원라이프 399·499는 상세 페이지 텍스트에 총액이 없어 상품명 숫자를 기준으로 표시했습니다.</p>
+</section>
+
+<section aria-labelledby="s4">
+  <div class="sec-head"><span class="sec-num">4</span><h2 id="s4">항목별 평가</h2></div>
+  <p class="sec-intro">조사자가 방문 결과를 바탕으로 매긴 5점 척도입니다. 회사 규모나 서비스 품질이 아니라 홈페이지가 일을 얼마나 잘하는지를 봤습니다.</p>
+  <div class="table-wrap">
+    <table class="t-rate" id="rate">
+      <thead><tr><th>회사</th><th>가격 투명성</th><th>신뢰 정보</th><th>상담 동선</th><th>모바일·접근성</th><th>정보 콘텐츠</th><th>최신성</th><th>합계</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">웅진프리드라이프</th><td data-s="2"></td><td data-s="4"></td><td data-s="4"></td><td data-s="2"></td><td data-s="4"></td><td data-s="2"></td><td class="total">18 / 30</td></tr>
+        <tr><th scope="row">교원라이프</th><td data-s="4"></td><td data-s="4"></td><td data-s="5"></td><td data-s="3"></td><td data-s="3"></td><td data-s="5"></td><td class="total">24 / 30</td></tr>
+        <tr><th scope="row">고이</th><td data-s="5"></td><td data-s="4"></td><td data-s="5"></td><td data-s="4"></td><td data-s="5"></td><td data-s="5"></td><td class="total">28 / 30</td></tr>
+        <tr><th scope="row">효누리</th><td data-s="4"></td><td data-s="2"></td><td data-s="4"></td><td data-s="3"></td><td data-s="3"></td><td data-s="4"></td><td class="total">20 / 30</td></tr>
+        <tr><th scope="row">더불어상조</th><td data-s="4"></td><td data-s="2"></td><td data-s="2"></td><td data-s="3"></td><td data-s="3"></td><td data-s="1"></td><td class="total">15 / 30</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="criteria">
+    <p><b>가격 투명성</b> 총액·포함 품목·추가요금 조건을 텍스트로 공개하는지</p>
+    <p><b>신뢰 정보</b> 사업자·재무·보증·감사 정보를 검증 가능한 형태로 보여주는지</p>
+    <p><b>상담 동선</b> 긴급 접수와 사전 상담으로 가는 길이 짧고 분명한지</p>
+    <p><b>모바일·접근성</b> 반응형, 화면 확대 허용, 대체텍스트, 페이지 무게</p>
+    <p><b>정보 콘텐츠</b> 장례 절차·비용·시설 정보 등 검색 유입용 콘텐츠의 양과 질</p>
+    <p><b>최신성</b> 후기·공지·재무 수치가 최근 날짜로 갱신되는지</p>
+  </div>
+</section>
+
+<section aria-labelledby="s5">
+  <div class="sec-head"><span class="sec-num">5</span><h2 id="s5">회사별 분석</h2></div>
+
+  <div class="co-list">
+
+  <article class="co" aria-labelledby="co1">
+    <div class="co-head">
+      <h3 id="co1">웅진프리드라이프</h3>
+      <span class="badge pre">선불제 · 선수금 1위</span>
+      <a class="co-url" href="https://www.preedlife.com" target="_blank" rel="noopener">preedlife.com</a>
+    </div>
+    <p class="verdict">업계 1위의 재무 신뢰를 가장 구체적으로 보여주지만, 사이트 구조는 오래된 포털형에 머물러 있습니다.</p>
+    <dl class="facts">
+      <dt>첫 화면</dt><dd>왼쪽에 로그인·이벤트 패널, 오른쪽에 4장짜리 배너 슬라이더. 첫 배너는 장례가 아니라 삼성생명 제휴 월 구독 건강케어(간병인 연계·병원 동행·차량 에스코트·심리상담)입니다. 메인 높이가 약 1,200px로 짧고, 상품 카드 3개와 공지 한 줄이 전부입니다.</dd>
+      <dt>메뉴 구조</dt><dd>회사소개 / 상품안내 / 다이렉트 / 고객센터 / 장례정보 / 미디어룸. 마우스를 올리면 전체 메가메뉴가 펼쳐지고 '상조 가입문의' 버튼이 크게 들어 있습니다. 상품안내 아래에 장례·투어·전환서비스·멤버십·법인·직영 장례식장이 있습니다.</dd>
+      <dt>상품·가격</dt><dd>웅진프리드 360·450·540·600과 다이렉트 450·540·600. 상세 페이지 본문에는 월 납입액과 총액 텍스트가 없습니다. 대신 만기 후 100% 환급 조건, 전환서비스 11종(여행·웨딩·어학연수·돌잔치·인테리어·골프 등), 추가요금 조건(차량 기준거리 초과 시 km당 1,800원, 의전관리사 하루 8시간 기준, 출동 후 취소 시 상품가 10%)을 긴 고지문으로 공개합니다.</dd>
+      <dt>신뢰 장치</dt><dd>제1금융권 8개 은행과 지급보증·예치 계약, 상조 관련 자산 2조 5,053억 원 대 고객 환급의무액 1조 5,680억 원, 2016~2023년 외부감사보고서 다운로드. '상조회사 선택 기준' 체크리스트(지급여력비율 100%, 선수금 예치율 50% 등)를 콘텐츠로 내세워 자사 강점이 곧 평가 기준이 되도록 짰습니다.</dd>
+      <dt>상담 동선</dt><dd>오른쪽 아래에 카카오 1:1 상담톡과 챗봇 고정. 상품 페이지 하단에는 URL 공유·카카오톡 공유·미디어·가입문의 고정 바. 대표전화 1588-3740(24시간 장례접수).</dd>
+    </dl>
+    <div class="pc">
+      <div class="plus"><h4>잘한 점</h4><ul>
+        <li>재무 안정성을 숫자와 감사보고서로 구체적으로 증빙</li>
+        <li>상품 고지사항이 자세해 분쟁 소지를 줄임</li>
+        <li>다이렉트 450은 상담 없이 온라인 가입 가능</li>
+      </ul></div>
+      <div class="minus"><h4>아쉬운 점</h4><ul>
+        <li>재무 수치는 2024년 12월 31일 기준, 감사보고서는 2023년까지로 2년 가까이 갱신되지 않음</li>
+        <li>1024px 고정폭 PC 사이트와 모바일 사이트를 따로 운영</li>
+        <li>가격이 텍스트로 없어 검색과 비교에 불리</li>
+        <li>메인 이미지 18개 중 13개에 대체텍스트가 없고, 푸터 저작권 연도가 2019년</li>
+      </ul></div>
+    </div>
+    <div class="metrics"><span>전송 약 5.3MB</span><span>요청 97건</span><span>onload 1.7초</span><span>jQuery · Slick · GTM · Channel.io · 카카오 · 네이버 · 메타 픽셀</span></div>
+  </article>
+
+  <article class="co" aria-labelledby="co2">
+    <div class="co-head">
+      <h3 id="co2">교원라이프</h3>
+      <span class="badge pre">선불제 · 선수금 2위</span>
+      <a class="co-url" href="https://www.kyowonlife.co.kr" target="_blank" rel="noopener">kyowonlife.co.kr</a>
+    </div>
+    <p class="verdict">다섯 곳 중 커머스에 가장 가까운 사이트입니다. 상조를 생활 혜택과 묶어 팔고, 온라인 가입과 후기를 상품 페이지에 붙였습니다.</p>
+    <dl class="facts">
+      <dt>첫 화면</dt><dd>전체 폭 슬라이더(이용후기·수상·가전·웨딩·장례식장)와 썸네일 내비게이션. 데스크톱에서도 햄버거 메뉴를 쓰는 모바일 우선 구조입니다. 바로 아래 퀵메뉴 6개: 긴급장례상담(1588-0060) · 상품/장례상담 · 계약조회 · 상조상품 · 라이프케어 · 이용후기.</dd>
+      <dt>메뉴 구조</dt><dd>나의 계약 / 혜택·이벤트 / 상품·서비스 / 고객센터 / 교원라이프. 계약조회·변경·해지 같은 기존 회원 업무를 첫 메뉴에 둔 점이 특징입니다.</dd>
+      <dt>상품·가격</dt><dd>기본(399·499), 다이렉트(N라이프 380, 다이렉트 349·449, 모바일 429, 다드림 올인원), 제휴(LG 구독·선납, 빨간펜라이프, KT, 금호타이어, 투어플랜 등), 그리고 납입금 없이 장례 후 정산하는 전액 후불 상품 '내상조 그대로'. 다이렉트 349 상세 페이지는 총 349만 원, 월 15,000원 × 232회, 품목표(장례지도사 2명, 도우미 4명 × 10시간, 리무진·버스 왕복 200km, 제단 설치 불가 시 25만 원 지원 등)를 모두 텍스트로 공개합니다.</dd>
+      <dt>신뢰 장치</dt><dd>2026 KS-SQI 상조 부문 1위, 한국소비자평가 6회 수상 배지, 감사보고서 링크, FAQ의 채무지급보증 설명. 메인과 상품 상세에 당일 작성된 후기가 장례지도사 이름과 함께 노출됩니다.</dd>
+      <dt>상담 동선</dt><dd>긴급 접수(24시간 080-555-1234)와 일반 상담(평일 9~18시)을 나눠 안내. 다이렉트 상품은 1회차 출금으로 온라인 가입이 끝납니다.</dd>
+    </dl>
+    <div class="pc">
+      <div class="plus"><h4>잘한 점</h4><ul>
+        <li>긴급 접수, 사전 상담, 기존 회원 업무의 입구를 분명히 나눔</li>
+        <li>가격과 품목을 텍스트로 공개</li>
+        <li>상품 페이지에 후기 연동, 소식·후기가 당일까지 갱신</li>
+      </ul></div>
+      <div class="minus"><h4>아쉬운 점</h4><ul>
+        <li>첫 방문 전송량 약 16.5MB, onload 약 19.8초로 다섯 곳 중 가장 무거움</li>
+        <li>화면 확대를 막는 설정(user-scalable=no)은 고령 이용자에게 불리</li>
+        <li>일부 후기 본문에 고인 실명과 장례식장명이 그대로 공개되어 검수가 필요</li>
+        <li>메인 본문이 자동 텍스트 추출과 접근성 트리에 잡히지 않아 스크린리더·검색 노출 점검이 필요</li>
+        <li>상품이 20종 가까이 되어 선택 부담이 큼</li>
+      </ul></div>
+    </div>
+    <div class="metrics"><span>전송 약 16.5MB</span><span>요청 116건</span><span>onload 19.8초</span><span>이미지 80개</span><span>Noto Sans KR</span></div>
+  </article>
+
+  <article class="co" aria-labelledby="co3">
+    <div class="co-head">
+      <h3 id="co3">고이</h3>
+      <span class="badge post">후불제 · 누적 투자 약 120억 원</span>
+      <a class="co-url" href="https://www.goifuneral.co.kr" target="_blank" rel="noopener">goifuneral.co.kr</a>
+    </div>
+    <p class="verdict">상조 홈페이지를 가격 조회 서비스로 바꿨습니다. 다섯 곳 중 상담 동선 설계와 콘텐츠가 가장 앞서 있습니다.</p>
+    <dl class="facts">
+      <dt>첫 화면</dt><dd>데스크톱에서도 가운데에 모바일 폭 화면을 띄우는 앱형 구조. 첫 화면 본문이 곧 장례 비용 견적 폼(시·도와 시·군·구, 조문객 수 0·50·100·200명 이상, 임종 긴급도 4단계)이고, 미리 알아본 사람은 평균 246만 원을 아꼈다는 문구가 붙습니다.</dd>
+      <dt>메뉴 구조</dt><dd>장례견적 / 상품안내 / 장례절차 / 고객후기(3,074 배지) / 24시간 고객센터 / 시설 찾기.</dd>
+      <dt>상품·가격</dt><dd>무빈소장 159 · 가족장 289 · 일반장 389(만 원), 가입 당일부터 이용 가능. 미리 준비하려는 사람을 위해 월 100원 × 300개월 '100원 상조', 계약금 3만·10만 원 '고이 퍼스트'(퍼스트10 최종가 279만 원) 같은 가격 보장형 상품을 더해 순수 후불에서 하이브리드로 넓혔습니다.</dd>
+      <dt>신뢰 장치</dt><dd>품목별 가격 정찰제, 쓰지 않은 품목 100% 현금 공제, 불만족 시 100% 환불(용품 강매·노잣돈·수고비 요구 금지 명시). 후기 3,074건을 상황 태그(해외 거주, 종교 장례, 이미 가입한 상조가 있는 경우)로 분류. 푸터에 감사보고서·사업자정보확인·상담사 조회.</dd>
+      <dt>상담 동선</dt><dd>견적 폼에서 상품 추천으로 이어지고, 임종 준비 체크리스트 신청으로 연락처를 받습니다. 채팅·전화 문의 병행. 장례식장·화장장·장지 검색과 선불/후불 비교 가이드로 검색 유입을 받습니다.</dd>
+    </dl>
+    <div class="pc">
+      <div class="plus"><h4>잘한 점</h4><ul>
+        <li>지역·규모·긴급도처럼 이용자의 상황부터 묻는 첫 화면</li>
+        <li>가격과 공제 규칙이 다섯 곳 중 가장 명확</li>
+        <li>가이드북·시설 찾기·블로그 등 정보 콘텐츠가 풍부</li>
+        <li>다섯 곳 중 가장 가벼운 페이지</li>
+      </ul></div>
+      <div class="minus"><h4>아쉬운 점</h4><ul>
+        <li>h1 제목 태그가 없음</li>
+        <li>이미지 20개 중 11개에 대체텍스트가 없음</li>
+        <li>데스크톱에서는 화면 대부분이 빈 여백</li>
+        <li>패키지·월납·계약금 상품이 늘면서 후불제 입문자가 구분하기 어려워짐</li>
+      </ul></div>
+    </div>
+    <div class="metrics"><span>전송 약 1.6MB</span><span>요청 128건</span><span>onload 2.5초</span><span>Next.js · Pretendard · Channel.io · GTM · 네이버 · 메타 픽셀</span></div>
+  </article>
+
+  <article class="co" aria-labelledby="co4">
+    <div class="co-head">
+      <h3 id="co4">효누리</h3>
+      <span class="badge post">후불제 · 2023년 설립</span>
+      <a class="co-url" href="https://hyonuri.com" target="_blank" rel="noopener">hyonuri.com</a>
+    </div>
+    <p class="verdict">가장 낮은 진입 가격과 '지금도 운영 중'이라는 신호로 신생 회사의 신뢰 부족을 메우려는 사이트입니다.</p>
+    <dl class="facts">
+      <dt>첫 화면</dt><dd>흰 국화 사진 전체 화면 슬라이더 3장과 상담신청 버튼. 상단 바에 네이버 블로그·톡톡·카카오톡 아이콘.</dd>
+      <dt>메뉴 구조</dt><dd>회사소개 / 장례상품 / 웰다잉 / 정보마당 / 고객센터.</dd>
+      <dt>상품·가격</dt><dd>무빈소 100 · 실속형 220(화장 전용) · 고급형 420(화장·매장 겸용)과 기업제휴 상품. 메인 하단에 상품별 구성과 가격을 그대로 노출하고, 타사 대비 절반 가격을 내세웁니다.</dd>
+      <dt>신뢰 장치</dt><dd>신뢰만족도 1위 브랜드(2025~2026, 후불제 부문), ISO 9001·14001, 여성기업 인증 공지. 실시간 부고 목록(고인 이름 일부 마스킹, 발인일, 장례식장)과 상담 신청 현황(이름 일부와 숫자 4자리)으로 활동성을 보여줍니다. FAQ에 설립일·상품·선불/후불 차이를 문답형으로 정리했습니다.</dd>
+      <dt>상담 동선</dt><dd>슬라이드마다 반복되는 상담신청(네이버 예약), 네이버 톡톡, 카카오 채널, 상담전화 1833-9751.</dd>
+    </dl>
+    <div class="pc">
+      <div class="plus"><h4>잘한 점</h4><ul>
+        <li>가격과 상품 구성이 메인에서 바로 보임</li>
+        <li>FAQ가 검색과 AI 답변에 잘 걸리는 문답형</li>
+        <li>실시간 부고·상담 현황으로 활동성을 증명</li>
+      </ul></div>
+      <div class="minus"><h4>아쉬운 점</h4><ul>
+        <li>메인 화면에서 사업자등록번호가 확인되지 않음</li>
+        <li>연락 이메일이 네이버 개인 메일 형태이고, 푸터에 '관리자' 링크가 노출됨</li>
+        <li>상담 신청자 이름·번호 일부 공개는 마스킹해도 개인정보 위험이 있음</li>
+        <li>스크롤 중간에 큰 빈 영역이 나타남</li>
+        <li>슬라이드마다 h1이 반복되고, 블로그 후기 피드는 제3자 홍보 글이 중복 노출됨</li>
+      </ul></div>
+    </div>
+    <div class="metrics"><span>전송 약 5.0MB</span><span>요청 58건</span><span>onload 2.1초</span><span>jQuery · GTM · 네이버 애널리틱스</span></div>
+  </article>
+
+  <article class="co" aria-labelledby="co5">
+    <div class="co-head">
+      <h3 id="co5">더불어상조</h3>
+      <span class="badge post">후불제 · 2003년 설립</span>
+      <a class="co-url" href="https://www.thesangjo.com" target="_blank" rel="noopener">thesangjo.com</a>
+    </div>
+    <p class="verdict">공무원·기업 단체라는 분명한 고객층과 투명한 품목표를 갖췄지만, 사이트 운영은 2024년에 멈춰 있습니다.</p>
+    <dl class="facts">
+      <dt>첫 화면</dt><dd>장례식장 제단 사진 슬라이더 위에 설립 연도와 연간 장례 건수(300여 건), 아래에 후불상조·기업상조·전화 안내 3칸. 헤더 오른쪽에 24시간 상담 번호가 늘 보입니다.</dd>
+      <dt>메뉴 구조</dt><dd>회사소개 / 장례서비스 / 상조 상품 / 기업 후불상조 / 장례정보 / 고객센터. 상품 메뉴 이름이 곧 가격입니다(알뜰형 290만원 · 기본형 360만원 · 고급형 470만원).</dd>
+      <dt>상품·가격</dt><dd>상세 페이지에 인력(장례관리사 1명, 상례사 1명, 도우미 6명), 차량(리무진·버스 왕복 200km), 용품 50여 종 품목표와 원산지(수의·관 중국)를 텍스트로 공개합니다. 단, 공급가는 2024년 1월 1일 기준이고, 패키지 품목을 쓰지 않으면 권리포기로 환불이 없습니다.</dd>
+      <dt>신뢰 장치</dt><dd>설립 연도와 연간 건수, 사업자등록번호·주소 표기, 구청·노조 협약 공지. 사전상담 → 장례접수 → 절차 안내 → 발인일 결제의 4단계 절차를 도식으로 보여줍니다.</dd>
+      <dt>상담 동선</dt><dd>대표번호 1566-9914와 휴대폰 번호를 함께 표기. 카카오톡이나 채팅 상담은 없습니다.</dd>
+    </dl>
+    <div class="pc">
+      <div class="plus"><h4>잘한 점</h4><ul>
+        <li>메뉴에서 바로 가격 확인 가능</li>
+        <li>원산지까지 밝힌 품목표</li>
+        <li>기업·단체 복리후생이라는 B2B 포지셔닝</li>
+      </ul></div>
+      <div class="minus"><h4>아쉬운 점</h4><ul>
+        <li>마지막 공지가 2024년 3월</li>
+        <li>미사용 품목 환불 불가 정책이 고이의 100% 공제와 정면으로 비교됨</li>
+        <li>개인 휴대폰 번호가 대표 연락처로 노출</li>
+        <li>공유 미리보기 이미지(og:image)와 h1이 없음</li>
+        <li>스크롤 애니메이션 때문에 화면에 들어오기 전 콘텐츠가 비어 보임</li>
+      </ul></div>
+    </div>
+    <div class="metrics"><span>전송 약 3.4MB</span><span>요청 46건</span><span>onload 1.6초</span><span>jQuery · Bootstrap · 네이버 애널리틱스</span></div>
+  </article>
+
+  </div>
+</section>
+
+<section aria-labelledby="s6">
+  <div class="sec-head"><span class="sec-num">6</span><h2 id="s6">선불제와 후불제, 홈페이지가 하는 일이 다릅니다</h2></div>
+  <div class="table-wrap">
+    <table class="t-split">
+      <thead><tr><th></th><th><span class="type pre">선불제</span> 웅진프리드라이프 · 교원라이프</th><th><span class="type post">후불제</span> 고이 · 효누리 · 더불어상조</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">홈페이지의 목적</th><td>10~20년 장기 납입 가입 설득, 기존 회원 계약 관리</td><td>장례가 났을 때 즉시 의뢰, 그 전에는 견적 확인</td></tr>
+        <tr><th scope="row">첫 화면 주제</th><td>라이프케어, 제휴 혜택, 이벤트</td><td>가격, 견적, 상담신청</td></tr>
+        <tr><th scope="row">가격 표현</th><td>월 납입액 × 회차, 만기 환급</td><td>총액 일시 결제, 정찰 가격</td></tr>
+        <tr><th scope="row">신뢰 근거</th><td>선수금 규모, 은행 지급보증, 감사보고서, 수상</td><td>정찰제, 공제·환불 규칙, 후기 수, 실시간 현황</td></tr>
+        <tr><th scope="row">주 상담 수단</th><td>카카오 상담, 온라인 가입, 계약조회</td><td>24시간 전화, 견적 폼, 상담신청</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="split">
+    <div class="trend"><h3>경계가 무너지는 중</h3><p>선불 2위 교원라이프가 전액 후불 상품을 팔고, 후불 대표 고이가 월 100원·계약금 상품으로 가격 고정을 팝니다. 이제 경쟁 축은 선불이냐 후불이냐가 아니라 가격을 얼마나 투명하고 확실하게 보장하느냐입니다.</p></div>
+    <div class="trend"><h3>장례 밖으로 넓어지는 선불제</h3><p>선불 대형사는 웨딩·여행·유학·가전·건강케어로 전환서비스를 늘려 상조를 생활 멤버십으로 바꾸고 있습니다. 홈페이지 첫 화면에서 장례가 거의 보이지 않는 이유입니다.</p></div>
+    <div class="trend"><h3>후불제의 숙제는 회사 신뢰</h3><p>후불제는 고객 돈을 미리 받지 않아 공정위 공시 대상이 아니므로, 회사가 믿을 만하다는 증거를 스스로 보여줘야 합니다. 감사보고서와 사업자 정보를 내건 고이와 그렇지 않은 곳의 차이가 큽니다.</p></div>
+  </div>
+</section>
+
+<section aria-labelledby="s7">
+  <div class="sec-head"><span class="sec-num">7</span><h2 id="s7">새 상조 홈페이지를 만든다면</h2></div>
+  <p class="sec-intro">다섯 곳에서 확인한 잘된 점과 빈틈을 기획 체크리스트로 옮겼습니다.</p>
+  <ol class="recs">
+    <li><b>첫 화면을 두 갈래로 나눕니다</b><span>'지금 장례가 났어요'(24시간 전화·출동)와 '미리 알아볼게요'(견적·상품). 참고: 교원라이프 퀵메뉴, 고이 긴급도 질문.</span></li>
+    <li><b>가격은 이미지가 아닌 텍스트 표로</b><span>총액, 포함 품목, 불포함 비용(장례식장 사용료·식대·화장장), 추가요금 조건까지. 참고: 교원라이프·더불어상조 품목표.</span></li>
+    <li><b>미사용 품목 처리 규칙을 먼저 밝힙니다</b><span>공제인지, 환불인지, 권리포기인지. 후불제 비교에서 가장 먼저 걸리는 쟁점입니다. 참고: 고이 100% 공제와 더불어상조 환불 불가.</span></li>
+    <li><b>신뢰 증빙에는 날짜를 붙여 최신으로</b><span>사업자 정보, 감사보고서, 선불이라면 지급보증·예치 현황을 최근 분기 기준으로. 2024년 수치에 머문 웅진프리드라이프가 반면교사입니다.</span></li>
+    <li><b>고령 이용자를 기준으로 설계합니다</b><span>화면 확대 허용, 본문 17px 이상, 터치 영역 48px 이상, 휴대폰에서 바로 걸리는 전화 링크, 이미지 대체텍스트.</span></li>
+    <li><b>카카오톡 공유 미리보기를 페이지마다 설정</b><span>부고와 견적은 메신저로 퍼집니다. og:title과 og:image가 없으면 링크가 빈 상자로 보입니다.</span></li>
+    <li><b>후기·부고 노출에 개인정보 규칙을 둡니다</b><span>고인·유족 이름, 연락처, 장례식장이 한데 묶여 공개되지 않도록 작성 안내와 검수 기준을 정합니다.</span></li>
+    <li><b>검색 유입용 정보 콘텐츠를 쌓습니다</b><span>장례 절차, 선불/후불 비교, 지역 장례식장 정보, 문답형 FAQ. 참고: 고이 가이드북·시설 찾기, 효누리 FAQ.</span></li>
+  </ol>
+</section>
+
+<section aria-labelledby="s8">
+  <div class="sec-head"><span class="sec-num">8</span><h2 id="s8">조사 방법과 출처</h2></div>
+  <div class="method">
+    <div>
+      <h3>방법과 한계</h3>
+      <ul>
+        <li>2026년 11월 12일, Chrome 데스크톱(창 폭 약 1,100px)으로 각 사 메인·상품 목록·상품 상세·신뢰 관련 페이지를 직접 방문했습니다.</li>
+        <li>전송량·onload 시간은 캐시 없는 첫 방문 1회 측정값입니다.</li>
+        <li>모바일 실기기 테스트는 하지 않았고, 모바일 대응은 viewport 설정과 화면 구조로 판단했습니다.</li>
+        <li>교원라이프 메인은 자동 텍스트 추출이 되지 않아 화면 확인으로 대신했습니다.</li>
+        <li>후불제 후보였던 '아름다운장례'(ajd.co.kr)는 해당 도메인이 통신·렌탈 비교 플랫폼으로 확인되어 더불어상조로 교체했습니다.</li>
+        <li>후기와 부고에 있는 개인 이름은 보고서에 옮기지 않았습니다.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>출처</h3>
+      <ul>
+        <li><a href="https://www.goifuneral.co.kr/blog/sangjo-company-ranking/" target="_blank" rel="noopener">고이장례연구소, 상조회사 순위 (공정위 2026년 3월 말 공시 인용)</a></li>
+        <li><a href="https://www.hankyung.com/article/202606195982i" target="_blank" rel="noopener">한국경제, 상조시장 11조 원 규모로 성장</a></li>
+        <li><a href="http://www.srtimes.kr/news/articleView.html?idxno=211025" target="_blank" rel="noopener">SR타임스, 교원라이프 선수금 2위</a></li>
+        <li><a href="https://www.venturesquare.net/1039433" target="_blank" rel="noopener">벤처스퀘어, 고이장례연구소 대표 인터뷰</a></li>
+        <li><a href="https://platum.kr/archives/195600" target="_blank" rel="noopener">플래텀, 고이 후불제 상조 견적 비교 서비스 출시</a></li>
+        <li>각 사 홈페이지 (위 표의 링크)</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+</div>
+
+<script>
+(function(){
+  var DATA = [
+    {co:"웅진프리드라이프", type:"선불제", k:"pre", items:[["웅진프리드 360",360],["웅진프리드 450 · 다이렉트 450",450],["웅진프리드 540 · 다이렉트 540",540],["웅진프리드 600 · 다이렉트 600",600]]},
+    {co:"교원라이프", type:"선불제", k:"pre", items:[["교원라이프 다이렉트 349",349],["교원라이프 399",399],["교원라이프 다이렉트 449",449],["교원라이프 499",499]]},
+    {co:"고이", type:"후불제", k:"post", items:[["무빈소장 159",159],["가족장 289",289],["일반장 389",389]]},
+    {co:"효누리", type:"후불제", k:"post", items:[["무빈소 100",100],["실속형 220",220],["고급형 420",420]]},
+    {co:"더불어상조", type:"후불제", k:"post", items:[["알뜰형 290",290],["기본형 360",360],["고급형 470",470]]}
+  ];
+  var MAX = 700;
+  var root = document.getElementById("dotplot");
+  if(root){
+    DATA.forEach(function(d){
+      var row = document.createElement("div");
+      row.className = "dp-row";
+      var label = document.createElement("div");
+      label.className = "dp-label";
+      label.innerHTML = "<strong></strong><span></span>";
+      label.firstChild.textContent = d.co;
+      label.lastChild.textContent = d.type;
+      var track = document.createElement("div");
+      track.className = "dp-track";
+      d.items.forEach(function(it){
+        var p = it[1] / MAX * 100;
+        var b = document.createElement("button");
+        b.type = "button";
+        b.className = "dp-dot " + d.k + (p > 70 ? " r" : (p < 20 ? " l" : ""));
+        b.style.left = p + "%";
+        b.setAttribute("aria-label", d.co + " " + it[0] + ", " + it[1] + "만 원");
+        var v = document.createElement("span"); v.className = "dp-val"; v.textContent = it[1];
+        var t = document.createElement("span"); t.className = "dp-tip"; t.textContent = it[0] + " · " + it[1] + "만 원";
+        b.appendChild(v); b.appendChild(t);
+        track.appendChild(b);
+      });
+      row.appendChild(label); row.appendChild(track);
+      root.appendChild(row);
+    });
+    var axis = document.createElement("div");
+    axis.className = "dp-axis";
+    var at = document.createElement("div"); at.className = "dp-axis-title"; at.textContent = "단위: 만 원";
+    var tr = document.createElement("div"); tr.className = "dp-axis-track";
+    for(var x = 0; x <= MAX; x += 100){
+      var s = document.createElement("span");
+      s.style.left = (x / MAX * 100) + "%";
+      s.textContent = x;
+      tr.appendChild(s);
+    }
+    axis.appendChild(at); axis.appendChild(tr);
+    root.appendChild(axis);
+  }
+  document.querySelectorAll("#rate td[data-s]").forEach(function(td){
+    var n = +td.getAttribute("data-s");
+    var wrap = document.createElement("span");
+    wrap.className = "dots"; wrap.setAttribute("aria-hidden", "true");
+    for(var i = 0; i < 5; i++){ var dot = document.createElement("i"); if(i < n) dot.className = "on"; wrap.appendChild(dot); }
+    var sc = document.createElement("span"); sc.className = "score"; sc.textContent = n;
+    td.setAttribute("aria-label", "5점 만점에 " + n + "점");
+    td.appendChild(wrap); td.appendChild(sc);
+  });
+})();
+</script>
+
+</body>
+</html>
