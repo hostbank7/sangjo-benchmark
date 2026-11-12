@@ -12,41 +12,37 @@
 <style>
 /* Layout: 단일 컬럼 보고서. 본문은 44rem 측정폭, 표·차트는 66rem까지 넓힘. 좌측 정렬, 섹션 번호는 보고서 목차 순서를 뜻함 */
 :root{
-  --paper:#f4f6f5;
-  --surface:#fcfcfb;
-  --ink:#1a1d1d;
-  --ink-2:#434d4c;
-  --muted:#66706f;
-  --line:#d4dad9;
-  --line-soft:#e5e9e8;
-  --accent:#24446e;
-  --accent-soft:#e2e8f0;
-  --pre:#2a78d6;
-  --post:#eb6834;
-  --good:#1f7a4d;
-  --bad:#b4442c;
+  /* 색감: 블랙프라이데이 배너. 검정 바탕 + 빨강→주황→흰색 불꽃 그라데이션, 단일 다크 테마 */
+  color-scheme:dark;
+  --paper:#0b0505;
+  --surface:#150a09;
+  --ink:#fbf3ef;
+  --ink-2:#dcc8c2;
+  --muted:#a68f88;
+  --line:#3d1f1a;
+  --line-soft:#2a1411;
+  --accent:#ff4a1c;
+  --accent-soft:rgba(255,58,24,.12);
+  --fire:linear-gradient(180deg, #ff2412 0%, #ff4a1c 38%, #ff9a3c 70%, #ffe9d6 100%);
+  --pre:#c98500;
+  --post:#e0261a;
+  --good:#6fd39a;
+  --bad:#ff7a5c;
   --f-display:"Gowun Batang","Nanum Myeongjo","AppleMyungjo","Batang",serif;
   --f-body:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif;
   --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Consolas,monospace;
 }
-@media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]){
-    color-scheme:dark;
-    --paper:#111413; --surface:#1a1a19; --ink:#e7eae9; --ink-2:#bcc4c3; --muted:#8f9998;
-    --line:#333a39; --line-soft:#262b2a; --accent:#a9c0e6; --accent-soft:#1b2431;
-    --pre:#3987e5; --post:#d95926; --good:#6cc597; --bad:#ec8f78;
-  }
-}
-:root[data-theme="dark"]{
-  color-scheme:dark;
-  --paper:#111413; --surface:#1a1a19; --ink:#e7eae9; --ink-2:#bcc4c3; --muted:#8f9998;
-  --line:#333a39; --line-soft:#262b2a; --accent:#a9c0e6; --accent-soft:#1b2431;
-  --pre:#3987e5; --post:#d95926; --good:#6cc597; --bad:#ec8f78;
-}
+::selection{background:rgba(255,74,28,.38); color:#fff}
 
 *{box-sizing:border-box}
 body{
-  background:var(--paper); color:var(--ink);
+  background:
+    radial-gradient(1100px 520px at 50% -160px, rgba(255,36,18,.45), rgba(255,36,18,0) 70%) no-repeat,
+    radial-gradient(800px 420px at 90% -40px, rgba(255,140,40,.18), rgba(255,140,40,0) 70%) no-repeat,
+    var(--paper);
+  border-top:4px solid #e0261a;
+  border-image:linear-gradient(90deg, #e0261a, #ff5a1f 50%, #ff9a3c) 1;
+  color:var(--ink);
   font-family:var(--f-body); font-size:16px; line-height:1.75;
   word-break:keep-all; overflow-wrap:break-word;
   -webkit-font-smoothing:antialiased;
@@ -70,6 +66,10 @@ ul{margin:0; padding:0; list-style:none}
 .doc-head{display:flex; flex-direction:column; gap:20px; padding-bottom:32px; border-bottom:1px solid var(--line)}
 .eyebrow{font-size:13px; font-weight:600; letter-spacing:.08em; color:var(--muted)}
 .doc-head h1{font-family:var(--f-display); font-weight:700; font-size:clamp(30px, 5vw, 42px); line-height:1.3; letter-spacing:-.01em}
+.doc-head h1 .fire{display:block}
+@supports ((-webkit-background-clip:text) or (background-clip:text)){
+  .doc-head h1 .fire{background:var(--fire); -webkit-background-clip:text; background-clip:text; color:transparent}
+}
 .lede{font-size:17px; color:var(--ink-2); max-width:44rem}
 .meta{display:flex; flex-wrap:wrap; gap:8px 32px; margin:0}
 .meta div{display:flex; flex-direction:column}
@@ -79,13 +79,13 @@ ul{margin:0; padding:0; list-style:none}
 /* ── Section scaffolding ── */
 section{display:flex; flex-direction:column; gap:24px}
 .sec-head{display:flex; align-items:baseline; gap:14px}
-.sec-num{font-family:var(--f-mono); font-size:14px; color:var(--muted)}
+.sec-num{font-family:var(--f-mono); font-size:14px; color:var(--accent)}
 .sec-head h2{font-family:var(--f-display); font-weight:700; font-size:clamp(23px, 3.4vw, 28px); line-height:1.35}
 .sec-intro{color:var(--ink-2); max-width:44rem}
 .note{font-size:13.5px; color:var(--muted); max-width:52rem; line-height:1.65}
 
 /* ── Summary ── */
-.summary{background:var(--accent-soft); border-radius:12px; padding:28px clamp(18px, 4vw, 36px); display:flex; flex-direction:column; gap:16px}
+.summary{background:linear-gradient(135deg, rgba(255,36,18,.20), rgba(255,120,40,.07) 55%, rgba(255,255,255,.02)); border:1px solid rgba(255,74,28,.32); border-radius:12px; padding:28px clamp(18px, 4vw, 36px); display:flex; flex-direction:column; gap:16px}
 .summary h2{font-family:var(--f-display); font-size:22px}
 .summary ol{margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:14px; counter-reset:s}
 .summary li{display:grid; grid-template-columns:1.6rem 1fr; gap:4px; max-width:52rem; counter-increment:s}
@@ -112,10 +112,10 @@ tbody th{font-weight:600; color:var(--muted); font-size:13px; white-space:nowrap
 .t-rate td{vertical-align:middle; white-space:nowrap}
 .t-rate td.total{font-family:var(--f-mono); font-weight:500}
 .dots{display:inline-flex; gap:4px; margin-right:8px; vertical-align:-1px}
-.dots i{width:9px; height:9px; border-radius:50%; border:1.5px solid var(--line); display:block}
-.dots i.on{background:var(--ink); border-color:var(--ink)}
+.dots i{width:9px; height:9px; border-radius:50%; border:1.5px solid var(--muted); opacity:.55; display:block}
+.dots i.on{background:var(--accent); border-color:var(--accent); opacity:1}
 .score{font-family:var(--f-mono); font-size:13px; color:var(--muted)}
-.criteria{display:grid; grid-template-columns:repeat(auto-fit, minmax(15rem, 1fr)); gap:10px 28px; font-size:13.5px; color:var(--ink-2)}
+.criteria{display:grid; grid-template-columns:repeat(auto-fit, minmax(min(15rem, 100%), 1fr)); gap:10px 28px; font-size:13.5px; color:var(--ink-2)}
 .criteria b{color:var(--ink); font-weight:600}
 
 /* ── Price dot plot ── */
@@ -149,14 +149,14 @@ tbody th{font-weight:600; color:var(--muted); font-size:13px; white-space:nowrap
 .dp-axis-title{font-size:12px; color:var(--muted); align-self:center}
 
 /* ── Two-column split ── */
-.split{display:grid; grid-template-columns:repeat(auto-fit, minmax(19rem, 1fr)); gap:16px 32px}
+.split{display:grid; grid-template-columns:repeat(auto-fit, minmax(min(19rem, 100%), 1fr)); gap:16px 32px}
 .trend{display:flex; flex-direction:column; gap:6px}
 .trend h3{font-size:17px; font-weight:600; line-height:1.5}
 .trend p{color:var(--ink-2); font-size:15px}
 
 /* ── Company profiles ── */
 .co-list{display:flex; flex-direction:column; gap:56px}
-.co{display:flex; flex-direction:column; gap:20px; border-top:2px solid var(--ink); padding-top:24px}
+.co{display:flex; flex-direction:column; gap:20px; border-top:2px solid var(--accent); border-image:linear-gradient(90deg, #ff2412, #ff9a3c 45%, rgba(255,154,60,0)) 1; padding-top:24px}
 .co-head{display:flex; flex-wrap:wrap; align-items:baseline; gap:8px 16px}
 .co-head h3{font-family:var(--f-display); font-weight:700; font-size:26px; line-height:1.3}
 .badge{display:inline-flex; align-items:center; gap:7px; font-size:13px; font-weight:500; color:var(--ink-2); border:1px solid var(--line); border-radius:999px; padding:2px 11px 2px 9px; background:var(--surface)}
@@ -166,7 +166,7 @@ tbody th{font-weight:600; color:var(--muted); font-size:13px; white-space:nowrap
 .facts{display:grid; grid-template-columns:7.5rem 1fr; gap:12px 24px; margin:0; max-width:52rem}
 .facts dt{font-size:13.5px; font-weight:600; color:var(--muted); padding-top:2px}
 .facts dd{margin:0; font-size:15px}
-.pc{display:grid; grid-template-columns:repeat(auto-fit, minmax(17rem, 1fr)); gap:16px 36px; max-width:58rem}
+.pc{display:grid; grid-template-columns:repeat(auto-fit, minmax(min(17rem, 100%), 1fr)); gap:16px 36px; max-width:58rem}
 .pc h4{font-size:14px; font-weight:600; margin-bottom:8px}
 .pc ul{display:flex; flex-direction:column; gap:7px}
 .pc li{display:grid; grid-template-columns:1.1rem 1fr; font-size:14.5px; line-height:1.65}
@@ -176,14 +176,14 @@ tbody th{font-weight:600; color:var(--muted); font-size:13px; white-space:nowrap
 .metrics{display:flex; flex-wrap:wrap; gap:4px 18px; font-family:var(--f-mono); font-size:12.5px; color:var(--muted); padding-top:12px; border-top:1px dashed var(--line); font-variant-numeric:tabular-nums}
 
 /* ── Recommendations ── */
-.recs{counter-reset:r; display:grid; grid-template-columns:repeat(auto-fit, minmax(20rem, 1fr)); gap:0 36px}
+.recs{counter-reset:r; margin:0; padding:0; display:grid; grid-template-columns:repeat(auto-fit, minmax(min(20rem, 100%), 1fr)); gap:0 36px}
 .recs li{counter-increment:r; display:grid; grid-template-columns:2rem 1fr; gap:2px 0; padding:16px 0; border-top:1px solid var(--line)}
 .recs li::before{content:counter(r, decimal-leading-zero); font-family:var(--f-mono); font-size:13px; color:var(--accent); padding-top:3px; grid-row:span 2}
 .recs b{font-weight:600; font-size:15.5px}
 .recs span{font-size:14px; color:var(--ink-2)}
 
 /* ── Method & sources ── */
-.method{display:grid; grid-template-columns:repeat(auto-fit, minmax(20rem, 1fr)); gap:24px 40px}
+.method{display:grid; grid-template-columns:repeat(auto-fit, minmax(min(20rem, 100%), 1fr)); gap:24px 40px}
 .method h3{font-size:15px; font-weight:600; margin-bottom:8px}
 .method ul{display:flex; flex-direction:column; gap:6px; font-size:14px; color:var(--ink-2)}
 .method li{padding-left:14px; position:relative}
@@ -195,6 +195,23 @@ tbody th{font-weight:600; color:var(--muted); font-size:13px; white-space:nowrap
   .wrap{gap:56px; padding-block:36px 72px}
 }
 @media (prefers-reduced-motion:reduce){ .dp-tip{transition:none} }
+
+/* ── Putting green ── */
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){ html{scroll-behavior:auto} }
+.golf-jump{align-self:flex-start; display:inline-flex; align-items:center; gap:8px; min-height:44px; padding:0 20px; border:0; border-radius:999px; background:linear-gradient(90deg, #e0261a, #ff5a1f); color:#fff; font-size:14px; font-weight:600; text-decoration:none; box-shadow:0 6px 18px rgba(255,50,20,.28)}
+.golf-jump:hover{filter:brightness(1.08)}
+.golf{display:flex; flex-direction:column; gap:16px; scroll-margin-top:24px}
+.golf-head{display:flex; flex-wrap:wrap; justify-content:space-between; align-items:flex-end; gap:12px 24px}
+.golf-head h2{font-family:var(--f-display); font-weight:700; font-size:clamp(23px, 3.4vw, 28px); line-height:1.35; margin-top:4px}
+.golf-help{color:var(--ink-2); font-size:15px; max-width:40rem; margin-top:6px}
+.golf-stats{display:flex; flex-wrap:wrap; align-items:center; gap:10px 18px; font-size:14px; color:var(--ink-2)}
+.golf-stats b{color:var(--ink); font-weight:600; margin-left:4px; font-family:var(--f-mono); font-variant-numeric:tabular-nums}
+.golf-btn{min-height:44px; padding:0 18px; border-radius:999px; border:1px solid var(--line); background:var(--surface); color:var(--ink); font:500 14px/1 var(--f-body); cursor:pointer}
+.golf-btn:hover{border-color:var(--muted)}
+.golf-canvas{display:block; width:100%; aspect-ratio:2/1; border-radius:14px; background:#2e6b3b; box-shadow:0 0 0 1px var(--line), 0 18px 50px rgba(255,40,15,.14); cursor:crosshair; -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none}
+@media (max-width:900px){ .golf-canvas{aspect-ratio:3/2} }
+@media (max-width:560px){ .golf-canvas{aspect-ratio:1/1} }
 
 /* ── Baby dragon: 화면 위를 날아다니는 장식 캐릭터 ── */
 .dragon{position:fixed; left:0; top:0; width:clamp(68px, 11vw, 112px); aspect-ratio:1; z-index:50; pointer-events:none; will-change:transform}
@@ -226,13 +243,14 @@ tbody th{font-weight:600; color:var(--muted); font-size:13px; white-space:nowrap
 
 <header class="doc-head">
   <p class="eyebrow">상조 홈페이지 벤치마킹 보고서</p>
-  <h1>상조 5사 홈페이지 분석<br>선불제 2곳 · 후불제 3곳</h1>
+  <h1><span class="fire">상조 5사 홈페이지 분석</span><span class="fire">선불제 2곳 · 후불제 3곳</span></h1>
   <p class="lede">선수금 상위 선불제 2곳과 시장 노출이 큰 후불제 3곳의 홈페이지를 직접 방문해 첫 화면, 메뉴 구조, 상품·가격 공개 방식, 신뢰 장치, 상담 동선, 기술 상태를 비교했습니다.</p>
   <dl class="meta">
     <div><dt>조사일</dt><dd>2026년 11월 12일</dd></div>
     <div><dt>대상</dt><dd>웅진프리드라이프 · 교원라이프 · 고이 · 효누리 · 더불어상조</dd></div>
     <div><dt>방식</dt><dd>Chrome 데스크톱 직접 방문 (메인·상품·신뢰 페이지)</dd></div>
   </dl>
+  <a class="golf-jump" href="#golf">퍼팅 그린에서 쉬어가기 <span aria-hidden="true">↓</span></a>
 </header>
 
 <div class="summary" aria-labelledby="sum-h">
@@ -557,6 +575,22 @@ tbody th{font-weight:600; color:var(--muted); font-size:13px; white-space:nowrap
   </div>
 </section>
 
+<section class="golf" id="golf" aria-labelledby="golf-h">
+  <div class="golf-head">
+    <div>
+      <p class="eyebrow">쉬어가기</p>
+      <h2 id="golf-h">퍼팅 그린</h2>
+      <p class="golf-help">공을 누른 채 뒤로 끌면 퍼터가 조준하고, 놓으면 칩니다. 많이 끌수록 세게 나갑니다. 가만히 두면 혼자서 홀을 노립니다.</p>
+    </div>
+    <div class="golf-stats">
+      <span>타수<b id="golfStrokes">0</b></span>
+      <span>홀인<b id="golfHoles">0</b></span>
+      <button type="button" class="golf-btn" id="golfNew">새 홀</button>
+    </div>
+  </div>
+  <canvas id="golfCanvas" class="golf-canvas" role="img" aria-label="골프공, 퍼터, 깃발이 꽂힌 홀이 있는 퍼팅 그린. 공을 끌어서 조준하고 놓으면 퍼팅합니다."></canvas>
+</section>
+
 </div>
 
 <script>
@@ -811,6 +845,311 @@ tbody th{font-weight:600; color:var(--muted); font-size:13px; white-space:nowrap
   var saved = null;
   try { saved = localStorage.getItem("dragon-hidden"); } catch(e){}
   setHidden(saved === "1");
+  window.dragonCheer = function(){ if(dragon.hidden) return; emit("star", 6); doTrick("hop"); };
+})();
+</script>
+
+<script>
+(function(){
+  var cv = document.getElementById("golfCanvas");
+  if(!cv || !cv.getContext) return;
+  var ctx = cv.getContext("2d");
+  var elS = document.getElementById("golfStrokes"), elH = document.getElementById("golfHoles"), btnNew = document.getElementById("golfNew");
+  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  // 월드 좌표: 짧은 변 = 100 단위. 모든 그리기를 이 단위로 함
+  var W = 0, H = 0, U = 1, WW = 200, WH = 100, F = 4;
+  var FRICTION = 60, MAXV = 175, SINK_V = 80;
+  var ball = { x: 40, y: 50, vx: 0, vy: 0, r: 2.2, sink: 0 };
+  var hole = { x: 150, y: 50, r: 3.6 };
+  var club = { ang: 0, gap: 1, alpha: 0 };
+  var phase = "idle", t0 = 0, now = 0, aimFrom = 0, aimTo = 0, v0 = 0, pull = 1, hit = false;
+  var strokes = 0, holes = 0, lastUser = -1e9, dragging = false, lipCool = 0, nextAt = 0;
+  var trail = [], parts = [], msg = null, raf = 0, last = 0, visible = true;
+
+  function rand(a, b){ return a + Math.random() * (b - a); }
+  function clamp(v, a, b){ return Math.max(a, Math.min(b, v)); }
+  function ease(p){ return p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2; }
+  function easeOut(p){ return 1 - Math.pow(1 - p, 3); }
+  function easeIn(p){ return p * p * p; }
+  function angDiff(a, b){ var d = b - a; while(d > Math.PI) d -= 2 * Math.PI; while(d < -Math.PI) d += 2 * Math.PI; return d; }
+  function speed(){ return Math.hypot(ball.vx, ball.vy); }
+  function updateStats(){ elS.textContent = strokes; elH.textContent = holes; }
+
+  function keepIn(){
+    ball.x = clamp(ball.x, F + ball.r, WW - F - ball.r); ball.y = clamp(ball.y, F + ball.r, WH - F - ball.r);
+    hole.x = clamp(hole.x, F + 6, WW - F - 6); hole.y = clamp(hole.y, F + 20, WH - F - 6);
+  }
+  function resize(){
+    var r = cv.getBoundingClientRect();
+    if(!r.width || !r.height) return;
+    var dpr = Math.min(2, window.devicePixelRatio || 1), oW = WW, oH = WH;
+    W = r.width; H = r.height; U = Math.min(W, H) / 100; WW = W / U; WH = H / U;
+    cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+    ctx.setTransform(dpr * U, 0, 0, dpr * U, 0, 0);
+    ball.x *= WW / oW; ball.y *= WH / oH; hole.x *= WW / oW; hole.y *= WH / oH;
+    keepIn();
+    draw();
+  }
+  function newHole(){
+    var m = F + 8, minD = Math.max(32, Math.hypot(WW, WH) * 0.38);
+    for(var i = 0; i < 60; i++){
+      ball.x = rand(m, WW - m); ball.y = rand(m, WH - m);
+      hole.x = rand(m, WW - m); hole.y = rand(F + 22, WH - m);
+      if(Math.hypot(ball.x - hole.x, ball.y - hole.y) > minD) break;
+    }
+    ball.vx = ball.vy = 0; ball.sink = 0; strokes = 0; trail = []; msg = null;
+    club.alpha = 0; club.gap = 1; phase = "idle"; t0 = now; updateStats();
+  }
+  function startAim(){
+    var dx = hole.x - ball.x, dy = hole.y - ball.y, d = Math.hypot(dx, dy);
+    aimTo = Math.atan2(dy, dx) + rand(-0.045, 0.045);
+    aimFrom = club.alpha > 0.5 ? club.ang : aimTo + rand(-0.8, 0.8);
+    v0 = clamp(Math.sqrt(2 * FRICTION * (d + 1.5)) * rand(0.92, 1.1), 8, MAXV);
+    pull = 1 + (v0 / MAXV) * 14;
+    phase = "aim"; t0 = now;
+  }
+  function strike(){
+    hit = true; ball.vx = Math.cos(club.ang) * v0; ball.vy = Math.sin(club.ang) * v0;
+    strokes++; updateStats();
+  }
+  function sink(){
+    ball.vx = ball.vy = 0; phase = "sunk"; t0 = now; holes++; updateStats();
+    msg = { text: strokes === 1 ? "홀인원!" : strokes + "타 만에 홀인", t: now };
+    burst(hole.x, hole.y); nextAt = now + 2000;
+    if(window.dragonCheer) window.dragonCheer();
+  }
+  function burst(x, y){
+    if(reduce) return;
+    var cols = ["#ffd166", "#ff7a93", "#7cc6ff", "#ffffff", "#b8f28a"];
+    for(var i = 0; i < 28; i++){
+      var a = rand(0, Math.PI * 2), s = rand(18, 55);
+      parts.push({ x: x, y: y, vx: Math.cos(a) * s, vy: Math.sin(a) * s - 20, life: rand(0.7, 1.3), max: 1.3, c: cols[i % cols.length], sz: rand(0.9, 1.8), rot: rand(0, 6), vr: rand(-8, 8) });
+    }
+  }
+  function physics(dt){
+    var sp = speed();
+    if(sp <= 0) return;
+    var ns = Math.max(0, sp - FRICTION * dt);
+    ball.vx *= ns / sp; ball.vy *= ns / sp;
+    var steps = Math.max(1, Math.ceil(ns * dt / 0.8)), h = dt / steps, lo = F + ball.r;
+    lipCool = Math.max(0, lipCool - dt);
+    for(var i = 0; i < steps; i++){
+      ball.x += ball.vx * h; ball.y += ball.vy * h;
+      if(ball.x < lo){ ball.x = lo; ball.vx = -ball.vx * 0.65; }
+      if(ball.x > WW - lo){ ball.x = WW - lo; ball.vx = -ball.vx * 0.65; }
+      if(ball.y < lo){ ball.y = lo; ball.vy = -ball.vy * 0.65; }
+      if(ball.y > WH - lo){ ball.y = WH - lo; ball.vy = -ball.vy * 0.65; }
+      var dx = hole.x - ball.x, dy = hole.y - ball.y, d = Math.hypot(dx, dy), s = speed();
+      if(d < hole.r - ball.r * 0.3){
+        if(s < SINK_V){ sink(); return; }
+        if(!lipCool){
+          var tw = (Math.random() < 0.5 ? -1 : 1) * rand(0.25, 0.5), c = Math.cos(tw), sn = Math.sin(tw);
+          var nvx = (ball.vx * c - ball.vy * sn) * 0.7; ball.vy = (ball.vx * sn + ball.vy * c) * 0.7; ball.vx = nvx; lipCool = 0.25;
+        }
+      } else if(d < hole.r + ball.r * 0.3 && s < 30 && d > 0){
+        ball.vx += dx / d * 90 * h; ball.vy += dy / d * 90 * h;
+      }
+    }
+  }
+  function update(dt){
+    var p;
+    if(phase === "idle"){
+      club.alpha = Math.max(0, club.alpha - dt * 2.5);
+      if(!reduce && !dragging && now - t0 > 700 && now - lastUser > 6000) startAim();
+    } else if(phase === "aim"){
+      club.alpha = Math.min(1, club.alpha + dt * 4);
+      p = clamp((now - t0) / 900, 0, 1);
+      club.ang = aimFrom + angDiff(aimFrom, aimTo) * ease(p); club.gap = 1;
+      if(p >= 1){ phase = "back"; t0 = now; }
+    } else if(phase === "back"){
+      p = clamp((now - t0) / 550, 0, 1);
+      club.gap = 1 + (pull - 1) * easeOut(p);
+      if(p >= 1){ phase = "hold"; t0 = now; }
+    } else if(phase === "hold"){
+      if(now - t0 > 160){ phase = "swing"; t0 = now; hit = false; }
+    } else if(phase === "swing"){
+      p = clamp((now - t0) / 170, 0, 1);
+      club.gap = pull - (pull + 4) * easeIn(p);
+      if(!hit && club.gap <= 0) strike();
+      if(p >= 1){ if(!hit) strike(); phase = "roll"; t0 = now; }
+    } else if(phase === "roll"){
+      club.alpha = Math.max(0, club.alpha - dt * 2.2);
+      physics(dt);
+      if(phase === "roll"){
+        var dd = Math.hypot(hole.x - ball.x, hole.y - ball.y);
+        if(speed() < 0.4 && dd >= hole.r + ball.r * 0.3){
+          ball.vx = ball.vy = 0;
+          if(strokes >= 6){ msg = { text: "다음 홀로", t: now }; phase = "wait"; nextAt = now + 1400; }
+          else { phase = "idle"; t0 = now; }
+        }
+      }
+    } else if(phase === "sunk"){
+      ball.sink = clamp((now - t0) / 380, 0, 1);
+      ball.x += (hole.x - ball.x) * Math.min(1, dt * 10); ball.y += (hole.y - ball.y) * Math.min(1, dt * 10);
+      if(now >= nextAt) newHole();
+    } else if(phase === "wait"){
+      club.alpha = Math.max(0, club.alpha - dt * 2.5);
+      if(now >= nextAt) newHole();
+    }
+    if(speed() > 2){ trail.push({ x: ball.x, y: ball.y }); if(trail.length > 26) trail.shift(); }
+    else if(trail.length) trail.shift();
+    for(var i = parts.length - 1; i >= 0; i--){
+      var q = parts[i]; q.life -= dt;
+      if(q.life <= 0){ parts.splice(i, 1); continue; }
+      q.vx *= Math.pow(0.15, dt); q.vy = q.vy * Math.pow(0.15, dt) + 22 * dt;
+      q.x += q.vx * dt; q.y += q.vy * dt; q.rot += q.vr * dt;
+    }
+  }
+
+  function rr(x, y, w, h, r){
+    ctx.beginPath(); ctx.moveTo(x + r, y);
+    ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath();
+  }
+  function line(x1, y1, x2, y2){ ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke(); }
+  function drawGreen(){
+    ctx.fillStyle = "#2e6b3b"; ctx.fillRect(0, 0, WW, WH);
+    rr(F, F, WW - 2 * F, WH - 2 * F, 7); ctx.fillStyle = "#5db463"; ctx.fill();
+    ctx.save(); rr(F, F, WW - 2 * F, WH - 2 * F, 7); ctx.clip();
+    ctx.fillStyle = "rgba(255,255,255,0.07)";
+    for(var sx = -WH; sx < WW + WH; sx += 16){
+      ctx.beginPath(); ctx.moveTo(sx, 0); ctx.lineTo(sx + 8, 0); ctx.lineTo(sx + 8 - WH, WH); ctx.lineTo(sx - WH, WH); ctx.closePath(); ctx.fill();
+    }
+    ctx.strokeStyle = "rgba(0,0,0,0.14)"; ctx.lineWidth = 1.4; rr(F, F, WW - 2 * F, WH - 2 * F, 7); ctx.stroke();
+    ctx.restore();
+  }
+  function drawHole(){
+    ctx.lineCap = "round";
+    ctx.strokeStyle = "rgba(0,0,0,0.18)"; ctx.lineWidth = 0.8; line(hole.x, hole.y, hole.x + 9, hole.y + 6);
+    ctx.fillStyle = "#16241a"; ctx.beginPath(); ctx.arc(hole.x, hole.y, hole.r, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = "#dfe7dc"; ctx.lineWidth = 0.7; ctx.beginPath(); ctx.arc(hole.x, hole.y, hole.r * 0.84, Math.PI * 1.08, Math.PI * 1.92); ctx.stroke();
+    ctx.fillStyle = "#0a120c"; ctx.beginPath(); ctx.arc(hole.x, hole.y + 0.5, hole.r * 0.6, 0, Math.PI * 2); ctx.fill();
+  }
+  function drawFlag(){
+    var top = hole.y - 17, w = reduce ? 0 : Math.sin(now / 260) * 1.2;
+    ctx.lineCap = "round"; ctx.strokeStyle = "#f4f4f2"; ctx.lineWidth = 0.7; line(hole.x, hole.y, hole.x, top);
+    ctx.fillStyle = "#e5483d"; ctx.beginPath(); ctx.moveTo(hole.x, top);
+    ctx.quadraticCurveTo(hole.x + 4, top + 1 + w * 0.5, hole.x + 8.5, top + 2.6 + w);
+    ctx.quadraticCurveTo(hole.x + 4, top + 4.2 + w * 0.5, hole.x, top + 5.4); ctx.closePath(); ctx.fill();
+  }
+  function drawTrail(){
+    for(var i = 0; i < trail.length; i++){
+      ctx.fillStyle = "rgba(255,255,255," + (i / trail.length * 0.35).toFixed(3) + ")";
+      ctx.beginPath(); ctx.arc(trail[i].x, trail[i].y, ball.r * 0.55, 0, Math.PI * 2); ctx.fill();
+    }
+  }
+  function drawAim(){
+    if(club.alpha < 0.05 || !(phase === "aim" || phase === "back" || phase === "hold" || phase === "user")) return;
+    var pw = clamp((club.gap - 1) / 14, 0, 1), L = 8 + pw * 55, dx = Math.cos(club.ang), dy = Math.sin(club.ang);
+    var sx = ball.x + dx * (ball.r + 1.5), sy = ball.y + dy * (ball.r + 1.5), ex = sx + dx * L, ey = sy + dy * L;
+    ctx.save(); ctx.globalAlpha = club.alpha * 0.9; ctx.lineCap = "round"; ctx.lineWidth = 0.9;
+    ctx.strokeStyle = ctx.fillStyle = pw < 0.5 ? "#ffffff" : (pw < 0.8 ? "#ffd166" : "#ff8a3d");
+    ctx.setLineDash([1.2, 2.4]); line(sx, sy, ex, ey); ctx.setLineDash([]);
+    ctx.beginPath(); ctx.moveTo(ex + dx * 2.4, ey + dy * 2.4); ctx.lineTo(ex - dy * 1.5, ey + dx * 1.5); ctx.lineTo(ex + dy * 1.5, ey - dx * 1.5); ctx.closePath(); ctx.fill();
+    ctx.restore();
+  }
+  function drawBall(){
+    var r = ball.r * (1 - ball.sink * 0.55);
+    ctx.save(); ctx.globalAlpha = 1 - ball.sink * 0.6;
+    if(ball.sink < 0.2){ ctx.fillStyle = "rgba(0,0,0,0.25)"; ctx.beginPath(); ctx.ellipse(ball.x + 0.6, ball.y + 0.8, r * 1.05, r * 0.9, 0, 0, Math.PI * 2); ctx.fill(); }
+    var g = ctx.createRadialGradient(ball.x - r * 0.4, ball.y - r * 0.45, r * 0.1, ball.x, ball.y, r);
+    g.addColorStop(0, "#ffffff"); g.addColorStop(1, "#cfd8dc");
+    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(ball.x, ball.y, r, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+  }
+  function drawClub(){
+    if(club.alpha <= 0.01) return;
+    var dx = Math.cos(club.ang), dy = Math.sin(club.ang), nx = -dy, ny = dx;
+    var back = ball.r + Math.max(club.gap, -4) + 1.2, cx = ball.x - dx * back, cy = ball.y - dy * back;
+    var hx = cx + nx * 3.2, hy = cy + ny * 3.2, gx = hx + nx * 24 - dx * 5, gy = hy + ny * 24 - dy * 5;
+    var k = 9 / Math.hypot(gx - hx, gy - hy);
+    ctx.save(); ctx.globalAlpha = club.alpha; ctx.lineCap = "round";
+    ctx.strokeStyle = "rgba(0,0,0,0.18)"; ctx.lineWidth = 1; line(hx + 0.8, hy + 1, gx + 1.6, gy + 2);
+    ctx.strokeStyle = "#8a9096"; ctx.lineWidth = 0.75; line(hx, hy, gx, gy);
+    ctx.strokeStyle = "#1f2327"; ctx.lineWidth = 1.7; line(gx - (gx - hx) * k, gy - (gy - hy) * k, gx, gy);
+    ctx.translate(cx, cy); ctx.rotate(club.ang);
+    ctx.fillStyle = "rgba(0,0,0,0.2)"; rr(-0.6, -3.5, 2.4, 8.4, 0.9); ctx.fill();
+    ctx.fillStyle = "#d4d9de"; rr(-1.1, -4.2, 2.4, 8.4, 0.9); ctx.fill();
+    ctx.fillStyle = "#7d868e"; ctx.fillRect(0.9, -4.0, 0.4, 8.0);
+    ctx.fillStyle = "#ff7a59"; ctx.fillRect(-0.9, -0.3, 1.4, 0.6);
+    ctx.restore();
+  }
+  function drawParts(){
+    for(var i = 0; i < parts.length; i++){
+      var q = parts[i];
+      ctx.save(); ctx.globalAlpha = clamp(q.life / q.max * 1.4, 0, 1); ctx.translate(q.x, q.y); ctx.rotate(q.rot);
+      ctx.fillStyle = q.c; ctx.fillRect(-q.sz / 2, -q.sz / 4, q.sz, q.sz / 2); ctx.restore();
+    }
+  }
+  function drawMsg(){
+    if(!msg) return;
+    var age = (now - msg.t) / 1000;
+    if(age > 2){ msg = null; return; }
+    var a = age < 0.2 ? age / 0.2 : (age > 1.6 ? (2 - age) / 0.4 : 1), sc = 0.8 + 0.2 * easeOut(Math.min(1, age / 0.25));
+    ctx.save(); ctx.globalAlpha = clamp(a, 0, 1); ctx.translate(WW / 2, WH * 0.2); ctx.scale(sc, sc);
+    ctx.font = "700 9px 'IBM Plex Sans KR', 'Malgun Gothic', sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    ctx.lineJoin = "round"; ctx.lineWidth = 2.2; ctx.strokeStyle = "rgba(20,50,28,0.55)"; ctx.strokeText(msg.text, 0, 0);
+    ctx.fillStyle = "#ffffff"; ctx.fillText(msg.text, 0, 0); ctx.restore();
+  }
+  function draw(){
+    if(!W) return;
+    ctx.clearRect(0, 0, WW, WH);
+    drawGreen(); drawHole(); drawTrail(); drawAim(); drawBall(); drawClub(); drawFlag(); drawParts(); drawMsg();
+  }
+
+  function frame(t){
+    raf = 0;
+    if(!visible) return;
+    now = t;
+    var dt = Math.min(0.033, (t - (last || t)) / 1000); last = t;
+    update(dt); draw();
+    raf = requestAnimationFrame(frame);
+  }
+  function kick(){ if(!raf && visible){ last = 0; raf = requestAnimationFrame(frame); } }
+
+  // 직접 치기: 공을 누른 채 뒤로 끌어 조준, 놓으면 퍼팅
+  function toWorld(e){ var r = cv.getBoundingClientRect(); return { x: (e.clientX - r.left) / U, y: (e.clientY - r.top) / U }; }
+  function canGrab(){ return (phase === "idle" || phase === "aim" || phase === "back" || phase === "hold" || phase === "user") && speed() < 0.4 && ball.sink === 0; }
+  function nearBall(p){ return Math.hypot(p.x - ball.x, p.y - ball.y) < 16; }
+  function aimAt(p){
+    var dx = ball.x - p.x, dy = ball.y - p.y, d = Math.hypot(dx, dy);
+    if(d > 0.5) club.ang = Math.atan2(dy, dx);
+    var pw = clamp((d - 3) / 40, 0, 1);
+    club.gap = 1 + pw * 14; pull = club.gap; v0 = pw * MAXV;
+  }
+  cv.addEventListener("pointerdown", function(e){
+    var p = toWorld(e);
+    if(!canGrab()) return;
+    if(e.pointerType !== "mouse" && !nearBall(p)) return;
+    dragging = true; phase = "user"; now = performance.now(); lastUser = now; club.alpha = 1;
+    cv.style.cursor = "grabbing";
+    try { cv.setPointerCapture(e.pointerId); } catch(_){}
+    aimAt(p); kick();
+  });
+  cv.addEventListener("pointermove", function(e){
+    var p = toWorld(e);
+    if(dragging){ aimAt(p); lastUser = performance.now(); }
+    else cv.style.cursor = canGrab() && nearBall(p) ? "grab" : "crosshair";
+  });
+  cv.addEventListener("pointerup", function(){
+    if(!dragging) return;
+    dragging = false; now = performance.now(); lastUser = now; cv.style.cursor = "crosshair";
+    if(v0 < MAXV * 0.03){ phase = "idle"; t0 = now; return; }
+    phase = "swing"; t0 = now; hit = false; kick();
+  });
+  cv.addEventListener("pointercancel", function(){ if(dragging){ dragging = false; phase = "idle"; t0 = performance.now(); } });
+  cv.addEventListener("touchstart", function(e){
+    if(!e.touches.length) return;
+    if(canGrab() && nearBall(toWorld(e.touches[0]))) e.preventDefault();
+  }, { passive: false });
+  btnNew.addEventListener("click", function(){ now = performance.now(); lastUser = -1e9; newHole(); kick(); });
+
+  if("ResizeObserver" in window) new ResizeObserver(resize).observe(cv);
+  else window.addEventListener("resize", resize);
+  if("IntersectionObserver" in window){
+    new IntersectionObserver(function(es){ visible = es[0].isIntersecting; if(visible) kick(); }, { rootMargin: "120px" }).observe(cv);
+  }
+  resize(); newHole(); draw(); kick();
 })();
 </script>
 
