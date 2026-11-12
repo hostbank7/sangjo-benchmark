@@ -195,6 +195,29 @@ tbody th{font-weight:600; color:var(--muted); font-size:13px; white-space:nowrap
   .wrap{gap:56px; padding-block:36px 72px}
 }
 @media (prefers-reduced-motion:reduce){ .dp-tip{transition:none} }
+
+/* ── Baby dragon: 화면 위를 날아다니는 장식 캐릭터 ── */
+.dragon{position:fixed; left:0; top:0; width:clamp(68px, 11vw, 112px); aspect-ratio:1; z-index:50; pointer-events:none; will-change:transform}
+.dragon-tilt, .dragon-flip, .dragon-trick{width:100%; height:100%}
+.dragon-tilt{transition:transform .25s ease-out}
+.dragon-flip{transition:transform .3s ease}
+.dragon-body{display:block; width:100%; height:100%; padding:0; border:0; background:none; cursor:pointer; pointer-events:auto; animation:dg-bob 1.8s ease-in-out infinite; filter:drop-shadow(0 6px 8px rgba(20,40,30,.22)); -webkit-tap-highlight-color:transparent}
+.dragon-body svg{display:block; width:100%; height:100%; overflow:visible}
+.dragon.is-resting .dg-wing{animation-duration:.6s}
+.dragon-trick.loop{animation:dg-loop .9s cubic-bezier(.45,.05,.35,1)}
+.dragon-trick.hop{animation:dg-hop .8s ease-out}
+.dragon-trick.wiggle{animation:dg-wiggle .7s ease-in-out}
+@keyframes dg-bob{0%,100%{transform:translateY(0)} 50%{transform:translateY(-7%)}}
+@keyframes dg-loop{0%{transform:translateY(0) rotate(0)} 50%{transform:translateY(-35%) rotate(-180deg)} 100%{transform:translateY(0) rotate(-360deg)}}
+@keyframes dg-hop{0%,100%{transform:translateY(0) scale(1)} 20%{transform:translateY(0) scale(1.08,.9)} 45%{transform:translateY(-38%) scale(.95,1.06)} 70%{transform:translateY(0) scale(1.06,.92)} 85%{transform:translateY(-10%)}}
+@keyframes dg-wiggle{0%,100%{transform:rotate(0)} 20%{transform:rotate(-12deg)} 40%{transform:rotate(10deg)} 60%{transform:rotate(-8deg)} 80%{transform:rotate(5deg)}}
+.dg-p{position:fixed; z-index:51; pointer-events:none; width:var(--s,14px); height:var(--s,14px); margin:calc(var(--s,14px) / -2) 0 0 calc(var(--s,14px) / -2); animation:dg-float var(--d,.9s) ease-out both}
+.dg-p svg{display:block; width:100%; height:100%}
+.dg-puff{border-radius:50%; background:radial-gradient(circle at 40% 40%, #fff3b0, #ffb347 55%, rgba(255,120,60,0) 72%)}
+@keyframes dg-float{from{opacity:1; transform:translate(0,0) scale(.6)} to{opacity:0; transform:translate(var(--dx,0), var(--dy,-60px)) scale(var(--sc,1.2))}}
+.dragon-toggle{position:fixed; z-index:52; right:max(12px, env(safe-area-inset-right, 0px)); bottom:calc(12px + env(safe-area-inset-bottom, 0px)); min-height:44px; padding:0 18px; border-radius:999px; border:1px solid var(--line); background:var(--surface); color:var(--ink); font:500 13px/1 var(--f-body); cursor:pointer; box-shadow:0 2px 10px rgba(0,0,0,.08)}
+.dragon-toggle:hover{border-color:var(--muted)}
+@media (prefers-reduced-motion:reduce){ .dragon-body, .dragon-tilt, .dragon-flip{animation:none; transition:none} }
 </style>
 
 </head>
@@ -595,6 +618,199 @@ tbody th{font-weight:600; color:var(--muted); font-size:13px; white-space:nowrap
     td.setAttribute("aria-label", "5점 만점에 " + n + "점");
     td.appendChild(wrap); td.appendChild(sc);
   });
+})();
+</script>
+
+<div class="dragon" id="dragon">
+  <div class="dragon-tilt"><div class="dragon-flip"><div class="dragon-trick">
+    <button type="button" class="dragon-body" id="dragonBtn" aria-label="아기 드래곤, 누르면 재주를 부려요">
+<svg class="dg-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 190 190" width="190" height="190" aria-hidden="true">
+<style>
+.dg-wing{transform-box:view-box;transform-origin:84px 112px;animation:dg-flap .34s ease-in-out infinite alternate}
+.dg-wing-back{transform-origin:100px 104px;animation-delay:-.12s}
+.dg-tail{transform-box:view-box;transform-origin:64px 144px;animation:dg-wag 1.3s ease-in-out infinite alternate}
+.dg-eyes{transform-box:view-box;transform-origin:136px 75px;animation:dg-blink 4.2s infinite}
+@keyframes dg-flap{from{transform:rotate(-22deg)}to{transform:rotate(14deg)}}
+@keyframes dg-wag{from{transform:rotate(-9deg)}to{transform:rotate(11deg)}}
+@keyframes dg-blink{0%,91%,100%{transform:scaleY(1)}94%{transform:scaleY(.12)}}
+@media (prefers-reduced-motion:reduce){.dg-wing,.dg-tail,.dg-eyes{animation:none}}
+</style>
+<g class="dg-wing dg-wing-back"><path d="M100 104 C94 84 82 66 66 50 C65 62 60 71 49 76 C57 81 60 88 58 96 C69 94 79 98 88 109 Z" fill="#f08fab" stroke="#2c6e52" stroke-width="2.5" stroke-linejoin="round"/></g>
+<g class="dg-tail">
+<path d="M25 137 L10 131 L13 115 L28 121 Z" fill="#ffd166" stroke="#c98a1e" stroke-width="2" stroke-linejoin="round"/>
+<path d="M66 152 C48 164 28 162 20 146 C18 140 20 135 24 133 C31 144 44 149 64 140 Z" fill="#6fd3a0" stroke="#2c6e52" stroke-width="2.5" stroke-linejoin="round"/>
+</g>
+<ellipse cx="84" cy="168" rx="13" ry="8.5" fill="#5cc490" stroke="#2c6e52" stroke-width="2.5"/>
+<ellipse cx="118" cy="170" rx="13" ry="8.5" fill="#5cc490" stroke="#2c6e52" stroke-width="2.5"/>
+<ellipse cx="98" cy="135" rx="40" ry="36" fill="#6fd3a0" stroke="#2c6e52" stroke-width="2.5"/>
+<ellipse cx="110" cy="142" rx="22" ry="24" fill="#fff0c2" stroke="#e2c47e" stroke-width="1.5"/>
+<path d="M94 132 Q110 137 126 132 M92 144 Q110 149 128 144 M95 156 Q110 160 125 156" fill="none" stroke="#e8cf92" stroke-width="2" stroke-linecap="round"/>
+<ellipse cx="131" cy="131" rx="6" ry="9.5" transform="rotate(-35 131 131)" fill="#6fd3a0" stroke="#2c6e52" stroke-width="2.2"/>
+<ellipse cx="91" cy="137" rx="5.5" ry="8.5" transform="rotate(30 91 137)" fill="#5cc490" stroke="#2c6e52" stroke-width="2.2"/>
+<g class="dg-wing">
+<path d="M84 112 C78 92 66 74 50 58 C49 70 44 79 33 84 C41 89 44 96 42 104 C53 102 63 106 72 117 Z" fill="#ffb3c7" stroke="#2c6e52" stroke-width="2.5" stroke-linejoin="round"/>
+<path d="M66 84 C56 86 46 86 36 85 M72 98 C62 98 52 100 44 103" fill="none" stroke="#e07f9c" stroke-width="1.6" stroke-linecap="round"/>
+<path d="M83 110 C76 92 64 76 51 61" fill="none" stroke="#2c6e52" stroke-width="3" stroke-linecap="round"/>
+</g>
+<g fill="#ffd166" stroke="#c98a1e" stroke-width="2" stroke-linejoin="round">
+<path d="M93 67 L79 71 L91 80 Z"/><path d="M99 55 L85 54 L94 66 Z"/><path d="M109 45 L97 40 L102 54 Z"/>
+</g>
+<g fill="#ffe08a" stroke="#c98a1e" stroke-width="2" stroke-linejoin="round">
+<path d="M112 48 Q109 33 111 21 Q119 30 127 44 Z"/><path d="M136 44 Q144 30 153 22 Q154 35 149 47 Z"/>
+</g>
+<circle cx="130" cy="80" r="40" fill="#6fd3a0" stroke="#2c6e52" stroke-width="2.5"/>
+<ellipse cx="116" cy="57" rx="12" ry="6.5" transform="rotate(-28 116 57)" fill="#ffffff" opacity=".35"/>
+<ellipse cx="150" cy="97" rx="21" ry="14" fill="#93e4bc" stroke="#2c6e52" stroke-width="2.5"/>
+<ellipse cx="156" cy="92" rx="2" ry="2.6" fill="#2c6e52"/><ellipse cx="165" cy="92.5" rx="1.8" ry="2.4" fill="#2c6e52"/>
+<path d="M139 103 Q150 112 162 103" fill="none" stroke="#2c6e52" stroke-width="2.5" stroke-linecap="round"/>
+<path d="M152 107.6 L154 112 L156.4 106.6 Z" fill="#ffffff" stroke="#2c6e52" stroke-width="1.2" stroke-linejoin="round"/>
+<ellipse cx="113" cy="92" rx="7" ry="4.2" fill="#ff9fb3" opacity=".9"/><ellipse cx="164" cy="81" rx="4" ry="2.6" fill="#ff9fb3" opacity=".85"/>
+<g class="dg-eyes">
+<ellipse cx="122" cy="76" rx="8.5" ry="10" fill="#2b2440"/><circle cx="125" cy="72" r="3.2" fill="#ffffff"/><circle cx="119.5" cy="80.5" r="1.5" fill="#ffffff"/>
+<ellipse cx="150" cy="73" rx="7.5" ry="9" fill="#2b2440"/><circle cx="152.6" cy="69.4" r="2.8" fill="#ffffff"/><circle cx="148" cy="77" r="1.3" fill="#ffffff"/>
+</g>
+</svg>
+    </button>
+  </div></div></div>
+</div>
+<button type="button" class="dragon-toggle" id="dragonToggle">드래곤 숨기기</button>
+
+<script>
+(function(){
+  var dragon = document.getElementById("dragon");
+  if(!dragon) return;
+  var tilt = dragon.querySelector(".dragon-tilt"), flip = dragon.querySelector(".dragon-flip"), trick = dragon.querySelector(".dragon-trick");
+  var btn = document.getElementById("dragonBtn"), toggle = document.getElementById("dragonToggle");
+  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var S = dragon.offsetWidth || 90, x = 0, y = 0, vx = 0, vy = 0, tx = 0, ty = 0, speed = 120;
+  var state = "fly", wait = 0, flyTime = 0, face = -1, last = 0, raf = 0, pointer = null, busy = false;
+  var HEART = '<svg viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-9.6-9.2C.9 8.4 3 4.5 6.7 4.5c2.1 0 3.6 1.2 4.3 2.6.7-1.4 2.2-2.6 4.3-2.6 3.7 0 5.8 3.9 4.3 7.3C19.5 16.4 12 21 12 21z" fill="#ff7a93"/></svg>';
+  var STAR = '<svg viewBox="0 0 24 24"><path d="M12 1.5l2.6 7.9 7.9 2.6-7.9 2.6L12 22.5l-2.6-7.9L1.5 12l7.9-2.6z" fill="#ffd166"/></svg>';
+
+  function rand(a, b){ return a + Math.random() * (b - a); }
+  function bounds(){
+    S = dragon.offsetWidth || S;
+    var w = document.documentElement.clientWidth, h = window.innerHeight;
+    return { x0: 8, x1: Math.max(8, w - S - 8), y0: 8, y1: Math.max(8, h - S - 64) };
+  }
+  function clampPos(){
+    var b = bounds();
+    x = Math.min(Math.max(x, b.x0), b.x1);
+    y = Math.min(Math.max(y, b.y0), b.y1);
+  }
+  function pick(){
+    var b = bounds(), now = performance.now();
+    if(pointer && now - pointer.t < 3000 && Math.random() < 0.35){ tx = pointer.x - S / 2; ty = pointer.y - S / 2; }
+    else { tx = rand(b.x0, b.x1); ty = rand(b.y0, b.y1); }
+    tx = Math.min(Math.max(tx, b.x0), b.x1);
+    ty = Math.min(Math.max(ty, b.y0), b.y1);
+    speed = Math.random() < 0.18 ? rand(300, 380) : rand(90, 170);
+    flyTime = 0;
+  }
+  function render(){
+    dragon.style.transform = "translate3d(" + x.toFixed(1) + "px," + y.toFixed(1) + "px,0)";
+    var deg = Math.max(-14, Math.min(14, vy * 0.06)) * face;
+    tilt.style.transform = "rotate(" + deg.toFixed(1) + "deg)";
+    flip.style.transform = "scaleX(" + face + ")";
+  }
+  function origin(kind){
+    var r = dragon.getBoundingClientRect();
+    if(kind === "heart") return { x: r.left + r.width * 0.55, y: r.top + r.height * 0.18 };
+    return { x: face > 0 ? r.left + r.width * 0.86 : r.left + r.width * 0.14, y: r.top + r.height * 0.53 };
+  }
+  function emit(kind, n){
+    if(reduce || dragon.hidden) return;
+    var o = origin(kind);
+    for(var i = 0; i < n; i++){
+      var p = document.createElement("span");
+      p.className = "dg-p" + (kind === "puff" ? " dg-puff" : "");
+      if(kind === "heart") p.innerHTML = HEART;
+      if(kind === "star") p.innerHTML = STAR;
+      var s = kind === "puff" ? rand(14, 24) : rand(12, 20);
+      var dx = kind === "puff" ? face * rand(30, 70) : rand(-40, 40);
+      var dy = kind === "puff" ? rand(-18, 12) : -rand(50, 110);
+      p.style.setProperty("--s", s + "px");
+      p.style.setProperty("--dx", dx + "px");
+      p.style.setProperty("--dy", dy + "px");
+      p.style.setProperty("--d", rand(0.7, 1.2) + "s");
+      p.style.setProperty("--sc", kind === "puff" ? "1.8" : "1.1");
+      p.style.left = (o.x + (kind === "puff" ? face * 4 : rand(-10, 10))) + "px";
+      p.style.top = (o.y + rand(-6, 6)) + "px";
+      p.style.animationDelay = (i * 0.06) + "s";
+      p.addEventListener("animationend", function(){ this.remove(); });
+      document.body.appendChild(p);
+    }
+  }
+  function doTrick(name){
+    if(busy || reduce) return;
+    busy = true;
+    trick.classList.remove("loop", "hop", "wiggle");
+    void trick.offsetWidth;
+    trick.classList.add(name);
+    if(name === "loop") setTimeout(function(){ emit("star", 5); }, 350);
+    if(name === "hop") emit("heart", 3);
+    if(name === "wiggle") emit("puff", 6);
+  }
+  trick.addEventListener("animationend", function(e){
+    if(e.target !== trick) return;
+    trick.classList.remove("loop", "hop", "wiggle");
+    busy = false;
+  });
+
+  function step(t){
+    raf = requestAnimationFrame(step);
+    var dt = Math.min(0.05, (t - (last || t)) / 1000);
+    last = t;
+    if(state === "fly"){
+      flyTime += dt;
+      var dx = tx - x, dy = ty - y, d = Math.hypot(dx, dy);
+      if(d < 10 || flyTime > 8){
+        state = "rest"; wait = rand(0.7, 2.2);
+        dragon.classList.add("is-resting");
+        var r = Math.random();
+        if(r < 0.22) doTrick("loop"); else if(r < 0.4) doTrick("hop"); else if(r < 0.55) doTrick("wiggle");
+      } else {
+        var sp = speed * Math.min(1, d / 90) + 20, k = Math.min(1, dt * 6);
+        vx += (dx / d * sp - vx) * k;
+        vy += (dy / d * sp - vy) * k;
+      }
+    } else {
+      var decay = Math.pow(0.02, dt);
+      vx *= decay; vy *= decay;
+      wait -= dt;
+      if(wait <= 0 && !busy){ state = "fly"; dragon.classList.remove("is-resting"); pick(); }
+    }
+    x += vx * dt; y += vy * dt;
+    clampPos();
+    if(vx > 25) face = 1; else if(vx < -25) face = -1;
+    render();
+  }
+
+  btn.addEventListener("click", function(){
+    emit("heart", 4);
+    doTrick(Math.random() < 0.6 ? "loop" : "hop");
+  });
+  function track(e){ pointer = { x: e.clientX, y: e.clientY, t: performance.now() }; }
+  window.addEventListener("pointermove", track, { passive: true });
+  window.addEventListener("pointerdown", track, { passive: true });
+  window.addEventListener("resize", function(){ clampPos(); if(state === "fly") pick(); render(); });
+
+  function setHidden(h){
+    dragon.hidden = h;
+    toggle.textContent = h ? "드래곤 부르기" : "드래곤 숨기기";
+    if(h){ if(raf){ cancelAnimationFrame(raf); raf = 0; } }
+    else if(!reduce && !raf){ last = 0; raf = requestAnimationFrame(step); }
+    try { localStorage.setItem("dragon-hidden", h ? "1" : "0"); } catch(e){}
+  }
+  toggle.addEventListener("click", function(){ setHidden(!dragon.hidden); });
+
+  var b = bounds();
+  if(reduce){ x = b.x1; y = b.y1; }
+  else { x = b.x1 - 20; y = Math.round((b.y0 + b.y1) / 2); pick(); }
+  render();
+  var saved = null;
+  try { saved = localStorage.getItem("dragon-hidden"); } catch(e){}
+  setHidden(saved === "1");
 })();
 </script>
 
