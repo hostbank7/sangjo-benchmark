@@ -1,0 +1,587 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>동행매치</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@500;600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap">
+<style>
+/* Layout: marketplace shell — sticky search header + category rail, card grid home, Soomgo-style request wizard, Kmong-style detail with sticky package box */
+:root{
+  --bg:#f4f6f5; --surface:#ffffff; --sunk:#e9eeec; --line:#d6dedb;
+  --fg:#18211f; --mute:#58655f; --accent:#1e5b4c; --accent-fg:#ffffff; --accent-soft:#dcebe5;
+  --urgent:#b3402e; --urgent-soft:#f6e1dc; --star:#b8862a; --ok:#2f7a4f;
+  --thumb-s:26%; --thumb-l:86%; --thumb-fg:#24302c;
+  --display:"IBM Plex Sans KR","Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --body:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#111715; --surface:#18201d; --sunk:#202a26; --line:#2e3a36;
+  --fg:#e7eeeb; --mute:#9aa9a3; --accent:#6fc2a6; --accent-fg:#0d1614; --accent-soft:#1f3a31;
+  --urgent:#ec8a76; --urgent-soft:#3a221d; --star:#e0b45a; --ok:#7fcf9c;
+  --thumb-s:18%; --thumb-l:22%; --thumb-fg:#e2ebe7; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#111715; --surface:#18201d; --sunk:#202a26; --line:#2e3a36;
+  --fg:#e7eeeb; --mute:#9aa9a3; --accent:#6fc2a6; --accent-fg:#0d1614; --accent-soft:#1f3a31;
+  --urgent:#ec8a76; --urgent-soft:#3a221d; --star:#e0b45a; --ok:#7fcf9c;
+  --thumb-s:18%; --thumb-l:22%; --thumb-fg:#e2ebe7; color-scheme:dark}
+*,*::before,*::after{box-sizing:border-box}
+[hidden]{display:none!important}
+img{max-width:100%}
+body{background:var(--bg);color:var(--fg);font:400 15px/1.65 var(--body);word-break:keep-all;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
+h1,h2,h3,h4{font-family:var(--display);line-height:1.35;margin:0;text-wrap:balance;letter-spacing:-.01em}
+h1{font-size:clamp(26px,4vw,38px);font-weight:700}
+h2{font-size:clamp(20px,2.6vw,25px);font-weight:700}
+h3{font-size:17px;font-weight:600}
+p{margin:0}
+a{color:inherit}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.wrap{max-width:1180px;margin:0 auto}
+.num{font-variant-numeric:tabular-nums}
+.mute{color:var(--mute)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:1px solid var(--accent);background:var(--accent);color:var(--accent-fg);
+  padding:11px 18px;border-radius:8px;font-weight:600;cursor:pointer;text-decoration:none;white-space:nowrap}
+.btn:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent;color:var(--accent)}
+.btn.urgent{background:var(--urgent);border-color:var(--urgent);color:#fff}
+.btn.block{width:100%}
+.chip{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:500;padding:2px 8px;border-radius:999px;background:var(--accent-soft);color:var(--accent);white-space:nowrap}
+.chip.u{background:var(--urgent-soft);color:var(--urgent)}
+.label{font-size:12px;letter-spacing:.06em;color:var(--mute);font-weight:500}
+
+/* header */
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--surface);border-bottom:1px solid var(--line);
+  margin-left:calc(-1 * max(16px,env(safe-area-inset-left,0px)));margin-right:calc(-1 * max(16px,env(safe-area-inset-right,0px)));
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.bar{display:flex;align-items:center;gap:16px;height:64px}
+.logo{font-family:var(--display);font-weight:700;font-size:20px;text-decoration:none;display:flex;align-items:center;gap:8px;white-space:nowrap}
+.logo i{width:22px;height:22px;border-radius:50%;border:2px solid var(--accent);position:relative;display:inline-block}
+.logo i::after{content:"";position:absolute;left:5px;top:5px;width:8px;height:8px;border-radius:50%;background:var(--accent)}
+.search{flex:1;display:flex;max-width:520px;border:1.5px solid var(--accent);border-radius:8px;overflow:hidden;background:var(--surface)}
+.search input{flex:1;min-width:0;border:0;padding:9px 12px;background:transparent}
+.search input:focus{outline:none}
+.search button{border:0;background:var(--accent);color:var(--accent-fg);padding:0 16px;font-weight:600;cursor:pointer}
+.navl{display:flex;gap:4px;margin-left:auto}
+.navl a{text-decoration:none;padding:8px 10px;font-size:14px;font-weight:500;border-radius:6px;white-space:nowrap}
+.navl a:hover{background:var(--sunk)}
+.navl a.em{color:var(--urgent)}
+.cats{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.cats::-webkit-scrollbar{display:none}
+.cats button{border:0;background:none;padding:10px 12px;font-size:14px;cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent;color:var(--mute)}
+.cats button[aria-pressed="true"]{color:var(--fg);border-color:var(--fg);font-weight:600}
+
+/* home */
+.hero{display:grid;grid-template-columns:1.25fr 1fr;gap:28px;padding-block:36px 28px;align-items:center}
+.hero>*{min-width:0}
+.hero p.lead{margin-top:12px;color:var(--mute);max-width:46ch}
+.hero .stats{display:flex;gap:28px;margin-top:22px;flex-wrap:wrap}
+.hero .stats b{display:block;font-family:var(--display);font-size:22px}
+.quick{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px;display:grid;gap:12px}
+.quick .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.field{display:grid;gap:4px}
+.field label{font-size:13px;font-weight:500}
+select,input.txt{width:100%;border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:10px 12px}
+.trust{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.trust div{background:var(--surface);padding:16px 18px}
+.trust b{display:block;font-family:var(--display);font-size:15px;margin-bottom:2px}
+.trust span{font-size:13px;color:var(--mute)}
+section.blk{padding-block:36px 8px}
+.sechead{display:flex;align-items:end;justify-content:space-between;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.catgrid{display:grid;grid-template-columns:repeat(8,1fr);gap:10px}
+.catgrid button{border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:14px 6px 12px;cursor:pointer;display:grid;justify-items:center;gap:8px;font-size:13px;font-weight:500}
+.catgrid button:hover{border-color:var(--accent)}
+.catgrid .ico{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;font-family:var(--display);font-weight:700;font-size:16px;
+  background:hsl(var(--h) var(--thumb-s) var(--thumb-l));color:var(--thumb-fg)}
+.catgrid button.soon{opacity:.6}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.card{display:flex;flex-direction:column;gap:8px;text-decoration:none;cursor:pointer;min-width:0}
+.thumb{aspect-ratio:4/3;max-width:100%;border-radius:var(--r);background:hsl(var(--h) var(--thumb-s) var(--thumb-l));color:var(--thumb-fg);
+  position:relative;padding:14px;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden}
+.thumb .t1{font-family:var(--display);font-weight:700;font-size:22px;line-height:1.2}
+.thumb .t2{font-size:12px;opacity:.85}
+.thumb .ring{position:absolute;right:-30px;bottom:-30px;width:120px;height:120px;border-radius:50%;border:14px solid currentColor;opacity:.08}
+.card:hover .thumb{filter:brightness(.97)}
+.card .pn{font-size:12px;color:var(--mute);display:flex;gap:6px;align-items:center}
+.card .tt{font-weight:500;line-height:1.45;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:2.9em}
+.card .pr{font-family:var(--display);font-weight:700;font-size:17px}
+.card .pr small{font-family:var(--body);font-weight:400;font-size:12px;color:var(--mute);margin-left:4px}
+.rate{font-size:13px;display:flex;gap:4px;align-items:center}
+.rate .s{color:var(--star)}
+.badges{display:flex;gap:4px;flex-wrap:wrap}
+.empty{padding:40px;text-align:center;color:var(--mute);border:1px dashed var(--line);border-radius:12px;grid-column:1/-1}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;counter-reset:s}
+.steps li{list-style:none;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px;counter-increment:s}
+.steps li::before{content:"STEP " counter(s);display:block;font-size:12px;letter-spacing:.08em;color:var(--accent);font-weight:700;margin-bottom:6px}
+.steps p{font-size:14px;color:var(--mute);margin-top:4px}
+.steps{padding:0;margin:0}
+.join{margin-block:40px;background:var(--accent);color:var(--accent-fg);border-radius:16px;padding:28px;display:flex;gap:20px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.join .btn{background:var(--accent-fg);color:var(--accent);border-color:var(--accent-fg)}
+.join p{opacity:.9;margin-top:6px;max-width:60ch}
+footer{border-top:1px solid var(--line);padding-block:24px 40px;font-size:13px;color:var(--mute);display:grid;gap:6px}
+
+/* wizard */
+.wiz{max-width:640px;margin:32px auto;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:28px}
+.prog{height:6px;background:var(--sunk);border-radius:3px;overflow:hidden;margin-bottom:22px}
+.prog span{display:block;height:100%;background:var(--accent);transition:width .25s}
+.opts{display:grid;gap:10px;margin-top:18px}
+.opt{display:flex;gap:12px;align-items:center;border:1px solid var(--line);border-radius:10px;padding:14px 16px;cursor:pointer;background:var(--surface);text-align:left;width:100%}
+.opt:hover{border-color:var(--accent)}
+.opt[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.opt .dot{width:18px;height:18px;border-radius:50%;border:2px solid var(--line);flex:none}
+.opt[aria-pressed="true"] .dot{border:6px solid var(--accent)}
+.opt small{display:block;color:var(--mute);font-size:13px}
+.wiznav{display:flex;justify-content:space-between;margin-top:22px;gap:10px}
+.thinking{text-align:center;padding:40px 0}
+.pulse{width:56px;height:56px;margin:0 auto 16px;border-radius:50%;border:4px solid var(--accent-soft);border-top-color:var(--accent);animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.result{display:grid;gap:14px;margin-top:18px}
+.rcard{border:1px solid var(--line);border-radius:12px;padding:16px;display:grid;gap:10px}
+.rcard.best{border-color:var(--accent);border-width:2px}
+.rtop{display:flex;justify-content:space-between;gap:10px;align-items:start;flex-wrap:wrap}
+.score{font-family:var(--display);font-size:26px;font-weight:700;color:var(--accent);line-height:1}
+.score small{font-size:12px;color:var(--mute);font-weight:500}
+.bars{display:grid;grid-template-columns:auto 1fr auto;gap:4px 10px;font-size:12px;align-items:center}
+.bars i{display:block;height:6px;background:var(--sunk);border-radius:3px;overflow:hidden}
+.bars i span{display:block;height:100%;background:var(--accent)}
+.cost{display:grid;grid-template-columns:1fr auto;gap:2px 12px;font-size:13px;background:var(--sunk);border-radius:8px;padding:10px 12px}
+.cost b{font-family:var(--display)}
+.cost .tot{border-top:1px solid var(--line);padding-top:6px;margin-top:4px;font-weight:700}
+
+/* detail */
+.crumb{font-size:13px;color:var(--mute);padding-block:18px 8px}
+.crumb a{text-decoration:none}
+.detail{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:32px;align-items:start;padding-bottom:40px}
+.detail .thumb{aspect-ratio:16/8}
+.detail .thumb .t1{font-size:34px}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-top:22px;overflow-x:auto;position:sticky;top:calc(env(safe-area-inset-top,0px) + 64px);background:var(--bg);z-index:5}
+.tabs a{padding:12px 12px;text-decoration:none;font-size:14px;white-space:nowrap;color:var(--mute)}
+.tabs a:hover{color:var(--fg)}
+.dsec{padding-block:26px;border-bottom:1px solid var(--line);display:grid;gap:12px}
+.dsec ul{margin:0;padding-left:18px;display:grid;gap:4px}
+.tblwrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:480px;font-size:14px}
+th,td{border:1px solid var(--line);padding:9px 10px;text-align:center}
+th{background:var(--sunk);font-weight:600}
+td:first-child,th:first-child{text-align:left}
+.pinfo{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.pinfo div{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px}
+.pinfo b{display:block;font-family:var(--display);font-size:18px}
+.pinfo span{font-size:12px;color:var(--mute)}
+.rev{border-bottom:1px solid var(--line);padding-block:12px;display:grid;gap:4px}
+.rev:last-child{border:0}
+.rev .h{display:flex;gap:8px;align-items:center;font-size:13px;flex-wrap:wrap}
+.buy{position:sticky;top:calc(env(safe-area-inset-top,0px) + 80px);background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.ptabs{display:grid;grid-template-columns:repeat(3,1fr);border-bottom:1px solid var(--line)}
+.ptabs button{border:0;background:var(--sunk);padding:12px 4px;cursor:pointer;font-weight:600;font-size:14px;color:var(--mute)}
+.ptabs button[aria-pressed="true"]{background:var(--surface);color:var(--fg);box-shadow:inset 0 -2px 0 var(--accent)}
+.buy .in{padding:18px;display:grid;gap:12px}
+.buy .price{font-family:var(--display);font-size:26px;font-weight:700}
+.buy ul{margin:0;padding:0;list-style:none;display:grid;gap:6px;font-size:14px}
+.buy li{display:flex;gap:8px}
+.buy li::before{content:"✓";color:var(--ok);font-weight:700}
+.safe{font-size:12px;color:var(--mute);background:var(--sunk);border-radius:8px;padding:10px 12px}
+
+/* emergency */
+.fab{position:fixed;right:calc(16px + env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:30;box-shadow:0 6px 20px rgba(0,0,0,.18);border-radius:999px;padding:13px 20px}
+.modal{position:fixed;inset:0;z-index:40;background:rgba(10,16,14,.55);display:grid;place-items:center;padding:16px}
+.modal .box{background:var(--surface);border-radius:16px;max-width:480px;width:100%;padding:24px;display:grid;gap:14px;max-height:90vh;overflow:auto}
+.callnum{font-family:var(--display);font-size:30px;font-weight:700;color:var(--urgent);user-select:all}
+.elist{display:grid;gap:8px}
+.elist div{display:flex;justify-content:space-between;gap:10px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:14px}
+.toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--fg);color:var(--bg);padding:12px 18px;border-radius:10px;z-index:50;font-size:14px;max-width:calc(100% - 32px)}
+
+@media (max-width:980px){
+  .grid{grid-template-columns:repeat(3,1fr)} .catgrid{grid-template-columns:repeat(4,1fr)}
+  .detail{grid-template-columns:1fr} .buy{position:static}
+  .navl a:not(.em){display:none}
+}
+@media (max-width:720px){
+  .hero{grid-template-columns:1fr} .trust{grid-template-columns:1fr 1fr} .steps{grid-template-columns:1fr 1fr}
+  .grid{grid-template-columns:repeat(2,1fr);gap:12px} .pinfo{grid-template-columns:1fr 1fr}
+  .bar{height:auto;flex-wrap:wrap;padding-block:10px;gap:10px} .search{order:3;max-width:none;flex-basis:100%}
+  .tabs{top:calc(env(safe-area-inset-top,0px) + 108px)}
+  .wiz{padding:20px}
+}
+@media (max-width:420px){.quick .row{grid-template-columns:1fr} .thumb .t1{font-size:18px}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<header class="top">
+  <div class="wrap">
+    <div class="bar">
+      <a class="logo" href="#home"><i aria-hidden="true"></i>동행매치</a>
+      <form class="search" id="searchForm" role="search">
+        <input id="q" type="search" placeholder="후불제 상조, 무빈소장, 가족장, 지역명으로 검색" aria-label="서비스 검색">
+        <button type="submit">검색</button>
+      </form>
+      <nav class="navl" aria-label="주요 메뉴">
+        <a href="#request">맞춤 견적 받기</a>
+        <a href="#join">파트너 입점</a>
+        <a href="#" class="em" data-emergency>긴급 출동</a>
+      </nav>
+    </div>
+    <div class="cats" id="catbar" role="toolbar" aria-label="카테고리"></div>
+  </div>
+</header>
+
+<main class="wrap" id="app"></main>
+
+<button class="btn urgent fab" data-emergency type="button">긴급 출동 요청</button>
+<div class="modal" id="emModal" hidden role="dialog" aria-modal="true" aria-labelledby="emTitle"></div>
+<div class="toast" id="toast" hidden role="status"></div>
+
+<script>
+(function(){
+const won = n => n.toLocaleString('ko-KR');
+const man = n => (n/10000).toLocaleString('ko-KR')+'만원';
+const $ = (s,el=document)=>el.querySelector(s);
+
+const CATS=[
+ ['all','전체',150,'全'],['nobinso','무빈소장',160,'無'],['family','가족장',30,'家'],['general','일반 3일장',210,'三'],
+ ['religion','종교 의전',260,'禮'],['nature','수목장·자연장',110,'林'],['memorial','추모공연·영상',330,'樂'],
+ ['after','사후 행정',190,'書'],['cleanup','유품 정리',40,'整']];
+const CATNAME=Object.fromEntries(CATS.map(c=>[c[0],c[1]]));
+const CATHUE=Object.fromEntries(CATS.map(c=>[c[0],c[2]]));
+
+// 예시 데이터 — 실존 업체가 아닌 시연용 가상 파트너
+const P=[
+ {id:1,name:'이음후불상조',region:'서울',hub:'서울 강서구',dispatch:40,dir:12,help:30,cars:'리무진 4 · 버스 3',rating:4.9,reviews:312,ins:true,rel:['무교','기독교','불교','천주교'],since:2011,extra:0},
+ {id:2,name:'소담의전',region:'경기 남부',hub:'수원 영통구',dispatch:50,dir:8,help:18,cars:'리무진 2 · 버스 2',rating:4.8,reviews:188,ins:true,rel:['무교','불교'],since:2015,extra:0},
+ {id:3,name:'한결장례서비스',region:'인천',hub:'인천 남동구',dispatch:45,dir:9,help:22,cars:'리무진 3 · 버스 2',rating:4.7,reviews:241,ins:true,rel:['무교','기독교','천주교'],since:2009,extra:1},
+ {id:4,name:'늘봄후불상조',region:'경기 북부',hub:'고양 일산동구',dispatch:55,dir:7,help:15,cars:'리무진 2 · 버스 1',rating:4.8,reviews:97,ins:true,rel:['무교','기독교'],since:2018,extra:0},
+ {id:5,name:'예담추모예술단',region:'서울',hub:'서울 종로구',dispatch:120,dir:2,help:6,cars:'-',rating:5.0,reviews:64,ins:true,rel:['무교','기독교','불교','천주교'],since:2020,extra:0},
+ {id:6,name:'바른정리',region:'경기 남부',hub:'성남 중원구',dispatch:180,dir:0,help:10,cars:'탑차 3',rating:4.9,reviews:133,ins:true,rel:['무교','기독교','불교','천주교'],since:2016,extra:0},
+ {id:7,name:'평안행정지원센터',region:'서울',hub:'서울 서초구',dispatch:0,dir:0,help:4,cars:'-',rating:4.9,reviews:205,ins:true,rel:['무교','기독교','불교','천주교'],since:2014,extra:0},
+];
+const PID=Object.fromEntries(P.map(p=>[p.id,p]));
+const S=[
+ {id:1,pid:1,cat:'nobinso',title:'무빈소장 1일 · 안치부터 화장까지 간소하고 정중하게',base:1900000,kind:'nobinso',rel:'all',tags:['서울 전역','24시간']},
+ {id:2,pid:1,cat:'general',title:'일반 3일장 표준 의전 · 지도사 2인 상주, 추가금 0원 서약',base:3900000,kind:'general',rel:'all',tags:['리무진 포함']},
+ {id:3,pid:2,cat:'family',title:'가족장 2일장 · 소형 빈소 50명 이하 맞춤 구성',base:2900000,kind:'family',rel:'all',tags:['수원·용인·화성']},
+ {id:4,pid:2,cat:'religion',title:'불교식 장례 · 스님 염불·49재 연계 의전',base:4200000,kind:'general',rel:'불교',tags:['사찰 연계']},
+ {id:5,pid:3,cat:'religion',title:'기독교·천주교 장례 · 입관예배와 연도 진행 경험 다수',base:4100000,kind:'general',rel:'기독교',tags:['교회 협력']},
+ {id:6,pid:3,cat:'nature',title:'수목장 연계 가족장 · 장지 상담과 분골 이동까지',base:3300000,kind:'family',rel:'all',tags:['장지 동행']},
+ {id:7,pid:4,cat:'family',title:'가족장 2일장 · 고양·파주 지역 1시간 내 출동',base:2700000,kind:'family',rel:'all',tags:['경기 북부']},
+ {id:8,pid:4,cat:'general',title:'일반 3일장 실속형 · 표준 스펙 중등급 기준',base:3500000,kind:'general',rel:'all',tags:['실속형']},
+ {id:9,pid:5,cat:'memorial',title:'추모 공연 · 국악 3중주와 헌시 낭독으로 올리는 예술 추모식',base:900000,kind:'addon',rel:'all',tags:['현역 예술인']},
+ {id:10,pid:5,cat:'memorial',title:'고인 추모 영상 제작 · 사진 30장으로 5분 헌정 영상',base:350000,kind:'addon',rel:'all',tags:['발인 전 완성']},
+ {id:11,pid:7,cat:'after',title:'사망신고·안심상속·보험금 청구 서류 대행 패키지',base:400000,kind:'addon',rel:'all',tags:['비대면 가능']},
+ {id:12,pid:6,cat:'cleanup',title:'유품 정리 · 30평 이하, 기부·재활용 분류 포함',base:1200000,kind:'addon',rel:'all',tags:['당일 작업']},
+];
+const SID=Object.fromEntries(S.map(s=>[s.id,s]));
+
+const TIERS=['기본','표준','프리미엄'];
+function packages(s){
+  const m=[1,1.35,1.8];
+  if(s.kind==='addon'){
+    return TIERS.map((t,i)=>({name:t,price:Math.round(s.base*m[i]/10000)*10000,items:[
+      i===0?'기본 구성':i===1?'기본 구성 + 확장 옵션':'전체 구성 + 담당자 1:1 전담',
+      i===0?'작업 1회':i===1?'작업 1회 + 수정 1회':'작업 1회 + 수정 무제한',
+      '사전 확정 견적, 추가 비용 없음']}));
+  }
+  return TIERS.map((t,i)=>({name:t,price:Math.round(s.base*m[i]/10000)*10000,items:[
+    `장례지도사 ${[1,2,2][i]}인 · 의전도우미 ${[2,4,6][i]}명(8시간)`,
+    `관 ${['하','중','상'][i]}등급 · 수의 ${['하','중','상'][i]}등급 (표준 스펙)`,
+    i===0?'운구 차량(앰뷸런스)':'리무진 1대'+(i===2?' · 버스 1대':''),
+    i===2?'추모 영상 기본형 포함':'헌화 · 입관 용품 일체',
+    '추가금 0원 서약 · 발인 후 결제']}));
+}
+const REVIEWS=[
+ ['김*영','새벽 3시에 연락드렸는데 40분 만에 오셨어요. 견적서에 적힌 금액 그대로 정산돼서 놀랐습니다.','영수증 인증'],
+ ['박*수','어머니가 교회 권사셨는데 입관예배 순서를 미리 챙겨 주셔서 마음이 놓였습니다.','영수증 인증'],
+ ['이*정','추가로 필요한 게 생길 때마다 카톡으로 금액을 먼저 보여 주고 승인받는 방식이 좋았어요.','영수증 인증'],
+ ['최*호','가족끼리 조용히 보내드리고 싶었는데 무빈소로 정중하게 진행해 주셨습니다.','이용 확인'],
+];
+const REGIONS=['서울','경기 북부','경기 남부','인천'];
+const ADJ={'서울':['경기 북부','경기 남부','인천'],'경기 북부':['서울'],'경기 남부':['서울','인천'],'인천':['서울','경기 남부']};
+
+let curCat='all', curQ='';
+
+function badges(p){
+  const b=[];
+  if(p.extra===0) b.push('<span class="chip">추가금 0원</span>');
+  if(p.dispatch>0 && p.dispatch<=60) b.push(`<span class="chip u">${p.dispatch}분 출동</span>`);
+  if(p.ins) b.push('<span class="chip">배상보험</span>');
+  return b.join('');
+}
+function thumb(s,extra=''){
+  return `<div class="thumb" style="--h:${CATHUE[s.cat]}"><span class="t2">${CATNAME[s.cat]}</span><span class="t1">${s.title.split(' · ')[0]}</span><span class="t2">${PID[s.pid].hub}${extra}</span><i class="ring" aria-hidden="true"></i></div>`;
+}
+function card(s){
+  const p=PID[s.pid];
+  return `<a class="card" href="#svc-${s.id}">${thumb(s)}
+    <span class="pn">${p.name}</span>
+    <span class="tt">${s.title}</span>
+    <span class="rate"><span class="s">★</span><b class="num">${p.rating.toFixed(1)}</b><span class="mute num">(${won(p.reviews)})</span></span>
+    <span class="pr num">${won(packages(s)[0].price)}원~<small>후불</small></span>
+    <span class="badges">${badges(p)}</span></a>`;
+}
+function filtered(){
+  const q=curQ.trim();
+  return S.filter(s=>{
+    if(curCat!=='all' && s.cat!==curCat) return false;
+    if(!q) return true;
+    const p=PID[s.pid];
+    return [s.title,p.name,p.hub,p.region,CATNAME[s.cat],s.tags.join(' '),s.rel].join(' ').includes(q);
+  });
+}
+function renderCats(){
+  $('#catbar').innerHTML=CATS.map(c=>`<button type="button" data-cat="${c[0]}" aria-pressed="${c[0]===curCat}">${c[1]}</button>`).join('');
+}
+
+function home(){
+  const list=filtered();
+  const title = curQ ? `'${curQ}' 검색 결과` : curCat==='all' ? '지금 많이 찾는 서비스' : CATNAME[curCat];
+  return `
+  <section class="hero">
+    <div>
+      <span class="label">후불제 상조 비교 · 매칭 플랫폼</span>
+      <h1 style="margin-top:8px">돈은 장례가 끝난 뒤에,<br>후불제 상조를 한눈에 비교하세요</h1>
+      <p class="lead">조건을 답하면 AI가 거리, 가격, 종교 의전 경험, 정산 이력을 따져 맞는 업체 3곳을 추천합니다. 모든 비용은 장례를 마친 뒤 결제합니다.</p>
+      <div class="stats num"><div><b>7곳</b><span class="mute">검증 파트너 (예시)</span></div><div><b>1시간</b><span class="mute">긴급 출동 기준</span></div><div><b>0원</b><span class="mute">승인 없는 추가금</span></div></div>
+    </div>
+    <form class="quick" id="quickForm">
+      <h3>1분 맞춤 견적</h3>
+      <div class="row">
+        <div class="field"><label for="qRegion">장례 지역</label><select id="qRegion">${REGIONS.map(r=>`<option>${r}</option>`).join('')}</select></div>
+        <div class="field"><label for="qKind">장례 형태</label><select id="qKind"><option value="nobinso">무빈소장</option><option value="family" selected>가족장 (2일장)</option><option value="general">일반 3일장</option></select></div>
+      </div>
+      <button class="btn block" type="submit">조건 더 입력하고 추천 받기</button>
+      <p class="mute" style="font-size:12px">견적 요청은 무료이며, 업체 연락처는 동의한 3곳에만 전달됩니다.</p>
+    </form>
+  </section>
+  <div class="trust">
+    <div><b>선납금 0원, 100% 후불</b><span>월 납입·해약 분쟁 없이 발인 후 결제</span></div>
+    <div><b>추가 청구는 승인제</b><span>유족이 승인한 항목만 청구</span></div>
+    <div><b>표준 스펙 등급</b><span>관·수의·유골함 상·중·하 통일</span></div>
+    <div><b>배상보험 확인</b><span>전 파트너 보험 증권 검증</span></div>
+  </div>
+  <section class="blk">
+    <div class="sechead"><h2>어떤 도움이 필요하세요?</h2></div>
+    <div class="catgrid">
+      ${CATS.slice(1).map(c=>`<button type="button" data-cat="${c[0]}"><span class="ico" style="--h:${c[2]}">${c[3]}</span>${c[1]}</button>`).join('')}
+    </div>
+  </section>
+  <section class="blk" id="list">
+    <div class="sechead"><h2>${title}</h2><span class="mute num">${list.length}개 서비스</span></div>
+    <div class="grid">${list.length?list.map(card).join(''):'<div class="empty">조건에 맞는 서비스가 없어요. 다른 지역이나 장례 형태로 검색해 보세요.</div>'}</div>
+  </section>
+  <section class="blk">
+    <div class="sechead"><h2>이렇게 진행돼요</h2></div>
+    <ol class="steps">
+      <li><h3>상황과 지역 입력</h3><p>긴급 출동인지, 미리 알아보는 중인지 고르고 지역을 정합니다.</p></li>
+      <li><h3>장례 조건 선택</h3><p>규모, 종교, 장지, 예산을 답합니다. 1분이면 충분합니다.</p></li>
+      <li><h3>AI 추천 3곳 비교</h3><p>장례식장 비용까지 합친 예상 총액과 추천 근거를 함께 봅니다.</p></li>
+      <li><h3>장례 진행 후 정산</h3><p>추가 항목은 승인한 것만 반영되고, 발인 후 결제합니다.</p></li>
+    </ol>
+  </section>
+  <section class="join" id="join">
+    <div><h2>정직하게 일하는 장례 전문가를 찾습니다</h2>
+    <p>후불제 상조 법인, 장례지도사, 추모 공연 예술인, 사후 행정 전문가가 입점할 수 있습니다. 영업비 대신 평점과 정산 이력으로 고객을 만납니다.</p></div>
+    <button class="btn" type="button" data-toast="입점 신청서는 시연 화면에서 제출되지 않아요.">파트너 입점 신청</button>
+  </section>`;
+}
+
+function detail(id){
+  const s=SID[id]; if(!s) return home();
+  const p=PID[s.pid], pk=packages(s);
+  const isAddon=s.kind==='addon';
+  const rows=isAddon?'':`
+    <tr><td>장례지도사</td><td>1인</td><td>2인</td><td>2인</td></tr>
+    <tr><td>의전도우미 (8시간)</td><td>2명</td><td>4명</td><td>6명</td></tr>
+    <tr><td>관 · 수의 등급</td><td>하</td><td>중</td><td>상</td></tr>
+    <tr><td>리무진 · 버스</td><td>-</td><td>리무진</td><td>리무진+버스</td></tr>
+    <tr><td>추모 영상</td><td>-</td><td>-</td><td>기본형</td></tr>`;
+  const revs=REVIEWS.slice(0,3).concat(s.id%2?[]:[REVIEWS[3]]);
+  return `
+  <div class="crumb"><a href="#home">홈</a> › ${CATNAME[s.cat]}</div>
+  <div class="detail">
+    <div style="min-width:0">
+      ${thumb(s,' · 예시 이미지')}
+      <h1 style="margin-top:18px;font-size:clamp(22px,3vw,28px)">${s.title}</h1>
+      <div class="rate" style="margin-top:8px"><span class="s">★</span><b class="num">${p.rating.toFixed(1)}</b><span class="mute num">리뷰 ${won(p.reviews)}개 · ${p.name}</span></div>
+      <div class="badges" style="margin-top:8px">${badges(p)}${s.tags.map(t=>`<span class="chip" style="background:var(--sunk);color:var(--mute)">${t}</span>`).join('')}</div>
+      <nav class="tabs" aria-label="상세 메뉴"><a href="#svc-${id}" data-jump="d-info">서비스 설명</a><a href="#svc-${id}" data-jump="d-pkg">패키지 비교</a><a href="#svc-${id}" data-jump="d-partner">파트너 정보</a><a href="#svc-${id}" data-jump="d-rev">리뷰</a><a href="#svc-${id}" data-jump="d-policy">정산·취소 규정</a></nav>
+      <div class="dsec" id="d-info"><h2>서비스 설명</h2>
+        <p>${p.hub}에 거점을 둔 ${p.name}가 직접 진행합니다. 계약 전에 플랫폼 표준 견적서로 항목별 금액을 확정하고, 장례 중 필요한 추가 항목은 유족 승인을 받은 뒤에만 반영합니다.</p>
+        <ul><li>상담부터 발인까지 같은 담당자가 진행</li><li>${s.rel==='all'?'무교·기독교·불교·천주교 의전 모두 가능':s.rel+' 의전 전문'}</li><li>장례식장 예약과 빈소 공실 확인 대행</li></ul>
+      </div>
+      <div class="dsec" id="d-pkg"><h2>패키지 비교</h2>
+        <div class="tblwrap"><table class="num"><thead><tr><th>항목</th>${pk.map(x=>`<th>${x.name}</th>`).join('')}</tr></thead>
+        <tbody><tr><td>가격 (후불)</td>${pk.map(x=>`<td><b>${won(x.price)}원</b></td>`).join('')}</tr>${rows}
+        <tr><td>추가금 0원 서약</td><td>✓</td><td>✓</td><td>✓</td></tr></tbody></table></div>
+        <p class="mute" style="font-size:13px">장례식장 빈소 사용료, 식대, 화장장 이용료는 별도이며, 맞춤 견적에서 예상 총액으로 함께 안내합니다.</p>
+      </div>
+      <div class="dsec" id="d-partner"><h2>파트너 정보</h2>
+        <div class="pinfo num">
+          <div><b>${p.dispatch?p.dispatch+'분':'비대면'}</b><span>평균 출동 시간</span></div>
+          <div><b>${p.dir}명 · ${p.help}명</b><span>장례지도사 · 도우미</span></div>
+          <div><b>${p.cars}</b><span>직영 차량</span></div>
+          <div><b>${p.since}년</b><span>설립</span></div>
+          <div><b>${p.extra}건</b><span>최근 1년 추가금 분쟁</span></div>
+          <div><b>${p.ins?'가입 확인':'미확인'}</b><span>배상책임보험</span></div>
+        </div>
+      </div>
+      <div class="dsec" id="d-rev"><h2>리뷰 <span class="mute num" style="font-size:16px">${won(p.reviews)}</span></h2>
+        ${revs.map(r=>`<div class="rev"><div class="h"><span class="s" style="color:var(--star)">★★★★★</span><b>${r[0]}</b><span class="chip">${r[2]}</span></div><p>${r[1]}</p></div>`).join('')}
+      </div>
+      <div class="dsec" id="d-policy"><h2>정산·취소 규정</h2>
+        <ul><li>결제는 발인 당일 정산서를 확인한 뒤 진행합니다. 조의금 결제, 카드 할부가 가능합니다.</li>
+        <li>견적서에 없고 승인하지 않은 항목은 청구되지 않습니다. 부당 청구가 확인되면 플랫폼이 차액을 보상합니다.</li>
+        <li>출동 전 취소는 비용이 없으며, 출동 후 취소는 실제 사용한 항목만 정산합니다.</li></ul>
+      </div>
+    </div>
+    <aside class="buy" aria-label="패키지 선택">
+      <div class="ptabs">${pk.map((x,i)=>`<button type="button" data-tier="${i}" aria-pressed="${i===1}">${x.name}</button>`).join('')}</div>
+      <div class="in" id="buyIn"></div>
+    </aside>
+  </div>`;
+}
+function renderBuy(id,i){
+  const s=SID[id], x=packages(s)[i];
+  $('#buyIn').innerHTML=`<div class="price num">${won(x.price)}원</div>
+    <ul>${x.items.map(t=>`<li>${t}</li>`).join('')}</ul>
+    <button class="btn block" type="button" data-toast="${PID[s.pid].name}에 상담 요청을 보냈어요. (시연 화면)">상담 후 예약하기</button>
+    <button class="btn ghost block" type="button" data-goto="request">다른 업체와 비교 견적 받기</button>
+    <p class="safe">지금은 결제하지 않습니다. 금액은 장례를 마친 뒤 정산서를 확인하고 결제합니다.</p>`;
+}
+
+/* wizard */
+const Q=[
+ {k:'mode',q:'어떤 상황이신가요?',o:[['urgent','지금 임종하셨어요','1시간 이내 출동 가능한 업체를 우선 추천해요'],['soon','임종이 임박했어요','오늘 안에 상담 가능한 업체를 연결해요'],['plan','미리 알아보는 중이에요','견적과 후기를 천천히 비교해요']]},
+ {k:'region',q:'장례를 치를 지역은 어디인가요?',o:REGIONS.map(r=>[r,r,''])},
+ {k:'kind',q:'어떤 형태의 장례를 원하세요?',o:[['nobinso','무빈소장','빈소 없이 안치 후 화장'],['family','가족장 (2일장)','가까운 가족과 지인 위주'],['general','일반 3일장','조문객을 맞는 일반 장례']]},
+ {k:'guests',q:'예상 조문객은 몇 명인가요?',o:[[30,'50명 이하',''],[100,'50~150명',''],[220,'150~300명',''],[350,'300명 이상','']]},
+ {k:'rel',q:'고인의 종교는 무엇인가요?',o:[['무교','무교',''],['기독교','기독교',''],['불교','불교',''],['천주교','천주교','']]},
+ {k:'burial',q:'장지는 정하셨나요?',o:[['charnel','화장 후 봉안당',''],['nature','수목장·자연장','장지 상담을 함께 받아요'],['grave','매장',''],['none','아직 정하지 못했어요','']]},
+ {k:'budget',q:'상조 서비스 예산은 어느 정도인가요?',o:[[2000000,'200만원 이하','장례식장 비용 제외'],[3500000,'200~400만원',''],[5500000,'400~700만원',''],[8000000,'700만원 이상','']]},
+];
+let ans={}, step=0;
+
+function wizard(){
+  if(step>=Q.length) return `<div class="wiz"><div class="thinking" id="thinking"><div class="pulse" aria-hidden="true"></div><h2>AI가 조건을 분석하고 있어요</h2><p class="mute" style="margin-top:6px">거리 · 가격 · 종교 의전 경험 · 정산 이력을 비교하는 중</p></div></div>`;
+  const c=Q[step];
+  return `<div class="wiz">
+    <div class="prog" aria-label="진행률"><span style="width:${Math.round(step/Q.length*100)}%"></span></div>
+    <span class="label num">질문 ${step+1} / ${Q.length}</span>
+    <h2 style="margin-top:4px">${c.q}</h2>
+    <div class="opts">${c.o.map(o=>`<button type="button" class="opt" data-ans="${o[0]}" aria-pressed="${String(ans[c.k])===String(o[0])}"><span class="dot"></span><span><b>${o[1]}</b>${o[2]?`<small>${o[2]}</small>`:''}</span></button>`).join('')}</div>
+    <div class="wiznav"><button class="btn ghost" type="button" data-back ${step===0?'disabled':''}>이전</button><span class="mute" style="font-size:13px;align-self:center">선택하면 다음 질문으로 넘어가요</span></div>
+  </div>`;
+}
+function hallCost(guests,kind){
+  if(kind==='nobinso') return {hall:600000,food:[0,0]};
+  const days=kind==='family'?2:3;
+  const room = guests<=50?400000:guests<=150?700000:guests<=300?1100000:1500000;
+  return {hall:room*(days-1)+300000, food:[guests*14000*Math.min(days-1,2), guests*20000*Math.min(days-1,2)]};
+}
+function scoreAll(){
+  const isUrgent=ans.mode==='urgent';
+  const cands=S.filter(s=>s.kind!=='addon');
+  return cands.map(s=>{
+    const p=PID[s.pid], pk=packages(s);
+    const tierIdx = ans.budget<=2000000?0:ans.budget<=5500000?1:2;
+    const price = pk[tierIdx].price;
+    const dist = p.region===ans.region?100:(ADJ[ans.region]||[]).includes(p.region)?65:30;
+    const speed = Math.max(0,100-(p.dispatch-30)*1.4);
+    const fit = (s.kind===ans.kind?100:s.kind==='general'&&ans.kind!=='nobinso'?60:40) * (ans.burial==='nature'&&s.cat==='nature'?1.1:1);
+    const relS = s.rel==='all'?(p.rel.includes(ans.rel)?85:55):(s.rel===ans.rel?100:20);
+    const priceS = Math.max(0,100-Math.max(0,price-ans.budget)/ans.budget*120);
+    const trust = Math.min(100,(p.rating-4)*80+ (p.extra===0?20:0)+(p.ins?5:0));
+    const w = isUrgent?{dist:.25,speed:.25,fit:.15,rel:.1,price:.1,trust:.15}:{dist:.2,speed:.05,fit:.2,rel:.15,price:.2,trust:.2};
+    const total = dist*w.dist+speed*w.speed+Math.min(100,fit)*w.fit+relS*w.rel+priceS*w.price+trust*w.trust;
+    return {s,p,price,tier:TIERS[tierIdx],total:Math.round(total),parts:[['거리',dist],['출동',speed],['조건 적합',Math.min(100,fit)],['종교 의전',relS],['예산',priceS],['신뢰',trust]]};
+  }).sort((a,b)=>b.total-a.total).filter((r,i,arr)=>arr.findIndex(x=>x.p.id===r.p.id)===i).slice(0,3);
+}
+function results(){
+  const top=scoreAll(), hc=hallCost(ans.guests,ans.kind);
+  const kindName={nobinso:'무빈소장',family:'가족장',general:'일반 3일장'}[ans.kind];
+  return `<div class="wiz">
+    <span class="label">AI 추천 결과</span>
+    <h2 style="margin-top:4px">${ans.region} · ${kindName} · ${ans.rel} 조건에 맞는 3곳</h2>
+    <p class="mute" style="margin-top:6px;font-size:14px">${ans.mode==='urgent'?'긴급 상황이라 출동 시간과 거리를 더 크게 반영했어요.':'가격, 조건 적합도, 정산 이력을 고르게 반영했어요.'}</p>
+    <div class="result">${top.map((r,i)=>{
+      const lo=r.price+hc.hall+hc.food[0], hi=r.price+hc.hall+hc.food[1];
+      return `<div class="rcard ${i===0?'best':''}">
+        <div class="rtop"><div>${i===0?'<span class="chip">가장 잘 맞아요</span> ':''}<h3 style="margin-top:4px">${r.p.name}</h3><p class="mute" style="font-size:13px">${r.s.title}</p></div>
+          <div class="score num">${r.total}<small> / 100</small></div></div>
+        <div class="bars num">${r.parts.map(([n,v])=>`<span>${n}</span><i><span style="width:${Math.round(v)}%"></span></i><span>${Math.round(v)}</span>`).join('')}</div>
+        <div class="cost num"><span>상조 서비스 (${r.tier})</span><b>${won(r.price)}원</b>
+          <span>장례식장 빈소·안치 (예상)</span><b>${won(hc.hall)}원</b>
+          <span>식대 (조문객 ${ans.guests}명 기준 예상)</span><b>${hc.food[1]?man(hc.food[0])+' ~ '+man(hc.food[1]):'없음'}</b>
+          <span class="tot">예상 총비용</span><b class="tot">${lo===hi?man(lo):man(lo)+' ~ '+man(hi)}</b></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn" href="#svc-${r.s.id}">상세 보기</a><button class="btn ghost" type="button" data-toast="${r.p.name}에 견적 요청을 보냈어요. (시연 화면)">이 업체에 견적 요청</button></div>
+      </div>`}).join('')}</div>
+    <p class="mute" style="font-size:12px;margin-top:14px">장례식장 비용은 지역 평균 공시 가격을 가정한 예시 값입니다. 실제 서비스에서는 e하늘 장사정보시스템 공시 가격과 공실 정보로 계산합니다.</p>
+    <div class="wiznav"><button class="btn ghost" type="button" data-restart>조건 다시 입력</button><button class="btn" type="button" data-toast="추천 3곳에 견적 요청을 보냈어요. 보통 10분 안에 연락이 와요. (시연 화면)">3곳 모두 견적 요청</button></div>
+  </div>`;
+}
+
+/* routing */
+function route(){
+  const h=(location.hash||'#home').slice(1);
+  const app=$('#app');
+  if(h.startsWith('svc-')){const id=+h.slice(4); app.innerHTML=detail(id); if(SID[id]) renderBuy(id,1); window.scrollTo(0,0);}
+  else if(h==='request'){app.innerHTML=ans.done?results():wizard(); window.scrollTo(0,0);}
+  else if(h==='join'){app.innerHTML=home(); $('#join').scrollIntoView();}
+  else {app.innerHTML=home(); if(h==='list') $('#list').scrollIntoView();}
+}
+function afterAnswer(){
+  if(step<Q.length){$('#app').innerHTML=wizard();return}
+  $('#app').innerHTML=wizard();
+  const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  setTimeout(()=>{ans.done=true;$('#app').innerHTML=results()},reduce?0:1100);
+}
+function toast(msg){const t=$('#toast');t.textContent=msg;t.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>t.hidden=true,2600)}
+function emergency(){
+  const m=$('#emModal');
+  const near=[...P].filter(p=>p.dispatch>0&&p.dispatch<=60).sort((a,b)=>a.dispatch-b.dispatch);
+  m.innerHTML=`<div class="box"><span class="chip u">24시간 긴급 출동</span>
+    <h2 id="emTitle">지금 바로 상담사가 받습니다</h2>
+    <p class="mute">아래 번호로 전화하면 상담사가 받고, AI가 가장 빨리 출동할 수 있는 업체를 찾아 연결합니다.</p>
+    <div class="callnum num">1600-0000</div><p class="mute" style="font-size:12px;margin-top:-8px">시연용 예시 번호입니다.</p>
+    <h3>1시간 안에 출동 가능한 파트너</h3>
+    <div class="elist num">${near.map(p=>`<div><span><b>${p.name}</b> <span class="mute">${p.hub}</span></span><span class="chip u">${p.dispatch}분</span></div>`).join('')}</div>
+    <h3>먼저 확인할 것</h3>
+    <ul style="margin:0;padding-left:18px;font-size:14px;display:grid;gap:4px"><li>병원이라면 병원 안치실 이용 가능 여부</li><li>자택이라면 119 또는 112 신고 후 검안 절차</li><li>사망진단서(시체검안서) 10부 이상 발급</li></ul>
+    <button class="btn ghost block" type="button" data-close>닫기</button></div>`;
+  m.hidden=false; $('[data-close]',m).focus();
+}
+
+document.addEventListener('click',e=>{
+  const t=e.target.closest('button,a'); if(!t) return;
+  if(t.dataset.cat){curCat=t.dataset.cat; curQ=''; $('#q').value=''; renderCats(); if(location.hash.startsWith('#svc-')||location.hash==='#request'){location.hash='list'} else {route(); $('#list').scrollIntoView({behavior:'smooth'})} return}
+  if(t.hasAttribute('data-emergency')){e.preventDefault(); emergency(); return}
+  if(t.hasAttribute('data-close')){$('#emModal').hidden=true; return}
+  if(t.dataset.toast){toast(t.dataset.toast); return}
+  if(t.dataset.goto){ans={};step=0;location.hash=t.dataset.goto; return}
+  if(t.dataset.tier){document.querySelectorAll('.ptabs button').forEach(b=>b.setAttribute('aria-pressed',b===t)); renderBuy(+location.hash.slice(5),+t.dataset.tier); return}
+  if(t.dataset.jump){e.preventDefault(); document.getElementById(t.dataset.jump).scrollIntoView({behavior:'smooth'}); return}
+  if(t.dataset.ans!==undefined){const c=Q[step]; const v=t.dataset.ans; ans[c.k]=isNaN(+v)?v:+v; step++; afterAnswer(); return}
+  if(t.hasAttribute('data-back')){step=Math.max(0,step-1); $('#app').innerHTML=wizard(); return}
+  if(t.hasAttribute('data-restart')){ans={};step=0;$('#app').innerHTML=wizard(); return}
+});
+$('#emModal').addEventListener('click',e=>{if(e.target.id==='emModal') e.currentTarget.hidden=true});
+document.addEventListener('keydown',e=>{if(e.key==='Escape') $('#emModal').hidden=true});
+document.addEventListener('submit',e=>{
+  e.preventDefault();
+  if(e.target.id==='searchForm'){curQ=$('#q').value; curCat='all'; renderCats(); if(location.hash==='#list'){route()} else location.hash='list'}
+  if(e.target.id==='quickForm'){ans={region:$('#qRegion').value,kind:$('#qKind').value}; step=0;
+    // 지역·형태는 이미 받았으니 상황 질문 다음 단계부터 이어 묻는다
+    location.hash='request';}
+});
+// skip questions already answered from the quick form
+const _afterAnswer=afterAnswer;
+afterAnswer=function(){while(step<Q.length && ans[Q[step].k]!==undefined) step++; _afterAnswer()};
+window.addEventListener('hashchange',route);
+renderCats(); route();
+})();
+</script>
+
+</html>
