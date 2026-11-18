@@ -10,23 +10,26 @@
 <style>
 /* Layout: two-sided request marketplace — sticky header with customer/partner switch; request form with live price floor; partner request board; chat thread with masked contacts; ranking table */
 :root{
-  --bg:#f4f6f5; --surface:#ffffff; --sunk:#e9eeec; --line:#d6dedb;
-  --fg:#18211f; --mute:#58655f; --accent:#1e5b4c; --accent-fg:#ffffff; --accent-soft:#dcebe5;
+  --bg:#f3f5f8; --surface:#ffffff; --sunk:#e8ecf2; --line:#d5dce6;
+  --fg:#141c26; --mute:#556173; --accent:#1c3f66; --accent-fg:#ffffff; --accent-soft:#e0e8f2;
+  --band:#122a45; --band-fg:#eef3f9; --band-mute:#a9b9cc; --band-line:#2a4462; --seal:#1f6b4c; --seal-soft:#dff0e7;
   --urgent:#b3402e; --urgent-soft:#f6e1dc; --star:#a87a1e; --ok:#2f7a4f; --warn:#94650f; --warn-soft:#f6ecd6;
-  --me:#1e5b4c; --me-fg:#ffffff;
+  --me:#1c3f66; --me-fg:#ffffff;
   --display:"IBM Plex Sans KR","Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
   --body:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#111715; --surface:#18201d; --sunk:#202a26; --line:#2e3a36;
-  --fg:#e7eeeb; --mute:#9aa9a3; --accent:#6fc2a6; --accent-fg:#0d1614; --accent-soft:#1f3a31;
+  --bg:#0f141b; --surface:#161d27; --sunk:#1e2733; --line:#2b3644;
+  --fg:#e6ecf3; --mute:#9aa7b8; --accent:#8db4e0; --accent-fg:#0d1520; --accent-soft:#1d2d42;
+  --band:#0b1622; --band-fg:#e6ecf3; --band-mute:#93a4b8; --band-line:#22344a; --seal:#7fcf9c; --seal-soft:#1b3326;
   --urgent:#ec8a76; --urgent-soft:#3a221d; --star:#e0b45a; --ok:#7fcf9c; --warn:#e3b45c; --warn-soft:#3a2f18;
-  --me:#2c6e5c; --me-fg:#f0f7f4; color-scheme:dark}}
+  --me:#2a4c75; --me-fg:#f0f5fb; color-scheme:dark}}
 :root[data-theme="dark"]{
-  --bg:#111715; --surface:#18201d; --sunk:#202a26; --line:#2e3a36;
-  --fg:#e7eeeb; --mute:#9aa9a3; --accent:#6fc2a6; --accent-fg:#0d1614; --accent-soft:#1f3a31;
+  --bg:#0f141b; --surface:#161d27; --sunk:#1e2733; --line:#2b3644;
+  --fg:#e6ecf3; --mute:#9aa7b8; --accent:#8db4e0; --accent-fg:#0d1520; --accent-soft:#1d2d42;
+  --band:#0b1622; --band-fg:#e6ecf3; --band-mute:#93a4b8; --band-line:#22344a; --seal:#7fcf9c; --seal-soft:#1b3326;
   --urgent:#ec8a76; --urgent-soft:#3a221d; --star:#e0b45a; --ok:#7fcf9c; --warn:#e3b45c; --warn-soft:#3a2f18;
-  --me:#2c6e5c; --me-fg:#f0f7f4; color-scheme:dark}
+  --me:#2a4c75; --me-fg:#f0f5fb; color-scheme:dark}
 *,*::before,*::after{box-sizing:border-box}
 [hidden]{display:none!important}
 body{background:var(--bg);color:var(--fg);font:400 15px/1.65 var(--body);word-break:keep-all;margin:0;
@@ -192,6 +195,55 @@ tr:last-child td{border-bottom:0}
 .toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--fg);color:var(--bg);padding:12px 18px;border-radius:10px;z-index:50;font-size:14px;max-width:calc(100% - 32px)}
 footer{border-top:1px solid var(--line);margin-top:30px;padding-block:22px 36px;font-size:13px;color:var(--mute);display:grid;gap:4px}
 
+/* business sections */
+.band{background:var(--band);color:var(--band-fg);border-radius:18px;padding:44px clamp(20px,4vw,48px);margin-top:24px;display:grid;grid-template-columns:1.35fr 1fr;gap:36px;align-items:center}
+.band>*{min-width:0}
+.band .label{color:var(--band-mute)}
+.band .lead{color:var(--band-mute);margin-top:14px;max-width:48ch}
+.band .btn{background:var(--band-fg);color:var(--band);border-color:var(--band-fg)}
+.band .btn.ghost{background:transparent;color:var(--band-fg);border-color:var(--band-line)}
+.facts{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--band-line);border-radius:14px;overflow:hidden}
+.facts div{padding:18px;border-bottom:1px solid var(--band-line)}
+.facts div:nth-child(odd){border-right:1px solid var(--band-line)}
+.facts div:nth-last-child(-n+2){border-bottom:0}
+.facts b{display:block;font-family:var(--display);font-size:24px;font-weight:700}
+.facts span{font-size:13px;color:var(--band-mute)}
+.seal{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;padding:2px 9px 2px 6px;border-radius:999px;background:var(--seal-soft);color:var(--seal);white-space:nowrap}
+.seal::before{content:"✓";display:grid;place-items:center;width:15px;height:15px;border-radius:50%;background:var(--seal);color:var(--surface);font-size:10px}
+.vsteps{display:grid;grid-template-columns:repeat(5,1fr);gap:0;padding:0;margin:0;counter-reset:v;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--surface)}
+.vsteps li{list-style:none;padding:20px 18px;border-right:1px solid var(--line);counter-increment:v;display:grid;gap:6px;align-content:start}
+.vsteps li:last-child{border-right:0}
+.vsteps li::before{content:"0" counter(v);font-family:var(--display);font-weight:700;font-size:13px;color:var(--accent);letter-spacing:.06em}
+.vsteps b{font-family:var(--display);font-size:16px}
+.vsteps p{font-size:13px;color:var(--mute)}
+.recheck{margin-top:10px;font-size:13px;color:var(--mute);display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.principles{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.principles div{border-top:3px solid var(--accent);background:var(--surface);padding:18px;border-radius:0 0 12px 12px;display:grid;gap:6px;align-content:start}
+.principles b{font-family:var(--display);font-size:16px}
+.principles p{font-size:14px;color:var(--mute)}
+.pcards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.pcard{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px;display:grid;gap:12px;align-content:start;min-width:0}
+.pcard .ph{display:flex;justify-content:space-between;gap:8px;align-items:start;flex-wrap:wrap}
+.pcard .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;border-block:1px solid var(--line);padding-block:12px}
+.pcard .stats b{display:block;font-family:var(--display);font-size:18px}
+.pcard .stats span{font-size:12px;color:var(--mute)}
+.checks{display:grid;grid-template-columns:1fr 1fr;gap:4px 10px;padding:0;margin:0;font-size:13px}
+.checks li{list-style:none;display:flex;gap:6px}
+.checks li::before{content:"✓";color:var(--seal);font-weight:700}
+.faq{display:grid;gap:8px}
+.faq details{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:0 18px}
+.faq summary{cursor:pointer;padding:15px 0;font-weight:600;font-family:var(--display);list-style:none;display:flex;justify-content:space-between;gap:12px}
+.faq summary::after{content:"+";color:var(--mute);font-weight:400}
+.faq details[open] summary::after{content:"−"}
+.faq details p{padding-bottom:16px;color:var(--mute);font-size:14px;max-width:70ch}
+.corp{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:24px}
+.corp b{color:var(--fg);font-family:var(--display)}
+.corp ul{list-style:none;margin:6px 0 0;padding:0;display:grid;gap:4px}
+@media (max-width:960px){
+  .band{grid-template-columns:1fr} .vsteps{grid-template-columns:1fr 1fr} .vsteps li{border-right:0;border-bottom:1px solid var(--line)}
+  .principles{grid-template-columns:1fr 1fr} .pcards{grid-template-columns:1fr 1fr} .corp{grid-template-columns:1fr}
+}
+@media (max-width:680px){ .principles,.pcards,.vsteps{grid-template-columns:1fr} .checks{grid-template-columns:1fr} }
 @media (max-width:960px){
   .reqs{grid-template-columns:1fr 1fr} .flow{grid-template-columns:repeat(3,1fr)}
   .formgrid,.two{grid-template-columns:1fr} .side{position:static}
@@ -206,7 +258,7 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding-block:22px 36px;
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 
-<div class="notice">오픈 기념 12개월 전면 무료 · 고객 가입, 업체 입점, 매칭 수수료 모두 0원</div>
+<div class="notice">동행매치는 직접 검증을 마친 후불제 상조회사만 운영합니다 · 오픈 기념 12개월 이용료 0원</div>
 <header class="top">
   <div class="wrap bar">
     <a class="logo" href="#home"><i aria-hidden="true"></i>동행매치</a>
@@ -219,8 +271,12 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding-block:22px 36px;
 </header>
 <main class="wrap" id="app"></main>
 <footer class="wrap">
-  <p>동행매치는 서울·경기·인천 지역의 후불제 상조 매칭 시연 화면입니다. 업체, 요청, 점수, 전화번호는 모두 예시이며 실제로 전송되지 않습니다.</p>
-  <p>매칭 확정 전 연락은 사이트 채팅과 050 안심번호로만 가능합니다. 장례식장 이용료, 화장장 이용료는 상조 비용과 별도입니다.</p>
+  <div class="corp">
+    <div><b>동행매치</b><p style="margin-top:6px">직접 검증한 후불제 상조회사와 유족을 연결하는 장례 매칭 플랫폼입니다. 동행매치는 통신판매중개자로서 장례 서비스의 당사자가 아니며, 확정 견적서와 다른 청구가 확인되면 운영 정책에 따라 보상을 지원합니다.</p></div>
+    <div><b>회사 정보</b><ul><li>상호 (주)동행매치 · 대표 OOO</li><li>사업자등록번호 000-00-00000</li><li>통신판매중개업 신고 제0000-서울OO-0000호</li><li>서울특별시 OO구 OO로 00</li></ul></div>
+    <div><b>고객센터 (24시간)</b><ul><li class="num">1600-0000</li><li>이용약관 · 개인정보처리방침</li><li>파트너 운영정책 · 검증 기준</li></ul></div>
+  </div>
+  <p style="margin-top:14px">이 화면은 시연용입니다. 회사 정보, 업체, 요청, 점수, 전화번호는 모두 예시이며 실제로 전송되지 않습니다.</p>
 </footer>
 <div class="modal" id="modal" hidden role="dialog" aria-modal="true"></div>
 <div class="toast" id="toast" hidden role="status"></div>
@@ -264,14 +320,17 @@ function floorOf(r){
 /* ---------- 예시 데이터 ---------- */
 // 가상 업체 — 실존 업체 아님
 const C=[
- {id:1,name:'이음후불상조',area:'서울 전역',happy:96,review:94,match:100,speed:92,warn:0,done:48,since:2011},
- {id:2,name:'한결장례서비스',area:'인천·경기 서부',happy:93,review:91,match:97,speed:88,warn:0,done:37,since:2009},
- {id:3,name:'소담의전',area:'경기 남부',happy:94,review:95,match:94,speed:80,warn:1,done:29,since:2015},
- {id:4,name:'늘봄후불상조',area:'경기 북부·서울 북부',happy:90,review:88,match:96,speed:95,warn:0,done:22,since:2018},
- {id:5,name:'평온가족장',area:'서울 동남권',happy:0,review:0,match:0,speed:90,warn:0,done:0,since:2023,isNew:true},
- {id:6,name:'바른예식',area:'경기 전역',happy:84,review:86,match:88,speed:70,warn:2,done:15,since:2016},
+ {id:1,name:'이음후불상조',area:'서울 전역',happy:96,review:94,match:100,speed:92,warn:0,done:48,since:2011,dir:12,cars:7,ver:'2026.09.12'},
+ {id:2,name:'한결장례서비스',area:'인천·경기 서부',happy:93,review:91,match:97,speed:88,warn:0,done:37,since:2009,dir:9,cars:5,ver:'2026.09.20'},
+ {id:3,name:'소담의전',area:'경기 남부',happy:94,review:95,match:94,speed:80,warn:1,done:29,since:2015,dir:8,cars:4,ver:'2026.10.02'},
+ {id:4,name:'늘봄후불상조',area:'경기 북부·서울 북부',happy:90,review:88,match:96,speed:95,warn:0,done:22,since:2018,dir:7,cars:3,ver:'2026.10.08'},
+ {id:5,name:'평온가족장',area:'서울 동남권',happy:0,review:0,match:0,speed:90,warn:0,done:0,since:2023,dir:4,cars:2,ver:'2026.11.05',isNew:true},
+ {id:6,name:'바른예식',area:'경기 전역',happy:84,review:86,match:88,speed:70,warn:2,done:15,since:2016,dir:6,cars:4,ver:'2026.09.28'},
 ];
 const CID=Object.fromEntries(C.map(c=>[c.id,c]));
+const CHECKS=['사업자·인허가 확인','장례지도사 자격 확인','배상책임보험 가입 확인','사무실·안치 장비 현장 실사','의전 차량 실사','대표·지도사 대면 면접','최근 이용 유족 레퍼런스 통화','추가금 0원·직거래 금지 서약'];
+const recheck=v=>(+v.slice(0,4)+1)+v.slice(4,7);
+const seal=c=>`<span class="seal">동행매치 검증 완료</span>`;
 function score(c){ if(c.isNew) return null; return Math.max(0,Math.round(c.happy*.4+c.review*.25+c.match*.15+c.speed*.1+ (c.done>=20?10:c.done/2) - c.warn*5)); }
 
 let RID=100, OID=500;
@@ -325,48 +384,96 @@ function reqCard(r,forPartner){
 function renderNav(){
   const h=location.hash.slice(1)||'home';
   const items=role==='customer'
-    ?[['home','홈'],['request','장례 요청하기'],['my','내 요청·제안'+(myReq?` (${myReq.offers.length})`:'')],['ranking','업체 순위']]
-    :[['board','요청 게시판'],['ptalk','내 제안·채팅'],['ranking','업체 순위'],['join','무료 입점 신청']];
+    ?[['home','서비스 소개'],['partners','검증 파트너'],['ranking','업체 순위'],['request','장례 요청하기'],['my','내 요청'+(myReq?` (${myReq.offers.length})`:'')]]
+    :[['board','요청 게시판'],['ptalk','내 제안·채팅'],['ranking','업체 순위'],['join','파트너 검증 신청']];
   $('#nav').innerHTML=items.map(([k,v])=>`<a href="#${k}" class="${h===k||h.startsWith(k+'-')?'on':''}">${v}</a>`).join('');
   document.querySelectorAll('.seg button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.role===role));
 }
 
 /* ---------- 고객: 홈 ---------- */
+const VSTEPS=[['서류 심사','사업자·인허가, 장례지도사 자격, 배상책임보험 증권을 확인합니다.'],['현장 실사','사무실, 안치·의전 장비, 의전 차량을 직접 방문해 확인합니다.'],['대면 면접','대표와 소속 장례지도사를 만나 의전 역량과 종교 의전 경험을 봅니다.'],['레퍼런스 확인','최근 장례를 맡긴 유족에게 직접 전화해 이용 경험을 묻습니다.'],['파트너 계약','추가금 0원, 직거래 금지 서약을 포함한 계약을 맺습니다.']];
+function pcard(c){
+  const s=score(c);
+  return `<article class="pcard"><div class="ph"><div><h3>${c.name}</h3><p class="small mute">${c.area} · ${c.since}년 설립</p></div>${seal(c)}</div>
+    <div class="stats num"><div><b>${s??'신규'}</b><span>종합 점수</span></div><div><b>${c.done}건</b><span>매칭 완료</span></div><div><b>${c.dir}명</b><span>장례지도사</span></div></div>
+    <ul class="checks">${CHECKS.map(x=>`<li>${x}</li>`).join('')}</ul>
+    <p class="small mute num">검증일 ${c.ver} · 재검증 예정 ${recheck(c.ver)}</p></article>`;
+}
 function vHome(){
-  const open=R.filter(r=>r.status==='open').slice(0,6);
+  const open=R.filter(r=>r.status==='open').slice(0,3);
+  const top=[...C].filter(c=>!c.isNew).sort((a,b)=>score(b)-score(a)).slice(0,3);
   return `
-  <section class="hero">
+  <section class="band">
     <div>
       <span class="label">서울 · 경기 · 인천 후불제 상조 매칭</span>
-      <h1 style="margin-top:8px">원하는 장례와 금액을 먼저 말하세요.<br>상조회사가 맞춰서 제안합니다.</h1>
-      <p class="lead">조건과 희망 금액으로 요청서를 올리면 검증된 후불제 상조회사들이 제안을 보냅니다. 사이트 채팅으로 협의하고, 장례를 마친 뒤 결제합니다.</p>
-      <div class="cta"><a class="btn" href="#request">무료로 장례 요청하기</a><button class="btn ghost" type="button" data-role="partner">상조회사 무료 입점</button></div>
+      <h1 style="margin-top:10px">동행매치가 직접 검증한 상조회사만<br>고객의 조건에 맞춰 제안합니다</h1>
+      <p class="lead">원하는 장례와 희망 금액을 요청서로 올리면, 서류 심사와 현장 실사를 통과한 후불제 상조회사들이 제안을 보냅니다. 협의는 사이트 안에서 하고, 결제는 장례를 마친 뒤에 합니다.</p>
+      <div class="cta"><a class="btn" href="#request">무료로 장례 요청하기</a><a class="btn ghost" href="#partners">검증 파트너 보기</a></div>
     </div>
-    <div class="example" aria-label="요청과 제안 예시">
-      <div class="bubble"><span class="label">고객 요청 예시</span><p style="margin-top:4px"><b>50만원</b>에 집에서 <b>자택장</b>으로 모시고 싶어요. 천주교, 가족만 모입니다.</p></div>
-      <div class="bubble r"><span class="label">이음후불상조 제안</span><p style="margin-top:4px">자택 안치, 입관, 화장장 운구까지 <b>50만원</b>에 가능합니다. 연도 시간에 맞춰 일정을 잡겠습니다.</p></div>
-      <div class="bubble r"><span class="label">늘봄후불상조 제안</span><p style="margin-top:4px">드라이아이스와 자택 안치 용품 포함 <b>55만원</b>입니다.</p></div>
+    <div class="facts num">
+      <div><b>8개 항목</b><span>입점 전 직접 검증</span></div>
+      <div><b>연 1회</b><span>전 파트너 재검증</span></div>
+      <div><b>0원</b><span>선납금, 100% 후불 결제</span></div>
+      <div><b>24시간</b><span>긴급 요청 상담 운영</span></div>
     </div>
   </section>
-  <div class="free">
-    <div><b class="num">0원</b><span>고객 회원가입과 요청서 작성</span></div>
-    <div><b class="num">0원</b><span>상조회사 입점과 제안 발송</span></div>
-    <div><b class="num">0원</b><span>오픈 후 12개월 매칭 수수료</span></div>
-  </div>
+
   <section class="blk">
-    <div class="sechead"><h2>이렇게 진행돼요</h2></div>
+    <div class="sechead"><div><span class="label">PARTNER VERIFICATION</span><h2 style="margin-top:4px">상조회사 검증 절차</h2></div><a class="small" href="#join" data-role-link="partner">파트너 검증 신청 안내</a></div>
+    <ol class="vsteps">${VSTEPS.map(v=>`<li><b>${v[0]}</b><p>${v[1]}</p></li>`).join('')}</ol>
+    <p class="recheck"><span class="seal">동행매치 검증 완료</span> 표시는 다섯 단계를 모두 통과한 업체에만 붙습니다. 해피콜 점수가 기준에 못 미치거나 직거래 경고를 받으면 재심사합니다.</p>
+  </section>
+
+  <section class="blk">
+    <div class="sechead"><h2>운영 원칙</h2></div>
+    <div class="principles">
+      <div><b>100% 후불 결제</b><p>선납금과 월 납입이 없습니다. 발인 후 확정 견적서 금액으로 결제합니다.</p></div>
+      <div><b>현실적인 최소 금액</b><p>선택한 인력, 용품, 차량을 실제로 제공할 수 있는 금액부터 요청할 수 있습니다.</p></div>
+      <div><b>사이트 안에서만 협의</b><p>매칭 확정 전 연락은 채팅과 050 안심번호로만 합니다. 직거래 유도는 제재합니다.</p></div>
+      <div><b>유족이 매기는 순위</b><p>상담사가 장례 후 직접 전화로 만족도를 조사하고, 그 점수로 업체 순위를 정합니다.</p></div>
+    </div>
+  </section>
+
+  <section class="blk">
+    <div class="sechead"><h2>이용 절차</h2></div>
     <ol class="flow">
       <li><b>요청서 작성</b>형태, 장소, 종교, 희망 금액을 고릅니다</li>
-      <li><b>업체 제안</b>지역 상조회사들이 금액과 조건을 보냅니다</li>
-      <li><b>채팅 협의</b>사이트 채팅과 050 안심번호로만 이야기합니다</li>
+      <li><b>검증 업체 제안</b>지역 파트너가 금액과 조건을 보냅니다</li>
+      <li><b>채팅 협의</b>사이트 채팅과 050 안심번호로 이야기합니다</li>
       <li><b>매칭 확정</b>협의 내용이 확정 견적서가 됩니다</li>
       <li><b>장례·후불 정산</b>발인 후 확정 금액으로 결제합니다</li>
-      <li><b>해피콜·리뷰</b>만족도 점수가 업체 순위에 반영됩니다</li>
+      <li><b>해피콜 평가</b>만족도 점수가 업체 순위에 반영됩니다</li>
     </ol>
   </section>
+
+  <section class="blk">
+    <div class="sechead"><h2>우수 검증 파트너</h2><a class="small" href="#partners">전체 파트너 보기</a></div>
+    <div class="pcards">${top.map(pcard).join('')}</div>
+  </section>
+
   <section class="blk">
     <div class="sechead"><h2>지금 올라온 요청</h2><span class="mute small">이름과 연락처는 공개되지 않습니다</span></div>
     <div class="reqs">${open.map(r=>reqCard(r,false)).join('')}</div>
+  </section>
+
+  <section class="blk">
+    <div class="sechead"><h2>자주 묻는 질문</h2></div>
+    <div class="faq">
+      <details><summary>상조회사는 어떻게 선정하나요?</summary><p>동행매치 담당자가 서류 심사, 현장 실사, 대면 면접, 유족 레퍼런스 통화를 직접 진행하고, 모두 통과한 업체와만 파트너 계약을 맺습니다. 신청한다고 모두 입점되지 않으며, 입점 후에도 매년 다시 검증합니다.</p></details>
+      <details><summary>이용 요금이 있나요?</summary><p>고객은 회원가입, 요청서 작성, 상담 모두 무료입니다. 장례 비용은 매칭된 상조회사에 발인 후 확정 견적서 금액으로 결제합니다.</p></details>
+      <details><summary>희망 금액에 왜 최소 금액이 있나요?</summary><p>선택한 조건을 제대로 제공할 수 없는 금액으로 매칭되면, 현장에서 추가금이 생기거나 서비스 질이 떨어집니다. 이를 막기 위해 조건별 최소 금액을 정해 두었습니다.</p></details>
+      <details><summary>상조회사와 직접 통화할 수 있나요?</summary><p>매칭 확정 전에는 050 안심번호로 통화할 수 있고 실제 번호는 공개되지 않습니다. 매칭이 확정되면 장례 진행 중 자유롭게 통화할 수 있으며, 안심번호는 정산이 끝날 때까지 유지됩니다.</p></details>
+      <details><summary>견적서에 없는 비용을 요구받으면 어떻게 하나요?</summary><p>확정 견적서에 없는 비용은 고객이 승인한 경우에만 청구할 수 있습니다. 승인하지 않은 청구는 고객센터로 알려 주시면 운영 정책에 따라 처리하고 해당 업체를 재심사합니다.</p></details>
+    </div>
+  </section>`;
+}
+function vPartners(){
+  const list=[...C].sort((a,b)=>(score(b)??-1)-(score(a)??-1));
+  return `<section class="blk">
+    <div class="sechead"><div><span class="label">서울 · 경기 · 인천</span><h1 style="font-size:clamp(22px,3vw,30px);margin-top:4px">동행매치 검증 파트너</h1>
+    <p class="mute" style="margin-top:6px;max-width:62ch">아래 업체는 모두 동행매치가 직접 방문하고 면접해 검증을 마친 후불제 상조회사입니다. 검증 항목과 검증일을 공개합니다.</p></div>
+    <span class="mute small num">파트너 ${C.length}곳</span></div>
+    <div class="pcards">${list.map(pcard).join('')}</div>
   </section>`;
 }
 
@@ -382,7 +489,7 @@ function vRequest(){
   return `<div class="formgrid">
   <form id="reqForm" class="panel" novalidate>
     <h1 style="font-size:clamp(22px,3vw,28px)">장례 요청서</h1>
-    <p class="mute small" style="margin:4px 0 18px">작성은 무료입니다. 공개되는 것은 조건과 희망 금액뿐이고, 이름과 연락처는 매칭 확정 전까지 업체에 보이지 않습니다.</p>
+    <p class="mute small" style="margin:4px 0 18px">작성은 무료이며, 동행매치가 직접 검증한 상조회사에만 공개됩니다. 공개되는 것은 조건과 희망 금액뿐이고, 이름과 연락처는 매칭 확정 전까지 업체에 보이지 않습니다.</p>
     <div class="ai">
       <label for="aiText"><b>말로 적어도 됩니다</b> <span class="mute small">AI가 아래 항목으로 정리해 드려요</span></label>
       <textarea id="aiText" placeholder="예) 50만원에 집에서 주택장으로 하고 싶습니다. 천주교이고 가족만 모여요. 서울 은평구입니다."></textarea>
@@ -449,7 +556,7 @@ function aiParse(t){
 function signup(after){
   const m=$('#modal');
   m.innerHTML=`<form class="box" id="signForm"><h2>무료 회원가입</h2>
-    <p class="mute small">요청서를 올리고 제안을 받으려면 가입이 필요합니다. 오픈 기념으로 모든 기능이 무료입니다.</p>
+    <p class="mute small">요청서를 올리고 동행매치 검증 파트너의 제안을 받으려면 가입이 필요합니다. 오픈 기념으로 모든 기능이 무료입니다.</p>
     <label class="small" for="sName">이름</label><input class="txt" id="sName" value="김동행" required>
     <label class="small" for="sPhone">휴대폰 번호 (업체에 공개되지 않음)</label><input class="txt" id="sPhone" value="010-0000-0000" inputmode="tel" required>
     <label class="check"><input type="checkbox" id="c1" checked> <span>[필수] 매칭 확정 전에는 사이트 채팅과 050 안심번호로만 연락하는 데 동의합니다.</span></label>
@@ -492,7 +599,7 @@ function vMy(){
     <div class="panel" style="display:grid;gap:8px"><div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap"><span>${timingChip(r)} <b>${r.sido} ${r.gu}</b></span><span class="price num" style="font-family:var(--display);font-weight:700;font-size:20px">${man(r.budget)} 희망</span></div>
       <div class="conds" style="display:flex;flex-wrap:wrap;gap:4px">${condChips(r)}</div>${r.memo?`<p class="small mute">${esc(r.memo)}</p>`:''}</div>
     <h2>받은 제안 <span class="num mute">${r.offers.length}</span></h2>
-    ${r.offers.map(o=>{const c=CID[o.cid],s=score(c);return `<div class="offer"><div class="h"><span><b>${c.name}</b> <span class="mute small">${c.area}</span></span>${s===null?'<span class="chip">신규 파트너</span>':`<span class="chip">만족도 점수 ${s}</span>`}</div>
+    ${r.offers.map(o=>{const c=CID[o.cid],s=score(c);return `<div class="offer"><div class="h"><span><b>${c.name}</b> ${seal(c)} <span class="mute small">${c.area}</span></span>${s===null?'<span class="chip">신규 파트너</span>':`<span class="chip">만족도 점수 ${s}</span>`}</div>
       <div class="p num">${man(o.price)}</div><p class="small">${esc(o.note)}</p>
       <div style="display:flex;gap:8px;flex-wrap:wrap">${o.status==='matched'?'<span class="chip">매칭 확정</span>':''}<a class="btn sm" href="#chat-${o.id}">채팅으로 협의하기</a></div></div>`}).join('')}
     ${r.offers.length<3&&!matched?'<div class="waiting">상조회사 제안을 기다리는 중이에요. 보통 30분 안에 도착합니다.</div>':''}
@@ -515,7 +622,7 @@ function vChat(oid){
   const r=RIDX()[o.rid], c=CID[o.cid], me=role==='customer'?'u':'p';
   const matched=o.status==='matched';
   return `<div class="two"><div class="chat">
-    <div class="ch"><div><b>${role==='customer'?c.name:r.who+'님'}</b> <span class="mute small">${r.sido} ${r.gu} · ${F.type.o[r.type]}</span></div>
+    <div class="ch"><div><b>${role==='customer'?c.name:r.who+'님'}</b> ${role==='customer'?seal(c):''} <span class="mute small">${r.sido} ${r.gu} · ${F.type.o[r.type]}</span></div>
       <button class="btn sm ghost" type="button" data-call="${o.id}">050 안심번호로 통화</button></div>
     <div class="msgs" id="msgs">
       <div class="m sys">매칭 확정 전에는 이 채팅과 050 안심번호로만 연락할 수 있어요. 전화번호, 카톡 아이디, 계좌번호는 자동으로 가려집니다.</div>
@@ -595,7 +702,7 @@ function vBoard(){
   return `<section class="blk">
     <div class="sechead"><div><span class="label">${partner.name} 님으로 보는 중</span><h1 style="font-size:clamp(22px,3vw,28px);margin-top:4px">고객 요청 게시판</h1></div>
       <div class="filters" role="group" aria-label="지역 필터">${['전체','서울','경기','인천','긴급'].map(f=>`<button type="button" data-bf="${f}" aria-pressed="${boardFilter===f}">${f}</button>`).join('')}</div></div>
-    <p class="mute small" style="margin-bottom:14px">제안 발송은 무료입니다. 제안 금액은 요청 조건의 최소 금액보다 낮게 보낼 수 없습니다.</p>
+    <p class="mute small" style="margin-bottom:14px">동행매치 검증을 마친 파트너만 볼 수 있는 요청입니다. 제안 발송은 무료입니다. 제안 금액은 요청 조건의 최소 금액보다 낮게 보낼 수 없습니다.</p>
     <div class="reqs">${list.map(r=>reqCard(r,true)).join('')||'<div class="waiting">이 조건의 요청이 없어요.</div>'}</div></section>`;
 }
 function proposeModal(rid){
@@ -635,7 +742,7 @@ function vRanking(){
       <div><b>-5점</b><span>직거래 유도 경고 1회당</span></div>
     </div>
     <div class="tblwrap"><table class="num"><thead><tr><th>순위</th><th>업체</th><th>해피콜</th><th>리뷰</th><th>정산 일치</th><th>응답 속도</th><th>매칭 건수</th><th>경고</th><th>종합</th></tr></thead><tbody>
-    ${rows.map((c,i)=>{const s=score(c);return `<tr><td class="rk">${s===null?'-':i+1}</td><td><b>${c.name}</b><br><span class="small mute">${c.area}</span></td>
+    ${rows.map((c,i)=>{const s=score(c);return `<tr><td class="rk">${s===null?'-':i+1}</td><td><b>${c.name}</b> ${seal(c)}<br><span class="small mute">${c.area} · 검증일 ${c.ver}</span></td>
       ${s===null?'<td colspan="3" style="text-align:center"><span class="chip">신규 파트너 · 첫 5건 동안 기본 노출</span></td>':`<td>${c.happy}</td><td>${c.review}</td><td>${c.match}</td>`}
       <td>${c.speed}</td><td>${c.done}</td><td>${c.warn?`<span class="chip u">${c.warn}회</span>`:'-'}</td><td class="tot">${s??'-'}</td></tr>`}).join('')}
     </tbody></table></div>
@@ -643,26 +750,31 @@ function vRanking(){
   </section>`;
 }
 
-/* ---------- 업체: 입점 ---------- */
+/* ---------- 업체: 검증 신청 ---------- */
 function vJoin(){
   return `<div class="formgrid"><form class="panel" id="joinForm">
-    <span class="label">오픈 기념 12개월 무료</span><h1 style="font-size:clamp(22px,3vw,28px);margin-top:4px">상조회사 무료 입점 신청</h1>
-    <p class="mute small" style="margin:4px 0 18px">입점, 요청 열람, 제안 발송, 매칭 수수료가 모두 무료입니다. 무료 기간이 끝나면 매칭이 성사된 건에만 수수료가 생기며, 30일 전에 미리 안내합니다.</p>
+    <span class="label">PARTNER APPLICATION</span><h1 style="font-size:clamp(22px,3vw,28px);margin-top:4px">파트너 검증 신청</h1>
+    <p class="mute small" style="margin:6px 0 18px">동행매치는 직접 검증한 상조회사만 고객 요청을 볼 수 있습니다. 신청서를 받으면 담당자가 연락해 서류 심사, 현장 실사, 대면 면접 일정을 잡습니다. 검증 결과에 따라 승인되지 않을 수 있습니다.</p>
     <div style="display:grid;gap:12px">
     <div class="row2"><div><label class="small" for="jName">상호</label><input class="txt" id="jName" placeholder="예) 동행후불상조"></div>
       <div><label class="small" for="jBiz">사업자등록번호</label><input class="txt" id="jBiz" placeholder="000-00-00000" inputmode="numeric"></div></div>
+    <div class="row2"><div><label class="small" for="jCeo">대표자</label><input class="txt" id="jCeo"></div>
+      <div><label class="small" for="jTel">담당자 연락처</label><input class="txt" id="jTel" inputmode="tel" placeholder="010-0000-0000"></div></div>
+    <div><label class="small" for="jAddr">사무실 주소 (현장 실사 장소)</label><input class="txt" id="jAddr"></div>
     <fieldset class="fs"><legend>활동 지역</legend><div class="opts">${['서울 전역','서울 동부','서울 서부','경기 북부','경기 남부','인천'].map(a=>`<label><input type="checkbox" name="area" value="${a}"><span>${a}</span></label>`).join('')}</div></fieldset>
     <div class="row2"><div><label class="small" for="jDir">장례지도사 인원</label><input class="txt" id="jDir" inputmode="numeric" placeholder="명"></div>
-      <div><label class="small" for="jHelp">의전도우미 인원</label><input class="txt" id="jHelp" inputmode="numeric" placeholder="명"></div></div>
-    <fieldset class="fs"><legend>제출 서류</legend><div class="opts">
-      <label><input type="checkbox" checked><span>사업자등록증</span></label><label><input type="checkbox" checked><span>장례지도사 자격증</span></label><label><input type="checkbox" checked><span>배상책임보험 증권</span></label></div>
-      <p class="small mute">서류 파일은 심사 담당자가 연락드려 받습니다. 심사는 보통 3일 안에 끝납니다.</p></fieldset>
-    <label class="check"><input type="checkbox" id="jAgree"> <span>[필수] 매칭 확정 전 직접 연락 금지와 단계별 제재 규정에 동의합니다.</span></label>
-    <button class="btn block" type="submit">무료 입점 신청하기</button></div></form>
-    <aside class="side"><div class="panel" style="display:grid;gap:10px"><h3>창립 파트너 혜택</h3>
-      <p class="small">오픈 후 6개월 안에 입점한 업체는 유료 전환 후에도 수수료 할인과 창립 파트너 배지를 받습니다.</p></div>
+      <div><label class="small" for="jCar">보유 의전 차량</label><input class="txt" id="jCar" inputmode="numeric" placeholder="대"></div></div>
+    <fieldset class="fs"><legend>준비 서류</legend><div class="opts">
+      <label><input type="checkbox" checked><span>사업자등록증</span></label><label><input type="checkbox" checked><span>장례지도사 자격증</span></label><label><input type="checkbox" checked><span>배상책임보험 증권</span></label><label><input type="checkbox"><span>최근 정산 내역 3건</span></label></div>
+      <p class="small mute">서류는 담당자 연락 후 제출합니다. 검증은 보통 2주 안에 마칩니다.</p></fieldset>
+    <label class="check"><input type="checkbox" id="jAgree"> <span>[필수] 현장 실사와 유족 레퍼런스 확인, 매칭 확정 전 직접 연락 금지와 단계별 제재 규정에 동의합니다.</span></label>
+    <button class="btn block" type="submit">검증 신청서 제출</button></div></form>
+    <aside class="side">
+      <div class="panel" style="display:grid;gap:10px"><h3>검증 항목</h3><ul class="checks" style="grid-template-columns:1fr">${CHECKS.map(x=>`<li>${x}</li>`).join('')}</ul></div>
+      <div class="panel" style="display:grid;gap:8px"><h3>창립 파트너 혜택</h3>
+      <p class="small">오픈 후 6개월 안에 검증을 통과한 업체는 12개월 무료 이용 후에도 수수료 할인과 창립 파트너 표시를 받습니다.</p></div>
       <div class="panel" style="display:grid;gap:10px"><h3>직거래 유도 제재 기준</h3>
-      <ol class="rules" style="grid-template-columns:1fr 1fr"><li>경고와 점수 5점 감점</li><li>30일 노출 제한</li><li>90일 제안 정지</li><li>입점 해지</li></ol>
+      <ol class="rules" style="grid-template-columns:1fr 1fr"><li>경고와 점수 5점 감점</li><li>30일 노출 제한</li><li>90일 제안 정지</li><li>파트너 계약 해지</li></ol>
       <p class="small mute">모든 단계에서 소명 기회를 드립니다. 매칭 확정 후 장례 진행 중 통화는 제재 대상이 아닙니다.</p></div></aside></div>`;
 }
 
@@ -671,7 +783,7 @@ function route(){
   const h=location.hash.slice(1)||(role==='customer'?'home':'board');
   const app=$('#app'); let html;
   if(h.startsWith('chat-')) html=vChat(+h.slice(5));
-  else html=({home:vHome,request:vRequest,my:vMy,board:vBoard,ptalk:vPtalk,ranking:vRanking,join:vJoin}[h]||vHome)();
+  else html=({home:vHome,partners:vPartners,request:vRequest,my:vMy,board:vBoard,ptalk:vPtalk,ranking:vRanking,join:vJoin}[h]||vHome)();
   const keep=h===route.last; route.last=h;
   app.innerHTML=html; renderNav();
   if(h==='request'){updateFloor()}
@@ -685,6 +797,7 @@ document.addEventListener('click',e=>{
   const t=e.target.closest('button,a'); if(!t) return;
   const d=t.dataset;
   if(d.role){e.preventDefault();setRole(d.role);return}
+  if(d.roleLink){role=d.roleLink;}
   if(t.hasAttribute('data-close')){$('#modal').hidden=true;return}
   if(t.id==='aiBtn'){readForm(); const txt=$('#aiText').value.trim(); if(!txt){toast('먼저 원하는 장례를 말로 적어 주세요.');return}
     const {d:nd,got,ask}=aiParse(txt); const memo=$('#memo').value||txt; draft={...nd,memo};
@@ -715,7 +828,7 @@ document.addEventListener('submit',e=>{
   if(e.target.id==='reqForm'){e.preventDefault(); readForm(); const fl=floorOf(draft); if(+draft.budget<fl.min){updateFloor();return}
     user?submitRequest():signup(submitRequest);}
   if(e.target.id==='sendForm'){e.preventDefault(); const v=$('#msgIn').value.trim(); if(!v) return; const o=allOffers().find(x=>x.id===+location.hash.slice(6)); sendMsg(o,v);}
-  if(e.target.id==='joinForm'){e.preventDefault(); if(!$('#jAgree').checked){toast('제재 규정 동의가 필요해요.');return} toast('입점 신청을 받았어요. 심사 담당자가 3일 안에 연락드립니다. (시연)');}
+  if(e.target.id==='joinForm'){e.preventDefault(); if(!$('#jAgree').checked){toast('검증 절차와 제재 규정에 동의해 주세요.');return} toast('검증 신청서를 받았어요. 담당자가 3일 안에 연락해 실사 일정을 잡습니다. (시연)');}
 });
 $('#modal').addEventListener('click',e=>{if(e.target.id==='modal') e.currentTarget.hidden=true});
 document.addEventListener('keydown',e=>{if(e.key==='Escape') $('#modal').hidden=true});
