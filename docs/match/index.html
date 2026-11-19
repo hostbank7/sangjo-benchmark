@@ -239,6 +239,37 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding-block:22px 36px;
 .corp{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:24px}
 .corp b{color:var(--fg);font-family:var(--display)}
 .corp ul{list-style:none;margin:6px 0 0;padding:0;display:grid;gap:4px}
+/* extra cost + admin */
+.xlist{display:grid;gap:8px}
+.xitem{border:1px solid var(--line);border-radius:10px;padding:10px 12px;display:grid;gap:4px;font-size:14px}
+.xitem .xh{display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap}
+.xitem .xb{display:flex;gap:6px;margin-top:4px}
+.settle{display:grid;grid-template-columns:1fr auto;gap:3px 12px;font-size:14px;background:var(--sunk);border-radius:10px;padding:12px 14px}
+.settle .t{border-top:1px solid var(--line);padding-top:6px;margin-top:4px;font-weight:700;font-family:var(--display)}
+.settle .no{color:var(--mute);text-decoration:line-through}
+.xform{display:grid;gap:8px;border-top:1px dashed var(--line);padding-top:12px}
+.admin{display:grid;grid-template-columns:210px minmax(0,1fr);gap:22px;padding-block:24px 40px;align-items:start}
+.atabs{display:grid;gap:2px;position:sticky;top:calc(env(safe-area-inset-top,0px) + 80px)}
+.atabs button{border:0;background:none;text-align:left;padding:10px 12px;border-radius:8px;cursor:pointer;font-weight:500;display:flex;justify-content:space-between;gap:8px}
+.atabs button:hover{background:var(--sunk)}
+.atabs button[aria-pressed="true"]{background:var(--accent);color:var(--accent-fg)}
+.atabs .cnt{font-size:12px;font-variant-numeric:tabular-nums;opacity:.8}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;display:grid;gap:4px;text-align:left;cursor:pointer}
+.tile b{font-family:var(--display);font-size:28px;line-height:1.1}
+.tile span{font-size:13px;color:var(--mute)}
+.tile.alert{border-left:4px solid var(--urgent)}
+.tile.ok{border-left:4px solid var(--seal)}
+.pipe{display:flex;gap:4px;flex-wrap:wrap}
+.pipe button{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:3px 10px;font-size:12px;cursor:pointer}
+.pipe button[aria-pressed="true"]{background:var(--seal-soft);color:var(--seal);border-color:transparent;font-weight:600}
+.pipe button[aria-pressed="true"]::before{content:"✓ "}
+.adm td,.adm th{text-align:left}
+.adm td.r,.adm th.r{text-align:right}
+.adm select{width:auto;padding:4px 6px}
+.adm input.txt{padding:6px 8px}
+.hcrow{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+@media (max-width:960px){ .admin{grid-template-columns:1fr} .atabs{position:static;display:flex;overflow-x:auto} .atabs button{white-space:nowrap} .tiles{grid-template-columns:1fr 1fr} }
 @media (max-width:960px){
   .band{grid-template-columns:1fr} .vsteps{grid-template-columns:1fr 1fr} .vsteps li{border-right:0;border-bottom:1px solid var(--line)}
   .principles{grid-template-columns:1fr 1fr} .pcards{grid-template-columns:1fr 1fr} .corp{grid-template-columns:1fr}
@@ -265,6 +296,7 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding-block:22px 36px;
     <div class="seg" role="group" aria-label="화면 전환">
       <button type="button" data-role="customer" aria-pressed="true">고객</button>
       <button type="button" data-role="partner" aria-pressed="false">상조회사</button>
+      <button type="button" data-role="admin" aria-pressed="false">운영자</button>
     </div>
     <nav class="navl" id="nav" aria-label="주요 메뉴"></nav>
   </div>
@@ -356,6 +388,29 @@ addOffer(R[1],3,235,'영통 거점이라 40분 안에 도착합니다. 수목장
 addOffer(R[2],2,410,'입관·발인 예배 순서지를 교회와 미리 맞춰 드립니다.');
 addOffer(R[2],6,399,'버스 포함 399만원, 예배 의전 가능합니다.');
 addOffer(R[3],1,105,'무빈소 해양장 진행 가능합니다. 해양장 업체 연결과 사망신고 대행까지 포함입니다.');
+// 파트너 시연용: 이미 매칭되어 장례 진행 중인 건
+{const o=R[3].offers[0]; o.status='matched'; R[3].status='matched'; R[3].stage=3;
+ o.msgs.push({from:'sys',text:'매칭이 확정되었어요. 확정 견적서가 만들어졌고, 050 안심번호는 정산이 끝날 때까지 유지됩니다.'});
+ o.extrasReq=[{id:1,item:'해양장 선박 대기 시간 연장',amount:10,reason:'기상 악화로 출항이 2시간 늦어졌습니다.',status:'approved',at:'11.18 09:40'}];}
+let XID=10, EVID=10, HCID=10;
+const APPS=[
+ {id:1,name:'새벽후불상조',area:'서울 서부',applied:'2026.11.10',steps:[true,true,false,false,false]},
+ {id:2,name:'다온의전',area:'인천',applied:'2026.11.14',steps:[true,false,false,false,false]},
+ {id:3,name:'정성장례',area:'경기 남부',applied:'2026.11.17',steps:[false,false,false,false,false]},
+];
+const EV=[
+ {id:1,type:'mask',cid:6,actor:'업체',text:'제안 채팅에 휴대폰 번호 입력 (자동 가림)',when:'11.17 22:10',status:'open'},
+ {id:2,type:'call',cid:3,actor:'업체',text:'050 통화 18분 후 매칭 없이 고객이 요청 종료',when:'11.18 14:02',status:'open'},
+ {id:3,type:'report',cid:6,actor:'고객',text:'해피콜: "명함 주면서 다음엔 직접 연락하라고 했다"',when:'11.15 16:30',status:'open'},
+];
+const HC=[
+ {id:1,cid:2,who:'오**',region:'인천 서구',type:'가족장 2일장',end:'11.16',status:'wait'},
+ {id:2,cid:3,who:'서**',region:'경기 용인시',type:'일반 3일장',end:'11.17',status:'wait'},
+ {id:3,cid:4,who:'문**',region:'경기 파주시',type:'무빈소장',end:'11.17',status:'wait'},
+];
+const SLOG=[];
+const SANCTION=['정상','경고','노출 제한 30일','제안 정지 90일','계약 해지 검토'];
+const sanc=c=>SANCTION[Math.min(c.warn,4)];
 const RIDX=()=>Object.fromEntries(R.map(r=>[r.id,r]));
 const allOffers=()=>R.flatMap(r=>r.offers);
 
@@ -386,7 +441,7 @@ function reqCard(r,forPartner){
 }
 function renderNav(){
   const h=location.hash.slice(1)||'home';
-  const items=role==='customer'
+  const items=role==='admin'?[['admin','운영 관리']]:role==='customer'
     ?[['home','서비스 소개'],['partners','검증 파트너'],['ranking','업체 순위'],['request','장례 요청하기'],['my','내 요청'+(myReq?` (${myReq.offers.length})`:'')]]
     :[['board','요청 게시판'],['ptalk','내 제안·채팅'],['ranking','업체 순위'],['join','파트너 검증 신청']];
   $('#nav').innerHTML=items.map(([k,v])=>`<a href="#${k}" class="${h===k||h.startsWith(k+'-')?'on':''}">${v}</a>`).join('');
@@ -602,6 +657,7 @@ function vMy(){
   return `<div class="two"><div style="display:grid;gap:14px;min-width:0">
     <div class="panel" style="display:grid;gap:8px"><div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap"><span>${timingChip(r)} <b>${r.sido} ${r.gu}</b></span><span class="price num" style="font-family:var(--display);font-weight:700;font-size:20px">${man(r.budget)} 희망</span></div>
       <div class="conds" style="display:flex;flex-wrap:wrap;gap:4px">${condChips(r)}</div>${r.memo?`<p class="small mute">${esc(r.memo)}</p>`:''}</div>
+    ${matched&&r.stage>=3?`<div class="panel">${extraBlock(matched)}</div>`:''}
     <h2>받은 제안 <span class="num mute">${r.offers.length}</span></h2>
     ${r.offers.map(o=>{const c=CID[o.cid],s=score(c);return `<div class="offer"><div class="h"><span><b>${dn(c,o.status==='matched')}</b> ${seal(c)} <span class="mute small">${c.area}</span></span>${s===null?'<span class="chip">신규 파트너</span>':`<span class="chip">만족도 점수 ${s}</span>`}</div>
       <div class="p num">${man(o.price)}</div><p class="small">${esc(o.note)}</p>
@@ -609,13 +665,53 @@ function vMy(){
     ${r.offers.length<3&&!matched?'<div class="waiting">상조회사 제안을 기다리는 중이에요. 보통 30분 안에 도착합니다.</div>':''}
   </div>
   <aside class="side"><div class="panel"><h3 style="margin-bottom:12px">진행 상황</h3>${timeline(r)}
-  ${matched&&r.stage<4?`<button class="btn block" type="button" data-advance>다음 단계로 (시연)</button>`:''}
+  ${matched&&r.stage<4?(xpending(matched)?'<p class="small" style="color:var(--warn);margin-bottom:8px">승인 대기 중인 추가 비용이 있어요. 승인하거나 거절해야 정산할 수 있습니다.</p><button class="btn block" type="button" disabled>다음 단계로 (시연)</button>':`<button class="btn block" type="button" data-advance>다음 단계로 (시연)</button>`):''}
   ${matched&&r.stage===4?`<button class="btn block" type="button" data-happy>해피콜 만족도 조사 받기 (시연)</button>`:''}
   </div></aside></div>`;
 }
 function timeline(r){
   const cur=r.stage??(r.offers.length?1:0);
   return `<ol class="timeline">${STAGES.map((s,i)=>`<li class="${i<cur?'done':i===cur?'cur':''}"><span class="small">${s}</span></li>`).join('')}</ol>`;
+}
+
+/* ---------- 추가 비용 승인 ---------- */
+const XITEMS=['의전도우미 시간 연장','장례지도사 추가 투입','리무진·버스 추가','용품 등급 변경','제단 꽃장식 추가','기타'];
+function xsum(o){return (o.extrasReq||[]).filter(x=>x.status==='approved').reduce((a,x)=>a+x.amount,0)}
+function xpending(o){return (o.extrasReq||[]).filter(x=>x.status==='pending').length}
+function xchip(x){return x.status==='approved'?'<span class="chip">승인</span>':x.status==='rejected'?'<span class="chip n">거절 · 청구 불가</span>':'<span class="chip w">승인 대기</span>'}
+function extraBlock(o){
+  const r=RIDX()[o.rid], L=o.extrasReq||[];
+  const canAdd=role==='partner'&&(r.stage??2)<4;
+  return `<div style="display:grid;gap:10px">
+    <span class="label">추가 비용 요청</span>
+    ${L.length?`<div class="xlist">${L.map(x=>`<div class="xitem"><div class="xh"><b>${esc(x.item)}</b>${xchip(x)}</div>
+      <div class="num"><b>+${man(x.amount)}</b> <span class="small mute">· ${x.at}</span></div><p class="small mute">${esc(x.reason)}</p>
+      ${role==='customer'&&x.status==='pending'?`<div class="xb"><button class="btn sm" type="button" data-xok="${o.id}:${x.id}">승인</button><button class="btn sm ghost" type="button" data-xno="${o.id}:${x.id}">거절</button></div>`:''}</div>`).join('')}</div>`
+      :'<p class="small mute">아직 요청된 추가 비용이 없어요.</p>'}
+    <div class="settle num"><span>확정 견적</span><b>${man(o.price)}</b>
+      <span>승인된 추가 비용</span><b>+${man(xsum(o))}</b>
+      ${L.filter(x=>x.status!=='approved').map(x=>`<span class="no">${esc(x.item)}</span><span class="no">${man(x.amount)}</span>`).join('')}
+      <span class="t">${(r.stage??2)>=4?'최종 정산 금액':'현재 예상 정산 금액'}</span><span class="t">${man(o.price+xsum(o))}</span></div>
+    <p class="small mute">${role==='customer'?'견적서에 없는 비용은 여기서 승인한 것만 청구됩니다. 같은 승인 요청이 카카오 알림톡으로도 발송됩니다.':'고객이 승인한 항목만 정산서에 들어갑니다. 승인 없이 청구하면 정산 일치 점수가 깎이고 재심사 대상이 됩니다.'}</p>
+    ${canAdd?`<div class="xform"><b class="small">추가 비용 승인 요청 보내기</b>
+      <select id="xItem" aria-label="항목">${XITEMS.map(i=>`<option>${i}</option>`).join('')}</select>
+      <div class="money"><input class="txt num" id="xAmt" inputmode="numeric" placeholder="0" aria-label="금액"><b>만원</b></div>
+      <input class="txt" id="xWhy" placeholder="사유 (예: 조문객이 많아 도우미 연장 필요)" aria-label="사유">
+      <button class="btn sm" type="button" data-xadd="${o.id}">고객에게 승인 요청</button></div>`:''}
+  </div>`;
+}
+function addExtra(o,item,amount,reason){
+  o.extrasReq=o.extrasReq||[];
+  const now=new Date(); const at=`${now.getMonth()+1}.${now.getDate()} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+  const x={id:++XID,item,amount,reason:maskText(reason).t,status:'pending',at}; o.extrasReq.push(x);
+  o.msgs.push({from:'sys',text:`추가 비용 승인 요청: ${item} +${man(amount)}. 고객이 승인해야 청구됩니다.`});
+  return x;
+}
+function decideExtra(key,ok){
+  const [oid,xid]=key.split(':').map(Number); const o=allOffers().find(x=>x.id===oid); const x=o.extrasReq.find(y=>y.id===xid);
+  x.status=ok?'approved':'rejected';
+  o.msgs.push({from:'sys',text:`고객이 '${x.item}' 추가 비용을 ${ok?'승인했어요. 정산 금액에 반영됩니다.':'거절했어요. 이 항목은 청구할 수 없습니다.'}`});
+  toast(ok?`${x.item} +${man(x.amount)} 승인했어요.`:`${x.item} 요청을 거절했어요. 청구되지 않습니다.`); route();
 }
 
 /* ---------- 채팅 (고객·업체 공용) ---------- */
@@ -649,7 +745,7 @@ function vChat(oid){
       <dt>금액</dt><dd><b style="font-family:var(--display);font-size:18px">${man(o.price)}</b> (발인 후 결제)</dd>
     </dl>
     ${role==='partner'&&!matched?`<div class="field" style="display:grid;gap:4px"><label class="small" for="newPrice">제안 금액 수정 (최소 ${man(floorOf(r).min)})</label><div class="money"><input class="txt num" id="newPrice" value="${o.price}" inputmode="numeric"><b>만원</b><button class="btn sm ghost" type="button" data-reprice="${o.id}">변경</button></div></div>`:''}
-    ${matched?'<span class="chip">매칭 확정 · 견적서에 없는 추가 비용은 고객 승인 후에만 청구됩니다</span>'
+    ${matched?extraBlock(o)
       :role==='customer'?(r.status==='open'?`<button class="btn block" type="button" data-match="${o.id}">이 조건으로 매칭 확정</button><p class="small mute">확정하면 위 내용이 확정 견적서가 되고, 다른 제안은 정중히 마감됩니다.</p>`:'<span class="chip n">다른 업체와 매칭되었습니다</span>')
       :'<p class="small mute">고객이 매칭 확정을 누르면 확정 견적서가 만들어집니다. 수수료는 오픈 후 12개월 동안 0원입니다.</p>'}
   </div></aside></div>`;
@@ -659,6 +755,7 @@ function sendMsg(o,text){
   const me=role==='customer'?'u':'p';
   const {t,hit}=maskText(text);
   o.msgs.push({from:me,text:t});
+  if(hit) EV.unshift({id:++EVID,type:'mask',cid:o.cid,actor:me==='p'?'업체':'고객',text:`채팅 자동 가림: "${t.slice(0,40)}"`,when:nowStr(),status:'open'});
   if(hit) o.msgs.push({from:'sys',text:'연락처나 상호로 보이는 내용을 가렸어요. 매칭 확정 전 직접 연락을 유도하면 업체는 단계별 제재를 받습니다.'});
   route();
   if(role==='customer'){setTimeout(()=>{o.msgs.push({from:'p',text:AUTO[o.msgs.length%3]}); if(location.hash==='#chat-'+o.id) route();},900)}
@@ -666,6 +763,7 @@ function sendMsg(o,text){
 }
 function call050(o){
   const c=CID[o.cid];
+  if(o.status!=='matched') EV.unshift({id:++EVID,type:'call',cid:o.cid,actor:role==='customer'?'고객':'업체',text:'매칭 전 050 안심번호 통화 (매칭 여부 추적 중)',when:nowStr(),status:'open'});
   const m=$('#modal');
   m.innerHTML=`<div class="box"><span class="chip">050 안심번호</span><h2>${role==='customer'?dn(c,o.status==='matched'):'고객'}과 통화</h2>
   <p style="font-family:var(--display);font-size:28px;font-weight:700;user-select:all" class="num">0507-${1000+o.id}-${2000+o.cid}</p>
@@ -698,9 +796,9 @@ function happyCall(){
     const avg=vals.reduce((a,b)=>a+b,0)/vals.length*20;
     const before=score(c);
     c.happy=Math.round((c.happy*c.done+avg)/(c.done+1)); c.review=Math.round((c.review*c.done+avg)/(c.done+1)); c.match=Math.round((c.match*c.done+vals[1]*20)/(c.done+1)); c.done++;
-    if(m.querySelector('input[name="bypass"]:checked').value==='yes'){c.warn++; toast(`${c.name}에 직거래 유도 경고 1회가 기록되었어요.`)}
+    if(m.querySelector('input[name="bypass"]:checked').value==='yes'){EV.unshift({id:++EVID,type:'report',cid:c.id,actor:'고객',text:'해피콜: 사이트 밖 연락·계약 제안 신고',when:nowStr(),status:'warned'}); c.warn++; toast(`${c.name}에 직거래 유도 경고 1회가 기록되었어요.`)}
     else toast(`만족도 점수가 반영되었어요. ${c.name} ${before} → ${score(c)}점`);
-    r.stage=7; m.hidden=true; route();
+    r.stage=7; const h=HC.find(x=>x.rid===r.id); if(h) h.status='done'; m.hidden=true; route();
   };
 }
 
@@ -786,12 +884,89 @@ function vJoin(){
       <p class="small mute">모든 단계에서 소명 기회를 드립니다. 매칭 확정 후 장례 진행 중 통화는 제재 대상이 아닙니다.</p></div></aside></div>`;
 }
 
+/* ---------- 운영자 ---------- */
+let adminTab='overview';
+function nowStr(){const n=new Date();return `${n.getMonth()+1}.${n.getDate()} ${String(n.getHours()).padStart(2,'0')}:${String(n.getMinutes()).padStart(2,'0')}`}
+function addWarn(c,why){c.warn++; SLOG.unshift({cid:c.id,text:`경고 ${c.warn}회 → ${sanc(c)}. ${why}`,when:nowStr()}); toast(`${c.name}: 경고 ${c.warn}회, ${sanc(c)} 단계가 되었어요.`)}
+function approveApp(id){
+  const i=APPS.findIndex(x=>x.id===id), a=APPS[i];
+  const code=String.fromCharCode(71+C.length-6)+'-'+String(10+id*7).padStart(2,'0');
+  C.push({id:C.length+1,code,ceo:'OOO',addr:a.area+' OO로 00',tel:'1588-00'+(C.length+1),biz:'000-00-000'+(C.length+1),name:a.name,area:a.area,happy:0,review:0,match:0,speed:85,warn:0,done:0,since:2020,dir:5,cars:2,ver:'2026.11.19',isNew:true});
+  CID[C[C.length-1].id]=C[C.length-1]; APPS.splice(i,1);
+  toast(`${a.name} 신청을 승인했어요. 검증 파트너 ${code}로 고객 요청을 볼 수 있습니다.`); route();
+}
+function saveHC(id){
+  const h=HC.find(x=>x.id===id), c=CID[h.cid];
+  const vals=[0,1,2,3].map(i=>+$(`#hc-${id}-${i}`).value); const avg=vals.reduce((a,b)=>a+b,0)/4*20;
+  const before=score(c)??'신규';
+  c.happy=Math.round((c.happy*c.done+avg)/(c.done+1)); c.review=Math.round((c.review*c.done+avg)/(c.done+1)); c.match=Math.round((c.match*c.done+vals[1]*20)/(c.done+1)); c.done++; c.isNew=false;
+  if($(`#hc-${id}-b`).checked){EV.unshift({id:++EVID,type:'report',cid:c.id,actor:'고객',text:`해피콜 신고: ${$(`#hc-${id}-m`).value.trim()||'사이트 밖 연락·계약 제안'}`,when:nowStr(),status:'open'})}
+  h.status='done'; if(h.rid&&myReq&&myReq.id===h.rid&&myReq.stage<6) myReq.stage=6;
+  toast(`해피콜 결과를 저장했어요. ${c.name} ${before} → ${score(c)}점`); route();
+}
+const EVT={mask:'채팅 가림',call:'050 통화 후 이탈',report:'고객 신고'};
+function vAdmin(){
+  const hcWait=HC.filter(h=>h.status==='wait'), evOpen=EV.filter(e=>e.status==='open');
+  const xs=R.flatMap(r=>r.offers.flatMap(o=>(o.extrasReq||[]).map(x=>({x,o,r}))));
+  const xPend=xs.filter(v=>v.x.status==='pending');
+  const tabs=[['overview','현황',''],['verify','파트너 검증',APPS.length],['happy','해피콜',hcWait.length],['suspect','직거래 의심',evOpen.length],['sanction','제재 관리',C.filter(c=>c.warn).length],['extra','추가 비용',xPend.length],['floor','최소 금액 기준','']];
+  let body='';
+  if(adminTab==='overview') body=`<h1 style="font-size:clamp(22px,3vw,28px)">운영 현황</h1>
+    <div class="tiles num">
+      <button class="tile ${APPS.length?'alert':'ok'}" type="button" data-atab="verify"><b>${APPS.length}</b><span>검증 진행 중인 신청 업체</span></button>
+      <button class="tile ${hcWait.length?'alert':'ok'}" type="button" data-atab="happy"><b>${hcWait.length}</b><span>해피콜 대기</span></button>
+      <button class="tile ${evOpen.length?'alert':'ok'}" type="button" data-atab="suspect"><b>${evOpen.length}</b><span>확인 안 된 직거래 의심 건</span></button>
+      <button class="tile ${xPend.length?'alert':'ok'}" type="button" data-atab="extra"><b>${xPend.length}</b><span>고객 승인 대기 추가 비용</span></button>
+      <button class="tile" type="button" data-atab="sanction"><b>${C.length}</b><span>활동 중인 검증 파트너</span></button>
+      <button class="tile" type="button" data-atab="extra"><b>${R.filter(r=>r.status==='open').length}</b><span>제안을 기다리는 고객 요청</span></button>
+    </div>
+    <h2 style="margin-top:24px">재검증 예정</h2>
+    <div class="tblwrap" style="margin-top:10px"><table class="adm num"><thead><tr><th>파트너</th><th>업체</th><th>검증일</th><th>재검증 예정</th><th>제재 단계</th></tr></thead><tbody>
+    ${[...C].sort((a,b)=>a.ver.localeCompare(b.ver)).map(c=>`<tr><td>${c.code}</td><td><b>${c.name}</b></td><td>${c.ver}</td><td>${recheck(c.ver)}</td><td>${c.warn?`<span class="chip u">${sanc(c)}</span>`:'<span class="chip">정상</span>'}</td></tr>`).join('')}</tbody></table></div>`;
+  if(adminTab==='verify') body=`<h1 style="font-size:clamp(22px,3vw,28px)">파트너 검증</h1><p class="mute small">단계를 눌러 완료 표시합니다. 다섯 단계를 모두 마쳐야 승인할 수 있습니다.</p>
+    <div class="tblwrap"><table class="adm"><thead><tr><th>신청 업체</th><th>신청일</th><th>검증 단계</th><th class="r">처리</th></tr></thead><tbody>
+    ${APPS.map(a=>`<tr><td><b>${a.name}</b><br><span class="small mute">${a.area}</span></td><td class="num">${a.applied}</td>
+      <td><div class="pipe">${VSTEPS.map((v,i)=>`<button type="button" data-step="${a.id}:${i}" aria-pressed="${a.steps[i]}">${v[0]}</button>`).join('')}</div></td>
+      <td class="r"><div style="display:flex;gap:6px;justify-content:flex-end"><button class="btn sm" type="button" data-approve="${a.id}" ${a.steps.every(Boolean)?'':'disabled'}>승인</button><button class="btn sm ghost" type="button" data-decline="${a.id}">반려</button></div></td></tr>`).join('')||'<tr><td colspan="4" class="mute">검증 중인 신청이 없어요.</td></tr>'}
+    </tbody></table></div>`;
+  if(adminTab==='happy') body=`<h1 style="font-size:clamp(22px,3vw,28px)">해피콜</h1><p class="mute small">발인 2~3일 뒤 유족에게 전화해 4개 항목을 1~5점으로 묻고, 사이트 밖 연락 제안이 있었는지 확인합니다.</p>
+    <div class="tblwrap"><table class="adm num"><thead><tr><th>유족</th><th>업체</th><th>발인</th><th>친절·전문성 / 정산 일치 / 약속 이행 / 전반 만족</th><th class="r">저장</th></tr></thead><tbody>
+    ${HC.map(h=>{const c=CID[h.cid];return `<tr><td><b>${h.who}님</b><br><span class="small mute">${h.region} · ${h.type}</span></td><td>${c.name}</td><td>${h.end}</td>
+      <td>${h.status==='done'?'<span class="chip">조사 완료 · 점수 반영됨</span>':`<div class="hcrow">${[0,1,2,3].map(i=>`<select id="hc-${h.id}-${i}" aria-label="점수 ${i+1}">${[5,4,3,2,1].map(n=>`<option>${n}</option>`).join('')}</select>`).join('')}
+        <label class="small"><input type="checkbox" id="hc-${h.id}-b"> 직거래 제안 있음</label><input class="txt" id="hc-${h.id}-m" placeholder="통화 메모" style="max-width:180px"></div>`}</td>
+      <td class="r">${h.status==='done'?'':`<button class="btn sm" type="button" data-hcsave="${h.id}">저장</button>`}</td></tr>`}).join('')}
+    </tbody></table></div>`;
+  if(adminTab==='suspect') body=`<h1 style="font-size:clamp(22px,3vw,28px)">직거래 의심</h1><p class="mute small">채팅 자동 가림, 매칭 전 050 통화 후 이탈, 해피콜 신고가 자동으로 모입니다. 확인 후 경고를 주거나 무혐의로 종결합니다.</p>
+    <div class="tblwrap"><table class="adm num"><thead><tr><th>유형</th><th>업체</th><th>주체</th><th>내용</th><th>시각</th><th class="r">처리</th></tr></thead><tbody>
+    ${EV.map(e=>{const c=CID[e.cid];return `<tr><td><span class="chip ${e.type==='report'?'u':'w'}">${EVT[e.type]}</span></td><td>${c.name}<br><span class="small mute">${c.code} · 경고 ${c.warn}회</span></td><td>${e.actor}</td><td style="min-width:220px">${esc(e.text)}</td><td>${e.when}</td>
+      <td class="r">${e.status==='open'?`<div style="display:flex;gap:6px;justify-content:flex-end"><button class="btn sm" type="button" data-evwarn="${e.id}">경고 부여</button><button class="btn sm ghost" type="button" data-evclear="${e.id}">무혐의</button></div>`:e.status==='warned'?'<span class="chip u">경고 처리</span>':'<span class="chip n">종결</span>'}</td></tr>`}).join('')}
+    </tbody></table></div>`;
+  if(adminTab==='sanction') body=`<h1 style="font-size:clamp(22px,3vw,28px)">제재 관리</h1><p class="mute small">경고 1회 경고·5점 감점, 2회 노출 제한 30일, 3회 제안 정지 90일, 4회 계약 해지 검토. 소명이 인정되면 경고를 취소합니다.</p>
+    <div class="tblwrap"><table class="adm num"><thead><tr><th>업체</th><th>경고</th><th>현재 단계</th><th>사유·소명 메모</th><th class="r">처리</th></tr></thead><tbody>
+    ${C.map(c=>`<tr><td><b>${c.name}</b><br><span class="small mute">${c.code}</span></td><td>${c.warn}회</td><td>${c.warn?`<span class="chip u">${sanc(c)}</span>`:'<span class="chip">정상</span>'}</td>
+      <td><input class="txt" id="sm-${c.id}" placeholder="사유 또는 소명 내용"></td>
+      <td class="r"><div style="display:flex;gap:6px;justify-content:flex-end"><button class="btn sm" type="button" data-warnup="${c.id}">경고 +1</button><button class="btn sm ghost" type="button" data-warndown="${c.id}" ${c.warn?'':'disabled'}>소명 인정</button></div></td></tr>`).join('')}
+    </tbody></table></div>
+    <h2 style="margin-top:22px">처리 기록</h2>
+    <div class="panel" style="margin-top:10px;display:grid;gap:6px">${SLOG.map(l=>`<p class="small num"><b>${CID[l.cid].name}</b> · ${l.when} · ${esc(l.text)}</p>`).join('')||'<p class="small mute">아직 처리 기록이 없어요.</p>'}</div>`;
+  if(adminTab==='extra') body=`<h1 style="font-size:clamp(22px,3vw,28px)">추가 비용 현황</h1><p class="mute small">장례 중 업체가 보낸 추가 비용 요청과 고객 승인 결과입니다. 거절된 항목은 정산서에 넣을 수 없습니다.</p>
+    <div class="tblwrap"><table class="adm num"><thead><tr><th>업체</th><th>유족</th><th>항목</th><th class="r">금액</th><th>요청 시각</th><th>상태</th></tr></thead><tbody>
+    ${xs.map(({x,o,r})=>`<tr><td>${CID[o.cid].name}</td><td>${r.who}님 · ${r.sido} ${r.gu}</td><td><b>${esc(x.item)}</b><br><span class="small mute">${esc(x.reason)}</span></td><td class="r">+${man(x.amount)}</td><td>${x.at}</td><td>${xchip(x)}</td></tr>`).join('')||'<tr><td colspan="6" class="mute">추가 비용 요청이 없어요.</td></tr>'}
+    </tbody></table></div>`;
+  if(adminTab==='floor') body=`<h1 style="font-size:clamp(22px,3vw,28px)">최소 금액 기준</h1><p class="mute small">장례 형태별 기본 최소 금액입니다. 바꾸면 고객 요청서와 업체 제안에 바로 적용됩니다. 실제 매칭 금액을 보며 조정하세요.</p>
+    <div class="tblwrap"><table class="adm num"><thead><tr><th>장례 형태</th><th class="r">기본 최소 금액 (만원)</th><th>최근 요청 희망 금액</th></tr></thead><tbody>
+    ${Object.keys(BASE).map(k=>{const rs=R.filter(r=>r.type===k).map(r=>r.budget);return `<tr><td><b>${F.type.o[k]}</b></td><td class="r"><input class="txt num" data-base="${k}" value="${BASE[k]}" inputmode="numeric" style="max-width:100px;text-align:right" aria-label="${F.type.o[k]} 최소 금액"></td><td>${rs.length?rs.map(man).join(', '):'-'}</td></tr>`}).join('')}
+    </tbody></table></div>`;
+  return `<div class="admin"><nav class="atabs" aria-label="운영 메뉴">${tabs.map(([k,l,n])=>`<button type="button" data-atab="${k}" aria-pressed="${adminTab===k}">${l}${n!==''?`<span class="cnt">${n}</span>`:''}</button>`).join('')}</nav>
+    <div style="display:grid;gap:12px;min-width:0">${body}</div></div>`;
+}
+
 /* ---------- 라우팅 ---------- */
 function route(){
   const h=location.hash.slice(1)||(role==='customer'?'home':'board');
   const app=$('#app'); let html;
   if(h.startsWith('chat-')) html=vChat(+h.slice(5));
-  else html=({home:vHome,partners:vPartners,request:vRequest,my:vMy,board:vBoard,ptalk:vPtalk,ranking:vRanking,join:vJoin}[h]||vHome)();
+  else html=({admin:vAdmin,home:vHome,partners:vPartners,request:vRequest,my:vMy,board:vBoard,ptalk:vPtalk,ranking:vRanking,join:vJoin}[h]||vHome)();
   const keep=h===route.last; route.last=h;
   app.innerHTML=html; renderNav();
   if(h==='request'){updateFloor()}
@@ -799,7 +974,7 @@ function route(){
   if(!keep) window.scrollTo(0,0);
   if(h.startsWith('chat-')&&keep){const i=$('#msgIn'); i&&i.focus()}
 }
-function setRole(r){role=r; location.hash=r==='customer'?'home':'board'; route()}
+function setRole(r){role=r; location.hash=r==='customer'?'home':r==='admin'?'admin':'board'; route()}
 
 document.addEventListener('click',e=>{
   const t=e.target.closest('button,a'); if(!t) return;
@@ -818,7 +993,26 @@ document.addEventListener('click',e=>{
   if(d.domatch){const o=allOffers().find(x=>x.id===+d.domatch), r=RIDX()[o.rid]; o.status='matched'; r.status='matched'; r.stage=2;
     o.msgs.push({from:'sys',text:'매칭이 확정되었어요. 확정 견적서가 만들어졌고, 050 안심번호는 정산이 끝날 때까지 유지됩니다.'});
     $('#modal').hidden=true; toast('매칭을 확정했어요. 확정 견적서가 만들어졌습니다.'); route(); return}
-  if(t.hasAttribute('data-advance')){myReq.stage=(myReq.stage||2)+1; route(); return}
+  if(t.hasAttribute('data-advance')){myReq.stage=(myReq.stage||2)+1;
+    if(myReq.stage===3&&!myReq.xdemo){myReq.xdemo=true; const o=myReq.offers.find(x=>x.status==='matched');
+      setTimeout(()=>{if(myReq.stage!==3) return; addExtra(o,'의전도우미 시간 연장',16,'조문객이 예상보다 많아 도우미 2명을 저녁 4시간 연장해야 합니다.'); toast('알림톡: 추가 비용 승인 요청이 도착했어요.'); if(['#my','#chat-'+o.id].includes(location.hash)) route();},1200);}
+    if(myReq.stage===4){const o=myReq.offers.find(x=>x.status==='matched'); HC.unshift({id:++HCID,cid:o.cid,who:myReq.who,region:`${myReq.sido} ${myReq.gu}`,type:F.type.o[myReq.type],end:'오늘',status:'wait',rid:myReq.id});}
+    route(); return}
+  if(d.xok){decideExtra(d.xok,true);return}
+  if(d.xno){decideExtra(d.xno,false);return}
+  if(d.xadd){const o=allOffers().find(x=>x.id===+d.xadd); const a=+$('#xAmt').value.replace(/[^0-9]/g,''); const w=$('#xWhy').value.trim();
+    if(!a){toast('추가 금액을 입력해 주세요.');return} if(!w){toast('고객이 이해할 수 있게 사유를 적어 주세요.');return}
+    addExtra(o,$('#xItem').value,a,w); toast('고객에게 승인 요청을 보냈어요. 알림톡도 함께 발송됩니다.'); route();
+    if(o.rid!==myReq?.id){} return}
+  if(d.atab){adminTab=d.atab; route(); return}
+  if(d.step){const [aid,i]=d.step.split(':').map(Number); const a=APPS.find(x=>x.id===aid); a.steps[i]=!a.steps[i]; route(); return}
+  if(d.approve){approveApp(+d.approve);return}
+  if(d.decline){const i=APPS.findIndex(x=>x.id===+d.decline); toast(`${APPS[i].name} 신청을 반려했어요.`); APPS.splice(i,1); route(); return}
+  if(d.evwarn){const e=EV.find(x=>x.id===+d.evwarn); e.status='warned'; addWarn(CID[e.cid],`직거래 의심 건 확인: ${e.text}`); route(); return}
+  if(d.evclear){const e=EV.find(x=>x.id===+d.evclear); e.status='cleared'; toast('무혐의로 종결했어요.'); route(); return}
+  if(d.warnup){addWarn(CID[+d.warnup],$('#sm-'+d.warnup).value.trim()||'운영자 경고'); route(); return}
+  if(d.warndown){const c=CID[+d.warndown]; if(c.warn>0){c.warn--; SLOG.unshift({cid:c.id,text:`소명 인정, 경고 1회 취소. ${$('#sm-'+c.id).value.trim()}`,when:nowStr()}); toast(`${c.name} 경고를 1회 취소했어요.`)} route(); return}
+  if(d.hcsave){saveHC(+d.hcsave);return}
   if(t.hasAttribute('data-happy')){happyCall();return}
   if(d.star!==undefined){t.parentElement.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b===t));return}
   if(d.reprice){const o=allOffers().find(x=>x.id===+d.reprice), r=RIDX()[o.rid], v=+$('#newPrice').value.replace(/[^0-9]/g,''), fl=floorOf(r);
@@ -831,7 +1025,7 @@ document.addEventListener('change',e=>{
   if(e.target.name==='type'&&e.target.value==='home'){readForm(); Object.assign(draft,{place:'home',helpers:'h0'}); const s=window.scrollY; route(); window.scrollTo(0,s); return}
   readForm(); updateFloor();
 });
-document.addEventListener('input',e=>{ if(e.target.id==='budget'||e.target.id==='memo'){readForm(); updateFloor();} });
+document.addEventListener('input',e=>{ if(e.target.dataset.base){const v=+e.target.value.replace(/[^0-9]/g,''); if(v>0){BASE[e.target.dataset.base]=v;} return} if(e.target.id==='budget'||e.target.id==='memo'){readForm(); updateFloor();} });
 document.addEventListener('submit',e=>{
   if(e.target.id==='reqForm'){e.preventDefault(); readForm(); const fl=floorOf(draft); if(+draft.budget<fl.min){updateFloor();return}
     user?submitRequest():signup(submitRequest);}
@@ -842,6 +1036,7 @@ $('#modal').addEventListener('click',e=>{if(e.target.id==='modal') e.currentTarg
 document.addEventListener('keydown',e=>{if(e.key==='Escape') $('#modal').hidden=true});
 window.addEventListener('hashchange',route);
 if(['board','ptalk','join'].includes(location.hash.slice(1))) role='partner';
+if(location.hash==='#admin') role='admin';
 route();
 })();
 </script>
