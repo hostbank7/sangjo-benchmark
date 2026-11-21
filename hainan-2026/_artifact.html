@@ -398,22 +398,22 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
       <button class="btn btn-line" type="button" id="copyMail">메일 주소 복사</button>
       <button class="btn btn-line" type="button" id="copyTel">번호 복사 010-5622-6576</button>
       <a class="btn btn-line" id="sms" href="sms:01056226576">문자 앱 열기</a>
-      <button class="btn kk" type="button" data-kakao data-note="copyNote">카카오톡 (ID hoyaa7070)</button>
+      <a class="btn kk" href="https://open.kakao.com/o/s7UxV6Xi" target="_blank" rel="noopener">카카오톡 상담방</a>
     </div>
     <p id="copyNote" style="margin:0;color:var(--muted);font-size:.92rem">메일·문자 앱이 열리지 않으면 내용을 복사해 hostbank7@gmail.com 이나 010-5622-6576 로 직접 보내 주세요. 담당자 확인 후 신청이 확정됩니다.</p>
   </div>
 </div></section>
 </main>
 
-<nav class="dock" aria-label="빠른 연락"><a class="btn btn-line" href="tel:01056226576">전화</a><button class="btn kk" type="button" data-kakao data-note="kkNote">카톡</button><a class="btn btn-gold" href="#apply">참가 신청하기</a></nav>
+<nav class="dock" aria-label="빠른 연락"><a class="btn btn-line" href="tel:01056226576">전화</a><a class="btn kk" href="https://open.kakao.com/o/s7UxV6Xi" target="_blank" rel="noopener">카톡</a><a class="btn btn-gold" href="#apply">참가 신청하기</a></nav>
 
 <footer class="contact"><div class="wrap" style="padding-block:40px">
   <div class="card">
     <div class="who">참가 신청 및 상담 · WP 월드파크골프 고문이사 <b>고용호</b></div>
     <div class="tel">010-5622-6576</div>
-    <div class="kakao"><span>카카오톡 상담 · ID <b>hoyaa7070</b></span>
-      <button class="btn kk" type="button" data-kakao data-note="kkNote">카카오톡으로 문의하기</button>
-      <small id="kkNote">카카오톡 → 친구 추가 → ID로 추가 → hoyaa7070</small></div>
+    <div class="kakao"><span><b>카카오톡 1:1 상담</b></span>
+      <a class="btn kk" href="https://open.kakao.com/o/s7UxV6Xi" target="_blank" rel="noopener">카카오톡으로 바로 상담하기</a>
+      <small>누르면 고용호 고문이사와 1:1 상담방이 바로 열립니다 (친구 추가 필요 없음)</small></div>
     <small>신청 메일 hostbank7@gmail.com · 국내 진행 투어유니버스 · 최소 출발 인원 100명 · 전세기 좌석 소진 시 조기 마감</small>
   </div>
 </div></footer>
@@ -493,18 +493,6 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
     phone.value=d.length<4?d:d.length<8?d.slice(0,3)+'-'+d.slice(3):d.slice(0,3)+'-'+d.slice(3,d.length-4)+'-'+d.slice(-4);
   });
 
-  // 카카오톡: ID 복사 후 카카오톡 앱 열기
-  var KAKAO_ID='hoyaa7070';
-  Array.prototype.forEach.call(document.querySelectorAll('[data-kakao]'),function(b){
-    b.addEventListener('click',function(){
-      var note=document.getElementById(b.getAttribute('data-note'));
-      function say(t){if(note) note.textContent=t;}
-      function open(){setTimeout(function(){location.href='kakaotalk://launch'},400);}
-      if(navigator.clipboard&&navigator.clipboard.writeText){
-        navigator.clipboard.writeText(KAKAO_ID).then(function(){say('ID를 복사했습니다. 카카오톡 → 친구 추가 → ID로 추가에 붙여 넣어 주세요.');open();},
-          function(){say('카카오톡 → 친구 추가 → ID로 추가에서 hoyaa7070 을 검색해 주세요.');open();});
-      } else {say('카카오톡 → 친구 추가 → ID로 추가에서 hoyaa7070 을 검색해 주세요.');open();}
-    });
   });
 })();
 </script>
