@@ -335,7 +335,7 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--gold);outline-of
 
 <section id="apply"><div class="wrap">
   <div class="head"><span class="eyebrow">APPLICATION</span><h2>참가 신청서</h2>
-    <p style="margin:0;color:var(--muted)">아래를 작성하면 신청 문자가 만들어집니다. 복사해서 고용호 고문이사(010-5622-6576)에게 문자나 카카오톡으로 보내 주세요. 담당자가 확인 후 계약금과 여권 정보를 안내해 드립니다.</p></div>
+    <p style="margin:0;color:var(--muted)">아래를 작성하고 <b>이메일로 신청 보내기</b>를 누르면 신청 메일이 자동으로 작성됩니다. 문자나 카카오톡으로 고용호 고문이사(010-5622-6576)에게 보내셔도 됩니다. 담당자가 확인 후 계약금과 여권 정보를 안내해 드립니다.</p></div>
   <form id="f" novalidate>
     <div class="row">
       <label for="name">성명 (대표 신청자) <em>*</em><input id="name" autocomplete="name" placeholder="홍길동"></label>
@@ -361,14 +361,16 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--gold);outline-of
     <button class="btn submit" type="submit">신청 문자 만들기</button>
   </form>
   <div class="result" id="result" hidden>
-    <b>아래 내용을 복사해 010-5622-6576 로 보내 주세요</b>
+    <b>아래 내용을 이메일(hostbank7@gmail.com) 또는 문자(010-5622-6576)로 보내 주세요</b>
     <pre id="msg"></pre>
     <div class="actions">
-      <button class="btn btn-gold" type="button" id="copyMsg">신청 내용 복사</button>
+      <a class="btn btn-gold" id="mail" href="mailto:hostbank7@gmail.com">이메일로 신청 보내기</a>
+      <button class="btn btn-line" type="button" id="copyMsg">신청 내용 복사</button>
+      <button class="btn btn-line" type="button" id="copyMail">메일 주소 복사</button>
       <button class="btn btn-line" type="button" id="copyTel">번호 복사 010-5622-6576</button>
       <a class="btn btn-line" id="sms" href="sms:01056226576">문자 앱 열기</a>
     </div>
-    <p id="copyNote" style="margin:0;color:var(--muted);font-size:.92rem">문자 앱이 열리지 않으면 내용을 복사한 뒤 직접 보내 주세요. 담당자 확인 후 신청이 확정됩니다.</p>
+    <p id="copyNote" style="margin:0;color:var(--muted);font-size:.92rem">메일·문자 앱이 열리지 않으면 내용을 복사해 hostbank7@gmail.com 이나 010-5622-6576 로 직접 보내 주세요. 담당자 확인 후 신청이 확정됩니다.</p>
   </div>
 </div></section>
 </main>
@@ -377,7 +379,7 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--gold);outline-of
   <div class="card">
     <div class="who">참가 신청 및 상담 · WP 월드파크골프 고문이사 <b>고용호</b></div>
     <div class="tel">010-5622-6576</div>
-    <small>국내 진행 투어유니버스 · 최소 출발 인원 100명 · 전세기 좌석 소진 시 조기 마감</small>
+    <small>신청 메일 hostbank7@gmail.com · 국내 진행 투어유니버스 · 최소 출발 인원 100명 · 전세기 좌석 소진 시 조기 마감</small>
   </div>
 </div></footer>
 
@@ -402,6 +404,7 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--gold);outline-of
     if(noteEl) noteEl.textContent='자동 복사가 막혀 있습니다. 내용을 길게 눌러 직접 복사해 주세요.';
   }
   $('copyTelTop').addEventListener('click',()=>copy('010-5622-6576',$('telMsgTop'),'번호를 복사했습니다. 전화나 문자로 연락 주세요.'));
+  $('copyMail').addEventListener('click',()=>copy('hostbank7@gmail.com',$('copyNote'),'메일 주소를 복사했습니다.'));
   $('copyTel').addEventListener('click',()=>copy('010-5622-6576',$('copyNote'),'번호를 복사했습니다.'));
   $('copyMsg').addEventListener('click',()=>{
     copy($('msg').textContent,$('copyNote'),'신청 내용을 복사했습니다. 010-5622-6576 로 붙여넣어 보내 주세요.');
@@ -435,6 +438,7 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--gold);outline-of
     ].filter(Boolean);
     const text=lines.join('\n');
     $('msg').textContent=text;
+    $('mail').href='mailto:hostbank7@gmail.com?subject='+encodeURIComponent('[하이난 파크골프 국제오픈 참가신청] '+v('name'))+'&body='+encodeURIComponent(text);
     $('sms').href='sms:01056226576?body='+encodeURIComponent(text);
     $('result').hidden=false;
     $('result').scrollIntoView({block:'start'});
