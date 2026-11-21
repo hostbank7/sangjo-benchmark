@@ -133,6 +133,9 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--gold);outline-of
 .contact .who{font-size:1rem;opacity:.9}
 .contact .tel{font-family:var(--serif);font-size:clamp(1.9rem,7vw,2.6rem);font-weight:800;color:#ffd88a;letter-spacing:.02em;font-variant-numeric:tabular-nums;user-select:all}
 .contact small{opacity:.8}
+.kk{background:#FEE500;color:#191919}
+.contact .kakao{display:grid;gap:6px;justify-items:center;margin-top:6px}
+.contact .kakao b{color:#ffd88a}
 
 /* prize band */
 .jackpot{background:linear-gradient(180deg,#0b3a28,#0f4a33);color:#fff;border-top:0;padding-block:34px}
@@ -198,10 +201,10 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
   input,select,textarea{font-size:1.1rem;min-height:56px}
   .btn{width:100%;justify-content:center;font-size:1.12rem;min-height:58px}
   .cta{flex-direction:column}
-  .dock{display:grid;grid-template-columns:1fr 1.3fr;gap:8px;position:fixed;left:0;right:0;bottom:0;z-index:20;
+  .dock{display:grid;grid-template-columns:1fr 1fr 1.6fr;gap:8px;position:fixed;left:0;right:0;bottom:0;z-index:20;
     padding:10px max(12px,env(safe-area-inset-right,0px)) calc(10px + env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-left,0px));
     background:var(--paper);border-top:1px solid var(--line);box-shadow:0 -4px 16px rgba(0,0,0,.12)}
-  .dock a{min-height:54px;font-size:1.08rem;padding:10px}
+  .dock a,.dock button{min-height:54px;font-size:1.08rem;padding:10px}
 }
 </style>
 </head>
@@ -408,18 +411,22 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
       <button class="btn btn-line" type="button" id="copyMail">메일 주소 복사</button>
       <button class="btn btn-line" type="button" id="copyTel">번호 복사 010-5622-6576</button>
       <a class="btn btn-line" id="sms" href="sms:01056226576">문자 앱 열기</a>
+      <button class="btn kk" type="button" data-kakao data-note="copyNote">카카오톡 (ID hoyaa7070)</button>
     </div>
     <p id="copyNote" style="margin:0;color:var(--muted);font-size:.92rem">메일·문자 앱이 열리지 않으면 내용을 복사해 hostbank7@gmail.com 이나 010-5622-6576 로 직접 보내 주세요. 담당자 확인 후 신청이 확정됩니다.</p>
   </div>
 </div></section>
 </main>
 
-<nav class="dock" aria-label="빠른 연락"><a class="btn btn-line" href="tel:01056226576">전화 상담</a><a class="btn btn-gold" href="#apply">참가 신청하기</a></nav>
+<nav class="dock" aria-label="빠른 연락"><a class="btn btn-line" href="tel:01056226576">전화</a><button class="btn kk" type="button" data-kakao data-note="kkNote">카톡</button><a class="btn btn-gold" href="#apply">참가 신청하기</a></nav>
 
 <footer class="contact"><div class="wrap" style="padding-block:40px">
   <div class="card">
     <div class="who">참가 신청 및 상담 · WP 월드파크골프 고문이사 <b>고용호</b></div>
     <div class="tel">010-5622-6576</div>
+    <div class="kakao"><span>카카오톡 상담 · ID <b>hoyaa7070</b></span>
+      <button class="btn kk" type="button" data-kakao data-note="kkNote">카카오톡으로 문의하기</button>
+      <small id="kkNote">카카오톡 → 친구 추가 → ID로 추가 → hoyaa7070</small></div>
     <a class="btn btn-ghost" style="justify-self:center;margin-block:6px" href="hainan-parkgolf-brochure.pdf" target="_blank" rel="noopener">팸플릿 PDF 내려받기</a>
     <small>신청 메일 hostbank7@gmail.com · 국내 진행 투어유니버스 · 최소 출발 인원 100명 · 전세기 좌석 소진 시 조기 마감</small>
   </div>
@@ -498,6 +505,20 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
   phone.addEventListener('input',()=>{
     let d=phone.value.replace(/\D/g,'');if(d.length>11&&/^010/.test(d)) d=d.slice(3);d=d.slice(0,11);
     phone.value=d.length<4?d:d.length<8?d.slice(0,3)+'-'+d.slice(3):d.slice(0,3)+'-'+d.slice(3,d.length-4)+'-'+d.slice(-4);
+  });
+
+  // 카카오톡: ID 복사 후 카카오톡 앱 열기
+  var KAKAO_ID='hoyaa7070';
+  Array.prototype.forEach.call(document.querySelectorAll('[data-kakao]'),function(b){
+    b.addEventListener('click',function(){
+      var note=document.getElementById(b.getAttribute('data-note'));
+      function say(t){if(note) note.textContent=t;}
+      function open(){setTimeout(function(){location.href='kakaotalk://launch'},400);}
+      if(navigator.clipboard&&navigator.clipboard.writeText){
+        navigator.clipboard.writeText(KAKAO_ID).then(function(){say('ID를 복사했습니다. 카카오톡 → 친구 추가 → ID로 추가에 붙여 넣어 주세요.');open();},
+          function(){say('카카오톡 → 친구 추가 → ID로 추가에서 hoyaa7070 을 검색해 주세요.');open();});
+      } else {say('카카오톡 → 친구 추가 → ID로 추가에서 hoyaa7070 을 검색해 주세요.');open();}
+    });
   });
 })();
 </script>
