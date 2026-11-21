@@ -123,6 +123,7 @@ footer small{opacity:.85;font-size:.85rem}
     for(var i=0;i<=n;i++) single.add(new Option(i===0?'안 함':i+'명',i));
     single.value=Math.min(c,n);calc()}
   count.addEventListener('change',fillSingle);single.addEventListener('change',calc);fillSingle();
+  if(/[?&]ok=1/.test(location.search)){$('f').hidden=true;$('done').hidden=false;$('msg').hidden=true;}
 
   // 휴대폰 번호: 숫자만 받아 010-1234-5678 형태로 자동 하이픈
   var phone=$('phone');
@@ -133,8 +134,18 @@ footer small{opacity:.85;font-size:.85rem}
   phone.addEventListener('input',fmtPhone);
   phone.addEventListener('focus',function(){if(!phone.value) phone.value='010-';setTimeout(function(){var l=phone.value.length;try{phone.setSelectionRange(l,l)}catch(e){}},0)});
 
-  var ENDPOINT='https://formsubmit.co/ajax/hostbank7@gmail.com';
+
+  // 신청 내용을 FormSubmit 으로 일반 폼 전송(페이지 이동). 끝나면 _next 주소로 돌아옴.
+  function postToMail(fields, next){
+    var f=document.createElement('form');
+    f.method='POST'; f.action='https://formsubmit.co/hostbank7@gmail.com'; f.acceptCharset='UTF-8'; f.style.display='none';
+    fields._next=next; fields._captcha='false'; fields._template='table';
+    for(var k in fields){var i=document.createElement('input');i.type='hidden';i.name=k;i.value=fields[k];f.appendChild(i);}
+    document.body.appendChild(f); f.submit();
+  }
+  var ONLINE=/github\.io$/.test(location.hostname);
   function showFallback(text){
+    $('msg').hidden=false;
     $('doneTitle').textContent='전송하지 못했습니다';
     $('doneText').textContent='인터넷 연결 문제로 신청이 전송되지 않았습니다. 아래 버튼으로 문자나 메일을 보내 주시거나 010-5622-6576 으로 전화 주세요.';
     $('fallback').hidden=false;
@@ -158,14 +169,11 @@ footer small{opacity:.85;font-size:.85rem}
     $('sms').href='sms:01056226576?body='+encodeURIComponent(text);
     if($('hp').value) return;
     var btn=$('send');btn.disabled=true;btn.textContent='보내는 중…';
-    fetch(ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},
-      body:JSON.stringify({_subject:'[참가신청] '+v('name')+' '+n+'명 · 하이난 파크골프 국제오픈대회',_template:'table',_captcha:'false',
-        '성명':v('name'),'연락처':v('phone'),'참가 인원':n+'명','1인실':s?s+'명':'안 함',
-        '동반자':v('companions')||'-','소속':v('club')||'-','예상 참가비':won(n*PRICE+s*SINGLE)})})
-    .then(function(r){return r.json().then(function(j){if(!r.ok||String(j.success)!=='true') throw j;})})
-    .then(function(){$('f').hidden=true;$('fallback').hidden=true;})
-    .catch(function(){showFallback(text);btn.disabled=false;btn.textContent='다시 신청하기';})
-    .then(function(){$('done').hidden=false;$('done').scrollIntoView({block:'start'});});
+    var fields={_subject:'[참가신청] '+v('name')+' '+n+'명 · 하이난 파크골프 국제오픈대회',
+      '성명':v('name'),'연락처':v('phone'),'참가 인원':n+'명','1인실':s?s+'명':'안 함',
+      '동반자':v('companions')||'-','소속':v('club')||'-','예상 참가비':won(n*PRICE+s*SINGLE)};
+    if(!ONLINE){showFallback(text);btn.disabled=false;btn.textContent='신청하기';$('done').hidden=false;$('done').scrollIntoView({block:'start'});return;}
+    postToMail(fields, location.origin+location.pathname+'?ok=1');
   });
   $('copy').addEventListener('click',function(){
     var t=$('msg').textContent;
