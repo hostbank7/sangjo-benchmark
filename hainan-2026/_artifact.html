@@ -1,0 +1,475 @@
+<title>하이난 미션힐스 파크골프 국제오픈</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@600;800&family=Noto+Sans+KR:wght@400;500;700;800&display=swap">
+<style>
+/* Layout: invitation card on top (photo + gold frame), then a single reading column of facts, schedule, prizes, and an application form that turns into a text message. */
+:root{
+  --bg:#f6f8f4; --paper:#ffffff; --ink:#15241d; --muted:#55645c; --line:#d9e2da;
+  --green:#0f4a33; --green-2:#17694a; --gold:#a8761c; --gold-soft:#f3e7cc; --red:#b42318;
+  --on-green:#ffffff; --chip:#e8f1ea;
+  --serif:"Noto Serif KR","Nanum Myeongjo",Georgia,serif;
+  --sans:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0d1612; --paper:#14211b; --ink:#e9efe9; --muted:#a3b2a9; --line:#2a3a32;
+  --green:#123d2c; --green-2:#5fc497; --gold:#e0b45c; --gold-soft:#3a2f18; --red:#ff8a7a;
+  --on-green:#f3f7f4; --chip:#1c2d25; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0d1612; --paper:#14211b; --ink:#e9efe9; --muted:#a3b2a9; --line:#2a3a32;
+  --green:#123d2c; --green-2:#5fc497; --gold:#e0b45c; --gold-soft:#3a2f18; --red:#ff8a7a;
+  --on-green:#f3f7f4; --chip:#1c2d25; color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:17px;line-height:1.7;word-break:keep-all}
+.wrap{max-width:860px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{text-wrap:balance;margin:0}
+h2{font-family:var(--serif);font-size:1.6rem;color:var(--green-2);line-height:1.35}
+:root:not([data-theme="dark"]) h2{color:var(--green)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) h2{color:var(--green-2)}}
+.eyebrow{font-size:.8rem;letter-spacing:.14em;color:var(--gold);font-weight:700}
+section{padding-block:44px;border-top:1px solid var(--line)}
+section .head{display:grid;gap:6px;margin-bottom:22px}
+
+/* hero */
+.hero{background:var(--green);color:var(--on-green)}
+.hero-photo{display:block;width:100%;max-width:100%;aspect-ratio:1400/469;object-fit:cover}
+.hero .wrap{padding-block:30px 36px;display:grid;gap:18px}
+.frame{border:1.5px solid #c9a24f;outline:1px solid rgba(201,162,79,.45);outline-offset:5px;padding:26px 20px;display:grid;gap:12px;text-align:center}
+.frame .kicker{font-size:.86rem;letter-spacing:.06em;color:#e6c77f;font-weight:700}
+.frame .invite{font-family:var(--serif);font-size:1.15rem;color:#f1dfae}
+.frame h1{font-family:var(--serif);font-weight:800;font-size:clamp(1.75rem,5.4vw,2.7rem);line-height:1.25}
+.frame h1 span{display:block;color:#e8c06a}
+.frame .zh{font-size:.86rem;opacity:.85}
+.purse{display:block;margin-top:4px;padding:10px 12px;border-radius:8px;background:#e3b85a;color:#1c1606;font-weight:700;text-decoration:none;font-size:1rem}
+.purse b{font-size:1.25rem;font-weight:800}
+.facts{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.18)}
+.facts div{background:var(--green);padding:12px 10px;text-align:center;display:grid;gap:2px}
+.facts b{font-size:1.08rem}
+.facts small{font-size:.78rem;opacity:.8}
+.facts .price{color:#ffd88a;font-size:1.35rem}
+.cta{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+.btn{font:inherit;font-weight:800;font-size:1.05rem;border-radius:10px;padding:14px 22px;border:0;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:8px;min-height:52px}
+.btn-gold{background:#e3b85a;color:#1c1606}
+.btn-ghost{background:transparent;color:inherit;border:1.5px solid currentColor}
+.btn:focus-visible{outline:3px solid #ffd88a;outline-offset:2px}
+.trust{font-size:.86rem;text-align:center;opacity:.9}
+
+/* letter */
+.letter p{margin:0 0 12px}
+.sign{text-align:right;font-family:var(--serif);font-weight:600}
+
+/* table */
+.spec{width:100%;border-collapse:collapse;background:var(--paper)}
+.spec th,.spec td{padding:12px 14px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+.spec th{width:7.5em;color:var(--muted);font-weight:700;background:var(--chip);white-space:nowrap}
+.flight{font-variant-numeric:tabular-nums}
+.hl{color:var(--red);font-weight:800}
+
+/* days */
+.days{display:grid;gap:14px}
+.day{display:grid;grid-template-columns:96px 1fr;background:var(--paper);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.day .d{background:var(--green);color:var(--on-green);padding:14px 10px;text-align:center;display:grid;align-content:start;gap:2px}
+.day .d b{font-size:1.15rem}
+.day .d small{font-size:.82rem;opacity:.85}
+.day .c{padding:14px 16px;min-width:0}
+.day .c h3{font-size:1.06rem;margin-bottom:6px}
+.day ul{margin:0;padding-left:1.1em}
+.day li{margin:2px 0}
+.tag{display:inline-block;font-size:.76rem;font-weight:700;padding:1px 8px;border-radius:99px;background:var(--gold-soft);color:var(--gold);margin-right:6px;vertical-align:2px}
+.meal{margin-top:8px;font-size:.84rem;color:var(--muted)}
+
+/* prizes */
+.prizes{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.prize{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:18px 16px;display:grid;gap:6px;align-content:start}
+.prize .rank{font-weight:800;color:var(--gold)}
+.prize .amt{font-family:var(--serif);font-size:1.45rem;font-weight:800}
+.prize p{margin:0;color:var(--muted);font-size:.93rem}
+.gift{margin-top:12px;padding:14px 16px;border-radius:12px;background:var(--gold-soft);font-size:.95rem}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.box{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:16px 18px;min-width:0}
+.box h3{font-size:1.05rem;margin-bottom:8px}
+.box ul{margin:0;padding-left:1.1em}
+.why{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.why div{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.why b{display:block;color:var(--green-2)}
+:root:not([data-theme="dark"]) .why b{color:var(--green)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .why b{color:var(--green-2)}}
+.why span{font-size:.93rem;color:var(--muted)}
+.photo{width:100%;max-width:100%;border-radius:12px;display:block;margin-top:14px}
+
+/* form */
+form{display:grid;gap:14px;background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:20px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+label{display:grid;gap:5px;font-weight:700;font-size:.95rem}
+label em{font-style:normal;color:var(--red)}
+input,select,textarea{font:inherit;font-weight:400;font-size:1rem;padding:12px;border:1.5px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);width:100%;min-height:50px}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--gold);outline-offset:1px}
+.check{display:flex;gap:10px;align-items:flex-start;font-weight:400;font-size:.9rem;color:var(--muted)}
+.check input{width:22px;min-height:22px;height:22px;margin-top:3px;flex:none}
+.total{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:6px;padding:12px 14px;background:var(--chip);border-radius:8px}
+.total b{font-size:1.3rem;font-variant-numeric:tabular-nums}
+.submit{background:var(--green);color:var(--on-green);justify-content:center}
+.err{color:var(--red);font-weight:700;margin:0}
+.result{margin-top:16px;background:var(--paper);border:2px solid var(--gold);border-radius:14px;padding:20px;display:grid;gap:12px}
+.result pre{white-space:pre-wrap;word-break:break-all;margin:0;padding:14px;background:var(--bg);border-radius:8px;font-family:var(--sans);font-size:.95rem;user-select:all}
+.result .actions{display:flex;flex-wrap:wrap;gap:10px}
+.btn-line{background:var(--chip);color:var(--ink)}
+
+/* contact */
+.contact{background:var(--green);color:var(--on-green);border-top:0}
+.contact .card{display:grid;gap:8px;text-align:center}
+.contact .who{font-size:1rem;opacity:.9}
+.contact .tel{font-family:var(--serif);font-size:clamp(1.9rem,7vw,2.6rem);font-weight:800;color:#ffd88a;letter-spacing:.02em;font-variant-numeric:tabular-nums;user-select:all}
+.contact small{opacity:.8}
+
+/* prize band */
+.jackpot{background:linear-gradient(180deg,#0b3a28,#0f4a33);color:#fff;border-top:0;padding-block:34px}
+.jackpot .lead{text-align:center;display:grid;gap:4px;margin-bottom:18px}
+.jackpot .lead b{font-family:var(--serif);font-size:clamp(1.3rem,4.2vw,1.8rem);color:#ffd88a}
+.jackpot .lead span{opacity:.85;font-size:.95rem}
+.podium{display:grid;grid-template-columns:1.25fr 1fr 1fr;gap:12px;align-items:stretch}
+.pod{border-radius:14px;padding:18px 16px;display:grid;gap:6px;align-content:start;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.18)}
+.pod.gold{background:linear-gradient(160deg,#f4d58a,#c99a3c);color:#1d1503;border:0}
+.pod .r{font-weight:800;font-size:.95rem;letter-spacing:.04em}
+.pod .won{font-family:var(--serif);font-weight:800;font-size:clamp(1.9rem,6vw,2.6rem);line-height:1.1}
+.pod .won small{font-size:.5em}
+.pod p{margin:0;font-size:.92rem;opacity:.92}
+.pod .sum{margin-top:4px;padding-top:8px;border-top:1px dashed currentColor;font-weight:800}
+.jackpot .note{text-align:center;margin:14px 0 0;font-size:.95rem}
+.jackpot .note b{color:#ffd88a}
+
+/* exchange */
+.pillars{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.pillar{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:16px 18px;display:grid;gap:4px;min-width:0}
+.pillar .zh2{font-size:.82rem;color:var(--gold);font-weight:700}
+.pillar b{font-size:1.04rem}
+.pillar span{font-size:.93rem;color:var(--muted)}
+.quote{margin-top:14px;padding:16px 18px;border-left:4px solid var(--gold);background:var(--gold-soft);border-radius:0 12px 12px 0;font-size:.98rem}
+
+/* value */
+.value{display:grid;grid-template-columns:1fr 1.3fr;gap:14px;align-items:start}
+.calc{background:var(--green);color:var(--on-green);border-radius:14px;padding:20px;display:grid;gap:10px}
+.calc .big{font-family:var(--serif);font-weight:800;font-size:2.4rem;color:#ffd88a;line-height:1.1;font-variant-numeric:tabular-nums}
+.calc .line{display:flex;justify-content:space-between;gap:10px;border-top:1px solid rgba(255,255,255,.2);padding-top:8px;font-size:.95rem}
+.calc .line b{font-variant-numeric:tabular-nums}
+.inc{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.inc li{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:.93rem;display:flex;gap:8px;align-items:flex-start;min-width:0}
+.inc li::before{content:"✓";color:var(--green-2);font-weight:800}
+
+@media (max-width:640px){
+  .podium,.pillars,.value,.inc{grid-template-columns:1fr}
+  .facts{grid-template-columns:repeat(2,1fr)}
+  .prizes,.two,.why,.row{grid-template-columns:1fr}
+  .day{grid-template-columns:1fr}
+  .day .d{display:flex;gap:10px;align-items:baseline;justify-content:flex-start;text-align:left;padding:10px 16px}
+  .spec th{width:5.5em;white-space:normal}
+}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+
+/* phone: bigger type, sticky action bar */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+.dock{display:none}
+@media (max-width:640px){
+  body{font-size:19px;line-height:1.75;padding-bottom:calc(76px + env(safe-area-inset-bottom,0px))}
+  h2{font-size:1.55rem}
+  .frame{padding:22px 14px}
+  .frame .kicker{font-size:.9rem}
+  .frame h1{font-size:2rem}
+  .facts b{font-size:1.15rem}
+  .facts small{font-size:.85rem}
+  .spec th,.spec td{display:block;width:auto;padding:8px 12px}
+  .spec th{border-bottom:0;padding-bottom:2px;background:transparent;color:var(--gold);font-size:.88rem}
+  .spec td{padding-top:0}
+  .day .c h3{font-size:1.12rem}
+  .meal,.pillar span,.prize p,.inc li,.why span{font-size:1rem}
+  .pod p{font-size:1rem}
+  input,select,textarea{font-size:1.1rem;min-height:56px}
+  .btn{width:100%;justify-content:center;font-size:1.12rem;min-height:58px}
+  .cta{flex-direction:column}
+  .dock{display:grid;grid-template-columns:1fr 1.3fr;gap:8px;position:fixed;left:0;right:0;bottom:0;z-index:20;
+    padding:10px max(12px,env(safe-area-inset-right,0px)) calc(10px + env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-left,0px));
+    background:var(--paper);border-top:1px solid var(--line);box-shadow:0 -4px 16px rgba(0,0,0,.12)}
+  .dock a{min-height:54px;font-size:1.08rem;padding:10px}
+}
+</style>
+
+<header class="hero">
+  <img class="hero-photo" src="img/hero.jpg" alt="하이난 미션힐스 리조트 코스를 걷는 파크골프 참가자들">
+  <div class="wrap">
+    <div class="frame">
+      <div class="kicker">중국 국가체육총국 주최 · 하이난성 공식 후원</div>
+      <div class="invite">귀하를 정중히 초대합니다</div>
+      <h1>2026 하이난 미션힐스<span>한·중 파크골프 국제오픈</span></h1>
+      <div class="zh">2026中国帕克球巡回赛·海南观澜湖中韩国际公开赛</div>
+      <a class="purse" href="#prize">우승 현금 <b>300만원</b> + 투어 상품권 · 준우승 현금 <b>200만원</b></a>
+    </div>
+    <div class="facts">
+      <div><small>대회 기간</small><b>12.27(일) ~ 1.1(금)</b><small>4박 6일 · 단 1회</small></div>
+      <div><small>항공</small><b>티웨이 직항 전세기</b><small>인천 ↔ 하이커우</small></div>
+      <div><small>1인 참가비</small><b class="price">159만원</b><small>항공·숙박·식사·그린피 포함</small></div>
+      <div><small>모집 인원</small><b>100명 이상</b><small>전세기 출발 기준</small></div>
+    </div>
+    <div class="cta">
+      <a class="btn btn-gold" href="#apply">참가 신청서 작성</a>
+      <button class="btn btn-ghost" type="button" id="copyTelTop">상담 010-5622-6576 번호 복사</button>
+    </div>
+    <p class="trust" id="telMsgTop">WP 월드파크골프 고용호 고문이사가 직접 안내해 드립니다</p>
+  </div>
+</header>
+
+<main>
+<section class="jackpot" id="prize"><div class="wrap">
+  <div class="lead"><span>각 부문별 시상 · 참가자 전원 선수팩 증정</span><b>우승하면 현금 300만원에 하이난 여행이 한 번 더</b></div>
+  <div class="podium">
+    <div class="pod gold"><span class="r">1위 우승</span><span class="won">300<small>만원</small></span><p>현금 300만원 + 하이난 미션힐스 파크골프 투어 상품권 (왕복항공·5성급 숙박·전 일정 식사, 159만원 상당)</p><span class="sum">총 459만원 상당 · 참가비의 약 2.9배</span></div>
+    <div class="pod"><span class="r">2위 준우승</span><span class="won">200<small>만원</small></span><p>현금 200만원 + 최고급 프리미엄 파크골프채 1개</p><span class="sum">현금 + 명품 클럽</span></div>
+    <div class="pod"><span class="r">3위 · 본선 입상</span><span class="won" style="font-size:1.9rem">상금·트로피</span><p>부문별 상금과 트로피, 공인 상장 수여</p><span class="sum">국제대회 공인 입상 기록</span></div>
+  </div>
+  <p class="note">참가자 <b>전원</b>에게 공식 공인구·기념 모자·파크골프 타월 웰컴 선수팩을 드립니다</p>
+</div></section>
+
+<section class="letter"><div class="wrap">
+  <div class="head"><span class="eyebrow">INVITATION</span><h2>초대의 글</h2></div>
+  <p>추운 한국의 겨울, 연평균 24℃의 따뜻한 하이난에서 한 해를 마무리하시면 어떨까요.</p>
+  <p>중국 국가체육총국이 주최하고 하이난성이 공식 후원하는 <b>「2026 하이난 미션힐스 한·중 파크골프 국제오픈」</b>에 한국 파크골프 동호인 여러분을 초대합니다. 세계적인 미션힐스 리조트 단지 안의 파크골프장에서 공식 대회를 치르고, 저녁에는 천연 화산암 온천에서 쉬는 4박 6일입니다.</p>
+  <p>티웨이항공 단독 전세기로 인천에서 하이커우까지 한 번에 이동하며, 숙소를 옮기지 않는 5성급 원스톱 일정이라 체력 부담이 적습니다. 2026년 송년과 2027년 새해를 한·중 동호인과 함께 맞이하는 단 한 번의 행사에 귀한 걸음 부탁드립니다.</p>
+  <p class="sign">WP 월드파크골프 고문이사 고용호 드림</p>
+</div></section>
+
+<section><div class="wrap">
+  <div class="head"><span class="eyebrow">KOREA · CHINA</span><h2>한·중 민간 체육 교류의 새로운 장</h2>
+    <p style="margin:0;color:var(--muted)">양국 정부 기관이 함께하는 공식 국제대회입니다. 한국 동호인이 중국 국가 공인 투어 무대에 직접 섭니다.</p></div>
+  <div class="pillars">
+    <div class="pillar"><span class="zh2">中国帕克球巡回赛</span><b>중국 국가 공인 파크골프 투어 대회</b><span>중국 국가체육총국 소구운동관리센터가 운영하는 전국 규격 순회경기 브랜드로 치러지는 공식 경기입니다. 입상 기록과 상장이 공인됩니다.</span></div>
+    <div class="pillar"><span class="zh2">海南省 公式后援</span><b>하이난성 공식 후원</b><span>하이난성이 공식 후원하고, 하이난성 관광청은 12월 1일 서울 포시즌스 호텔에서 ‘2026 하이난 파크골프 설명회’를 열어 한국 파크골프 교류를 직접 소개합니다.</span></div>
+    <div class="pillar"><span class="zh2">中韩友谊之夜</span><b>한·중 파크골프 우호의 밤</b><span>대회 전날 양국 선수단이 한자리에 모이는 환영 만찬. 조편성 발표와 함께 교류가 시작됩니다.</span></div>
+    <div class="pillar"><span class="zh2">中韩友谊赛</span><b>한·중 친선 교류전 · 혼합복식</b><span>개인전 36홀과 별도로 한국과 중국 동호인이 함께 어울리는 18홀 친선전을 엽니다. 실력보다 우정이 중심입니다.</span></div>
+    <div class="pillar"><span class="zh2">开幕式 · 颁奖晚宴</span><b>개막식 · 폐회식 갈라디너</b><span>공식 개막 시타식과 ‘영광의 밤’ 시상 만찬. 국제대회 무대의 격식을 그대로 경험합니다.</span></div>
+    <div class="pillar"><span class="zh2">辞旧迎新</span><b>양국 동호인이 함께 맞는 새해</b><span>12월 31일 송년 만찬 후 새해 첫날 귀국. 2026년을 마무리하고 2027년을 여는 특별한 일정입니다.</span></div>
+  </div>
+  <div class="quote">한국 파크골프 동호인에게 겨울은 비수기입니다. 영하의 날씨를 피해 연평균 24℃의 하이난에서 중국 동호인과 실력을 겨루고 우정을 나누는 일, 이번 국제오픈은 그 무대를 여는 단 한 번의 스페셜 대회입니다.</div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="head"><span class="eyebrow">VALUE</span><h2>159만원으로 누리는 혜택</h2>
+    <p style="margin:0;color:var(--muted)">항공, 5성급 숙박, 하루 세 끼, 대회 참가, 관광까지 한 번에 포함한 가격입니다.</p></div>
+  <div class="value">
+    <div class="calc">
+      <span>4박 6일 전 일정 하루 비용</span>
+      <span class="big">약 26.5만원</span>
+      <div class="line"><span>1인 참가비 (2인 1실)</span><b>1,590,000원</b></div>
+      <div class="line"><span>6일로 나누면</span><b>하루 265,000원</b></div>
+      <div class="line"><span>포함 라운딩</span><b>18홀 × 5회 (90홀)</b></div>
+      <div class="line"><span>현지 추가 지불</span><b>미팅·샌딩 $50</b></div>
+    </div>
+    <ul class="inc">
+      <li>티웨이항공 인천 직항 전세기 왕복</li>
+      <li>5성급 미션힐스 리조트 4박</li>
+      <li>전 일정 식사 (환영만찬·갈라디너·송년만찬)</li>
+      <li>대회 공식 참가비 · 그린피 · 락카</li>
+      <li>공식 연습 18홀 + 본선 36홀 + 친선전 18홀 + 굿바이 18홀</li>
+      <li>천연 화산암 온천 무제한</li>
+      <li>전용 차량 · 한국어 가이드</li>
+      <li>중국 무비자 입국 (별도 비자비 없음)</li>
+      <li>하이커우 문화 투어 · CDF 면세점 VIP 쇼핑</li>
+      <li>웰컴 선수팩 · 공식 기념품 · 시상식 참가</li>
+    </ul>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="head"><span class="eyebrow">OVERVIEW</span><h2>대회 개요</h2></div>
+  <div style="overflow-x:auto">
+  <table class="spec">
+    <tr><th>대회명</th><td>2026 하이난 미션힐스 한·중 파크골프 국제오픈<br><small>2026 Hainan Mission Hills Korea-China Park Golf International Open</small></td></tr>
+    <tr><th>주최·후원</th><td>주최 중국 국가체육총국 (소구운동관리센터, 중국 파크골프 투어)<br>후원 하이난성</td></tr>
+    <tr><th>기간</th><td>2026년 12월 27일(일) ~ 2027년 1월 1일(금), 4박 6일</td></tr>
+    <tr><th>장소</th><td>중국 하이난성 하이커우 미션힐스 리조트 파크골프장 (리조트 단지 안, 도보·카트 이동)</td></tr>
+    <tr><th>항공</th><td class="flight">티웨이항공 단독 전세기<br>가는 편 TW9623 · 12/27(일) 21:30 인천 출발 → 01:00 하이커우 도착<br>오는 편 TW9624 · 1/1(금) 02:00 하이커우 출발 → 06:45 인천 도착</td></tr>
+    <tr><th>경기 종목</th><td>남·여 개인전 36홀 스트로크 (본선 1R + 결선 2R)<br>한·중 친선 교류전 및 남녀 혼합복식 18홀<br>공식 연습라운드 18홀, 굿바이 라운딩</td></tr>
+    <tr><th>참가비</th><td><span class="hl">1인 159만원</span> (2인 1실 기준)<br><small>1인실 사용 시 1박 10만원 추가 (4박 40만원)</small></td></tr>
+    <tr><th>출발 조건</th><td>최소 100명 이상 (전세기 운항 기준)</td></tr>
+    <tr><th>국내 진행</th><td>투어유니버스</td></tr>
+    <tr><th>모객·상담</th><td>WP 월드파크골프 고용호 고문이사 · <b class="flight">010-5622-6576</b></td></tr>
+  </table>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="head"><span class="eyebrow">ITINERARY</span><h2>4박 6일 일정</h2></div>
+  <div class="days">
+    <div class="day"><div class="d"><b>1일차</b><small>12/27 (일)</small></div><div class="c">
+      <h3>인천 출발, 하이커우 도착</h3>
+      <ul><li>인천국제공항 출발 (TW9623, 21:30)</li><li>하이커우 메이란 공항 도착 (01:00), 가이드 미팅</li><li>미션힐스 리조트로 이동 (약 20분) 후 체크인, 휴식</li></ul>
+      <div class="meal">석식 기내식/개별</div></div></div>
+    <div class="day"><div class="d"><b>2일차</b><small>12/28 (월)</small></div><div class="c">
+      <h3><span class="tag">공식 1차</span>선수 등록과 연습라운드</h3>
+      <ul><li>선수 등록, 선수팩 수령</li><li>공식 연습라운드 18홀, 잔디 적응과 로컬룰 브리핑</li><li>한·중 파크골프 우호의 밤 환영 만찬, 조편성 발표</li><li>리조트 천연 온천 스파</li></ul>
+      <div class="meal">조식 리조트 · 중식 클럽 · 석식 환영 만찬</div></div></div>
+    <div class="day"><div class="d"><b>3일차</b><small>12/29 (화)</small></div><div class="c">
+      <h3><span class="tag">공식 2차</span>개막식과 본선 36홀</h3>
+      <ul><li>국제오픈 개막식 및 시타식</li><li>본선 1R 남·여 개인전 18홀 스트로크</li><li>결선 2R 18홀, 36홀 합산으로 최종 순위 결정</li><li>미션힐스 만찬 특식, 온천 휴식</li></ul>
+      <div class="meal">조식 리조트 · 중식 클럽 · 석식 특식</div></div></div>
+    <div class="day"><div class="d"><b>4일차</b><small>12/30 (수)</small></div><div class="c">
+      <h3><span class="tag">공식 3차</span>친선 교류전과 시상식</h3>
+      <ul><li>한·중 친선 교류전 및 남녀 혼합복식 토너먼트 18홀</li><li>해안 건축물 윈둥 도서관, 센트러빌 거리 문화 투어</li><li>폐회식 갈라디너 ‘영광의 밤’: 트로피·상금 시상</li></ul>
+      <div class="meal">조식 리조트 · 중식 클럽 · 석식 시상 만찬</div></div></div>
+    <div class="day"><div class="d"><b>5일차</b><small>12/31 (목)</small></div><div class="c">
+      <h3>굿바이 라운딩과 송년 만찬</h3>
+      <ul><li>체크아웃 후 오전 친선 굿바이 라운딩</li><li>100년 역사의 하이커우 치러우 옛거리 탐방</li><li>CDF 하이커우 글로벌 면세점 VIP 쇼핑</li><li>2026 송년 특별 만찬 후 공항 이동</li></ul>
+      <div class="meal">조식 리조트 · 중식 클럽 · 석식 송년 특식</div></div></div>
+    <div class="day"><div class="d"><b>6일차</b><small>1/1 (금)</small></div><div class="c">
+      <h3>새해 첫날 인천 도착</h3>
+      <ul><li>하이커우 출발 (TW9624, 02:00)</li><li>인천국제공항 도착 (06:45)</li></ul>
+      <div class="meal">현지 사정에 따라 일정 순서가 일부 바뀔 수 있습니다.</div></div></div>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="head"><span class="eyebrow">PRICE</span><h2>참가비 포함·불포함</h2></div>
+  <div class="two">
+    <div class="box"><h3>포함 (1인 159만원)</h3><ul>
+      <li>티웨이항공 인천–하이커우 왕복 전세기 항공료</li>
+      <li>5성급 미션힐스 리조트 4박 (2인 1실)</li>
+      <li>전 일정 조·중·석식, 환영 만찬·갈라디너</li>
+      <li>대회 공식 참가비·그린피, 전용 락카</li>
+      <li>전용 차량, 한국어 가이드</li>
+      <li>천연 온천 이용, 관광 일정, 선수팩·기념품</li></ul></div>
+    <div class="box"><h3>불포함</h3><ul>
+      <li>미팅·샌딩 비용 1인 $50 (현지 지불)</li>
+      <li>1인실 추가 요금 1박 10만원</li>
+      <li>개인 경비, 매너팁</li></ul>
+      <h3 style="margin-top:14px">준비물</h3><ul>
+      <li>여권 (출국일 기준 유효기간 6개월 이상)</li>
+      <li>개인 파크골프채 (수하물 운송 가능)</li></ul></div>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="head"><span class="eyebrow">WHY HAINAN</span><h2>겨울 하이난을 추천하는 이유</h2></div>
+  <div class="why">
+    <div><b>연평균 24℃ 따뜻한 겨울</b><span>한국 한파를 피해 반팔로 라운딩</span></div>
+    <div><b>리조트 안의 36홀 파크골프장</b><span>숙소에서 코스까지 도보·카트 이동</span></div>
+    <div><b>천연 화산암 온천</b><span>라운딩 후 매일 저녁 온천 회복</span></div>
+    <div><b>직항 전세기, 무비자 입국</b><span>공항에서 리조트까지 약 20분</span></div>
+  </div>
+  <img class="photo" src="img/course.jpg" alt="미션힐스 파크골프 코스 전경">
+  <img class="photo" src="img/onsen.jpg" alt="미션힐스 천연 온천 스파">
+</div></section>
+
+<section id="apply"><div class="wrap">
+  <div class="head"><span class="eyebrow">APPLICATION</span><h2>참가 신청서</h2>
+    <p style="margin:0;color:var(--muted)">아래를 작성하고 <b>이메일로 신청 보내기</b>를 누르면 신청 메일이 자동으로 작성됩니다. 문자나 카카오톡으로 고용호 고문이사(010-5622-6576)에게 보내셔도 됩니다. 담당자가 확인 후 계약금과 여권 정보를 안내해 드립니다.</p></div>
+  <form id="f" novalidate>
+    <div class="row">
+      <label for="name">성명 (대표 신청자) <em>*</em><input id="name" autocomplete="name" placeholder="홍길동"></label>
+      <label for="phone">연락처 <em>*</em><input id="phone" inputmode="tel" autocomplete="tel" placeholder="010-0000-0000"></label>
+    </div>
+    <div class="row">
+      <label for="birth">출생 연도<input id="birth" inputmode="numeric" placeholder="1958"></label>
+      <label for="gender">성별 (개인전 부문)<select id="gender"><option value="">선택</option><option>남</option><option>여</option></select></label>
+    </div>
+    <div class="row">
+      <label for="count">참가 인원 (본인 포함) <em>*</em><select id="count"></select></label>
+      <label for="single">1인실 사용 인원<select id="single"></select></label>
+    </div>
+    <label for="companions">동반자 성명·성별<input id="companions" placeholder="예) 김영희(여), 이철수(남)"></label>
+    <div class="row">
+      <label for="club">소속 동호회·협회<input id="club" placeholder="예) ○○시 파크골프협회"></label>
+      <label for="event">희망 종목<select id="event"><option>개인전 + 혼합복식</option><option>개인전만</option><option>친선 라운딩 위주 (비경쟁)</option></select></label>
+    </div>
+    <label for="memo">요청 사항<textarea id="memo" rows="3" placeholder="객실 배정, 식사, 거동 관련 등"></textarea></label>
+    <div class="total"><span>예상 참가비</span><b id="total">1,590,000원</b></div>
+    <label class="check" for="agree"><input type="checkbox" id="agree"><span>신청 안내와 상담을 위해 성명·연락처 등 위 정보를 담당자에게 제공하는 데 동의합니다. <em>*</em></span></label>
+    <p class="err" id="err" hidden></p>
+    <button class="btn submit" type="submit">신청 문자 만들기</button>
+  </form>
+  <div class="result" id="result" hidden>
+    <b>아래 내용을 이메일(hostbank7@gmail.com) 또는 문자(010-5622-6576)로 보내 주세요</b>
+    <pre id="msg"></pre>
+    <div class="actions">
+      <a class="btn btn-gold" id="mail" href="mailto:hostbank7@gmail.com">이메일로 신청 보내기</a>
+      <button class="btn btn-line" type="button" id="copyMsg">신청 내용 복사</button>
+      <button class="btn btn-line" type="button" id="copyMail">메일 주소 복사</button>
+      <button class="btn btn-line" type="button" id="copyTel">번호 복사 010-5622-6576</button>
+      <a class="btn btn-line" id="sms" href="sms:01056226576">문자 앱 열기</a>
+    </div>
+    <p id="copyNote" style="margin:0;color:var(--muted);font-size:.92rem">메일·문자 앱이 열리지 않으면 내용을 복사해 hostbank7@gmail.com 이나 010-5622-6576 로 직접 보내 주세요. 담당자 확인 후 신청이 확정됩니다.</p>
+  </div>
+</div></section>
+</main>
+
+<nav class="dock" aria-label="빠른 연락"><a class="btn btn-line" href="tel:01056226576">전화 상담</a><a class="btn btn-gold" href="#apply">참가 신청하기</a></nav>
+
+<footer class="contact"><div class="wrap" style="padding-block:40px">
+  <div class="card">
+    <div class="who">참가 신청 및 상담 · WP 월드파크골프 고문이사 <b>고용호</b></div>
+    <div class="tel">010-5622-6576</div>
+    <small>신청 메일 hostbank7@gmail.com · 국내 진행 투어유니버스 · 최소 출발 인원 100명 · 전세기 좌석 소진 시 조기 마감</small>
+  </div>
+</div></footer>
+
+<script>
+(function(){
+  const $=id=>document.getElementById(id);
+  const PRICE=1590000, SINGLE=400000;
+  const count=$('count'), single=$('single');
+  for(let i=1;i<=10;i++){count.add(new Option(i+'명',i));}
+  function fillSingle(){
+    const n=+count.value, cur=+single.value||0; single.length=0;
+    for(let i=0;i<=n;i++){single.add(new Option(i===0?'없음 (2인 1실)':i+'명',i));}
+    single.value=Math.min(cur,n); calc();
+  }
+  function won(v){return v.toLocaleString('ko-KR')+'원';}
+  function calc(){ $('total').textContent=won(+count.value*PRICE + +single.value*SINGLE); }
+  count.addEventListener('change',fillSingle); single.addEventListener('change',calc);
+  fillSingle();
+
+  async function copy(text,noteEl,okText){
+    try{ await navigator.clipboard.writeText(text); if(noteEl) noteEl.textContent=okText; return; }catch(e){}
+    if(noteEl) noteEl.textContent='자동 복사가 막혀 있습니다. 내용을 길게 눌러 직접 복사해 주세요.';
+  }
+  $('copyTelTop').addEventListener('click',()=>copy('010-5622-6576',$('telMsgTop'),'번호를 복사했습니다. 전화나 문자로 연락 주세요.'));
+  $('copyMail').addEventListener('click',()=>copy('hostbank7@gmail.com',$('copyNote'),'메일 주소를 복사했습니다.'));
+  $('copyTel').addEventListener('click',()=>copy('010-5622-6576',$('copyNote'),'번호를 복사했습니다.'));
+  $('copyMsg').addEventListener('click',()=>{
+    copy($('msg').textContent,$('copyNote'),'신청 내용을 복사했습니다. 010-5622-6576 로 붙여넣어 보내 주세요.');
+    const r=document.createRange(); r.selectNodeContents($('msg')); const s=getSelection(); s.removeAllRanges(); s.addRange(r);
+  });
+
+  $('f').addEventListener('submit',e=>{
+    e.preventDefault();
+    const v=id=>$(id).value.trim(), err=$('err');
+    const miss=[];
+    if(!v('name')) miss.push('성명');
+    if(!/^0\d{1,2}-?\d{3,4}-?\d{4}$/.test(v('phone').replace(/\s/g,''))) miss.push('연락처(010-0000-0000 형식)');
+    if(!$('agree').checked) miss.push('정보 제공 동의');
+    if(miss.length){ err.textContent=miss.join(', ')+' 항목을 확인해 주세요.'; err.hidden=false; return; }
+    err.hidden=true;
+    const n=+count.value, s=+single.value;
+    const lines=[
+      '[2026 하이난 미션힐스 한·중 파크골프 국제오픈 참가 신청]',
+      '일정: 2026.12.27(일)~2027.1.1(금) 4박6일 / 인천 출발',
+      '성명: '+v('name'),
+      '연락처: '+v('phone'),
+      v('birth')?'출생연도: '+v('birth'):'',
+      $('gender').value?'성별: '+$('gender').value:'',
+      '참가 인원: '+n+'명'+(s?' (1인실 '+s+'명)':' (2인 1실)'),
+      v('companions')?'동반자: '+v('companions'):'',
+      v('club')?'소속: '+v('club'):'',
+      '희망 종목: '+$('event').value,
+      v('memo')?'요청 사항: '+v('memo'):'',
+      '예상 참가비: '+won(n*PRICE+s*SINGLE),
+      '정보 제공 동의: 예'
+    ].filter(Boolean);
+    const text=lines.join('\n');
+    $('msg').textContent=text;
+    $('mail').href='mailto:hostbank7@gmail.com?subject='+encodeURIComponent('[하이난 파크골프 국제오픈 참가신청] '+v('name'))+'&body='+encodeURIComponent(text);
+    $('sms').href='sms:01056226576?body='+encodeURIComponent(text);
+    $('result').hidden=false;
+    $('result').scrollIntoView({block:'start'});
+  });
+})();
+</script>
