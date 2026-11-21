@@ -5,7 +5,7 @@ s=(here/'_artifact.html').read_text(encoding='utf-8')
 url='https://hostbank7.github.io/sangjo-benchmark/hainan-2026/'
 head=('<!doctype html>\n<html lang="ko">\n<head>\n<meta charset="utf-8">\n'
  '<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n'
- '<meta property="og:title" content="2026 하이난 미션힐스 한·중 파크골프 국제오픈">\n'
+ '<meta property="og:title" content="2026 하이난 미션힐스 한·중 파크골프 국제오픈대회">\n'
  '<meta property="og:description" content="12.27~1.1 4박6일 · 티웨이 직항 전세기 · 1인 159만원 · 우승 현금 300만원">\n'
  f'<meta property="og:image" content="{url}img/hero.jpg">\n<meta property="og:url" content="{url}">\n'
  '<style>:root{color-scheme:light} body{margin:0} img{max-width:100%} [hidden]{display:none!important}</style>\n')

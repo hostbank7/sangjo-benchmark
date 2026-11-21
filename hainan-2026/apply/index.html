@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>참가 신청 · 하이난 파크골프 국제오픈</title>
-<meta property="og:title" content="참가 신청 · 2026 하이난 미션힐스 한·중 파크골프 국제오픈">
+<title>참가 신청 · 하이난 파크골프 국제오픈대회</title>
+<meta property="og:title" content="참가 신청 · 2026 하이난 미션힐스 한·중 파크골프 국제오픈대회">
 <meta property="og:description" content="12.27~1.1 4박6일 · 1인 159만원 · 우승 현금 300만원 · 1분이면 신청 끝">
 <meta property="og:image" content="https://hostbank7.github.io/sangjo-benchmark/hainan-2026/img/hero.jpg">
 <meta property="og:url" content="https://hostbank7.github.io/sangjo-benchmark/hainan-2026/apply/">
@@ -63,7 +63,7 @@ footer small{opacity:.85;font-size:.85rem}
 <body>
 <header><div class="wrap">
   <div class="k">중국 국가체육총국 주최 · 하이난성 공식 후원</div>
-  <h1>2026 하이난 미션힐스<span>한·중 파크골프 국제오픈</span></h1>
+  <h1>2026 하이난 미션힐스<span>한·중 파크골프 국제오픈대회</span></h1>
   <div class="prize">우승 현금 <b>300만원</b> + 투어 상품권 · 준우승 <b>200만원</b></div>
 </div></header>
 
@@ -130,7 +130,7 @@ footer small{opacity:.85;font-size:.85rem}
     if(miss.length){$('err').textContent=miss.join(', ')+'를 확인해 주세요.';$('err').hidden=false;return}
     $('err').hidden=true;
     var n=+count.value,s=+single.value;
-    var text=['[하이난 파크골프 국제오픈 참가 신청]','성명: '+v('name'),'연락처: '+v('phone'),
+    var text=['[하이난 파크골프 국제오픈대회 참가 신청]','성명: '+v('name'),'연락처: '+v('phone'),
       '인원: '+n+'명'+(s?' (1인실 '+s+'명)':' (2인 1실)'),
       v('companions')?'동반자: '+v('companions'):'', v('club')?'소속: '+v('club'):'',
       '예상 참가비: '+won(n*PRICE+s*SINGLE)].filter(Boolean).join('\n');
