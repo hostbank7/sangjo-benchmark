@@ -57,6 +57,9 @@ input:focus,select:focus{outline:none;border-color:var(--green)}
 footer{margin-top:24px;background:var(--green);color:#fff;text-align:center}
 footer .wrap{padding-block:24px calc(24px + env(safe-area-inset-bottom,0px));display:grid;gap:6px}
 footer .tel{font-family:var(--serif);font-size:2rem;color:#ffd88a;text-decoration:none}
+footer .kakao{margin-top:8px;display:grid;gap:6px}
+footer .kakao b{color:#ffd88a}
+.kk{background:#FEE500;color:#191919}
 footer small{opacity:.85;font-size:.85rem}
 </style>
 </head>
@@ -101,6 +104,7 @@ footer small{opacity:.85;font-size:.85rem}
     <a class="btn go" id="mail" href="mailto:hostbank7@gmail.com">메일 앱으로 보내기</a>
     <a class="btn alt" id="sms" href="sms:01056226576">문자로 보내기</a>
     <button class="btn alt" type="button" id="copy">내용 복사</button>
+    <button class="btn kk" type="button" data-kakao data-note="note">카카오톡으로 보내기 (ID hoyaa7070)</button>
     </div>
     <p id="note"></p>
   </section>
@@ -109,6 +113,9 @@ footer small{opacity:.85;font-size:.85rem}
 <footer><div class="wrap">
   <span>전화 상담 · WP 월드파크골프 고문이사 고용호</span>
   <a class="tel" href="tel:01056226576">010-5622-6576</a>
+  <div class="kakao"><span>카카오톡 상담 · ID <b>hoyaa7070</b></span>
+    <button class="btn kk" type="button" data-kakao data-note="kkNote">카카오톡으로 문의하기</button>
+    <small id="kkNote">카카오톡 → 친구 추가 → ID로 추가 → hoyaa7070</small></div>
   <small>신청 메일 hostbank7@gmail.com · 국내 진행 투어유니버스<br>최소 출발 100명 · 전세기 좌석 소진 시 조기 마감</small>
 </div></footer>
 
@@ -179,6 +186,20 @@ footer small{opacity:.85;font-size:.85rem}
     var t=$('msg').textContent;
     if(navigator.clipboard) navigator.clipboard.writeText(t).then(function(){$('note').textContent='복사했습니다. hostbank7@gmail.com 또는 010-5622-6576 으로 보내 주세요.'},function(){$('note').textContent='위 내용을 길게 눌러 복사해 주세요.'});
     else $('note').textContent='위 내용을 길게 눌러 복사해 주세요.';
+  });
+
+  // 카카오톡: ID 복사 후 카카오톡 앱 열기
+  var KAKAO_ID='hoyaa7070';
+  Array.prototype.forEach.call(document.querySelectorAll('[data-kakao]'),function(b){
+    b.addEventListener('click',function(){
+      var note=document.getElementById(b.getAttribute('data-note'));
+      function say(t){if(note) note.textContent=t;}
+      function open(){setTimeout(function(){location.href='kakaotalk://launch'},400);}
+      if(navigator.clipboard&&navigator.clipboard.writeText){
+        navigator.clipboard.writeText(KAKAO_ID).then(function(){say('ID를 복사했습니다. 카카오톡 → 친구 추가 → ID로 추가에 붙여 넣어 주세요.');open();},
+          function(){say('카카오톡 → 친구 추가 → ID로 추가에서 hoyaa7070 을 검색해 주세요.');open();});
+      } else {say('카카오톡 → 친구 추가 → ID로 추가에서 hoyaa7070 을 검색해 주세요.');open();}
+    });
   });
 })();
 </script>
