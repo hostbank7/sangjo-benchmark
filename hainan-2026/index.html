@@ -167,6 +167,32 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--gold);outline-of
   .spec th{width:5.5em;white-space:normal}
 }
 @media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+
+/* phone: bigger type, sticky action bar */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+.dock{display:none}
+@media (max-width:640px){
+  body{font-size:19px;line-height:1.75;padding-bottom:calc(76px + env(safe-area-inset-bottom,0px))}
+  h2{font-size:1.55rem}
+  .frame{padding:22px 14px}
+  .frame .kicker{font-size:.9rem}
+  .frame h1{font-size:2rem}
+  .facts b{font-size:1.15rem}
+  .facts small{font-size:.85rem}
+  .spec th,.spec td{display:block;width:auto;padding:8px 12px}
+  .spec th{border-bottom:0;padding-bottom:2px;background:transparent;color:var(--gold);font-size:.88rem}
+  .spec td{padding-top:0}
+  .day .c h3{font-size:1.12rem}
+  .meal,.pillar span,.prize p,.inc li,.why span{font-size:1rem}
+  .pod p{font-size:1rem}
+  input,select,textarea{font-size:1.1rem;min-height:56px}
+  .btn{width:100%;justify-content:center;font-size:1.12rem;min-height:58px}
+  .cta{flex-direction:column}
+  .dock{display:grid;grid-template-columns:1fr 1.3fr;gap:8px;position:fixed;left:0;right:0;bottom:0;z-index:20;
+    padding:10px max(12px,env(safe-area-inset-right,0px)) calc(10px + env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-left,0px));
+    background:var(--paper);border-top:1px solid var(--line);box-shadow:0 -4px 16px rgba(0,0,0,.12)}
+  .dock a{min-height:54px;font-size:1.08rem;padding:10px}
+}
 </style>
 
 <header class="hero">
@@ -374,6 +400,8 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--gold);outline-of
   </div>
 </div></section>
 </main>
+
+<nav class="dock" aria-label="빠른 연락"><a class="btn btn-line" href="tel:01056226576">전화 상담</a><a class="btn btn-gold" href="#apply">참가 신청하기</a></nav>
 
 <footer class="contact"><div class="wrap" style="padding-block:40px">
   <div class="card">
