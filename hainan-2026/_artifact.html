@@ -33,7 +33,7 @@ section .head{display:grid;gap:6px;margin-bottom:22px}
 
 /* hero */
 .hero{background:var(--green);color:var(--on-green)}
-.hero-photo{display:block;width:100%;max-width:100%;aspect-ratio:1400/469;object-fit:cover}
+.hero-photo{display:block;width:100%;max-width:100%;height:clamp(210px,30vw,400px);object-fit:cover;object-position:35% 60%}
 .hero .wrap{padding-block:30px 36px;display:grid;gap:18px}
 .frame{border:1.5px solid #c9a24f;outline:1px solid rgba(201,162,79,.45);outline-offset:5px;padding:26px 20px;display:grid;gap:12px;text-align:center}
 .frame .kicker{font-size:.86rem;letter-spacing:.06em;color:#e6c77f;font-weight:700}
@@ -182,6 +182,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
   .frame h1{font-size:2rem}
   .facts b{font-size:1.15rem}
   .facts small{font-size:.85rem}
+  .hero-photo{height:auto;aspect-ratio:810/400;object-position:center}
   .spec th,.spec td{display:block;width:auto;padding:8px 12px}
   .spec th{border-bottom:0;padding-bottom:2px;background:transparent;color:var(--gold);font-size:.88rem}
   .spec td{padding-top:0}
@@ -199,7 +200,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 </style>
 
 <header class="hero">
-  <img class="hero-photo" src="img/hero.jpg" alt="하이난 미션힐스 리조트 코스를 걷는 파크골프 참가자들">
+  <picture><source media="(max-width:640px)" srcset="img/course.jpg"><img class="hero-photo" src="img/hero.jpg" alt="노을 진 하이난 해안가 미션힐스 골프 코스"></picture>
   <div class="wrap">
     <div class="frame">
       <div class="kicker">중국 국가체육총국 주최 · 하이난성 공식 후원</div>
@@ -358,7 +359,8 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
     <div><b>천연 화산암 온천</b><span>라운딩 후 매일 저녁 온천 회복</span></div>
     <div><b>직항 전세기, 무비자 입국</b><span>공항에서 리조트까지 약 20분</span></div>
   </div>
-  <img class="photo" src="img/course.jpg" alt="미션힐스 파크골프 코스 전경">
+  <img class="photo" src="img/course.jpg" alt="호수와 야자수가 어우러진 미션힐스 코스와 리조트">
+  <img class="photo" src="img/people.jpg" alt="미션힐스 코스를 걷는 동호인들">
   <img class="photo" src="img/onsen.jpg" alt="미션힐스 천연 온천 스파">
 </div></section>
 
