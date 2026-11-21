@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8">
+<title>하이난 파크골프 국제오픈 인쇄용</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@600;800&family=Noto+Sans+KR:wght@400;500;700;800&display=swap">
+<style>
+@page{size:A4;margin:0}
+*{box-sizing:border-box}
+:root{--green:#0f4a33;--gold:#a8761c;--goldl:#e8c06a;--ink:#15241d;--muted:#55645c;--line:#d9e2da;--chip:#eef4ef;--red:#b42318}
+body{margin:0;font-family:"Noto Sans KR",sans-serif;color:var(--ink);word-break:keep-all;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.page{width:210mm;height:297mm;overflow:hidden;position:relative;page-break-after:always;background:#fff}
+.serif{font-family:"Noto Serif KR",serif}
+/* page 1 invitation */
+.p1{background:var(--green);color:#fff;display:flex;flex-direction:column}
+.p1 img{width:100%;height:92mm;object-fit:cover;display:block}
+.p1 .body{flex:1;margin:9mm 12mm 10mm;border:1.5px solid #c9a24f;outline:1px solid rgba(201,162,79,.5);outline-offset:5px;padding:9mm 10mm;display:flex;flex-direction:column;gap:5mm;text-align:center}
+.k{color:#e6c77f;font-weight:700;letter-spacing:.05em;font-size:11.5pt}
+.inv{font-family:"Noto Serif KR",serif;color:#f1dfae;font-size:15pt}
+h1{margin:0;font-family:"Noto Serif KR",serif;font-weight:800;font-size:29pt;line-height:1.28}
+h1 span{display:block;color:var(--goldl)}
+.zh{font-size:10pt;opacity:.85}
+.facts{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.2)}
+.facts div{background:var(--green);padding:3mm 2mm;display:grid;gap:1mm}
+.facts small{font-size:8.5pt;opacity:.8}
+.facts b{font-size:12pt}
+.facts .price{color:#ffd88a;font-size:17pt}
+.letter{font-size:10.5pt;line-height:1.75;text-align:left;opacity:.95;margin:0}
+.callbox{margin-top:auto;background:#fff;color:var(--ink);border-radius:3mm;padding:4mm 5mm;display:grid;gap:1mm}
+.callbox .t{font-size:10.5pt;color:var(--muted)}
+.callbox .n{font-family:"Noto Serif KR",serif;font-weight:800;font-size:26pt;color:var(--green);letter-spacing:.02em}
+.callbox .s{font-size:9pt;color:var(--muted)}
+/* page 2 details */
+.p2{padding:11mm 12mm 10mm;display:flex;flex-direction:column;gap:4mm}
+.p2 h2{margin:0 0 2mm;font-family:"Noto Serif KR",serif;color:var(--green);font-size:15pt;border-bottom:2px solid var(--green);padding-bottom:1.5mm}
+.top{display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid var(--line);padding-bottom:2mm}
+.top b{font-family:"Noto Serif KR",serif;font-size:13pt;color:var(--green)}
+.top span{font-size:9pt;color:var(--muted)}
+table{width:100%;border-collapse:collapse;font-size:9.3pt;line-height:1.5}
+td,th{border:1px solid var(--line);padding:1.6mm 2.2mm;vertical-align:top;text-align:left}
+th{background:var(--chip);white-space:nowrap;font-weight:700}
+.sched td:first-child{white-space:nowrap;font-weight:700;background:var(--chip);width:22mm}
+.sched td:last-child{white-space:nowrap;color:var(--muted);font-size:8.5pt;width:27mm}
+.tag{display:inline-block;font-size:7.8pt;font-weight:700;padding:0 1.6mm;border-radius:9px;background:#f3e7cc;color:var(--gold);margin-right:1mm}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:3mm}
+.pz{border:1px solid var(--line);border-radius:2mm;padding:2.5mm 3mm;font-size:8.8pt;line-height:1.45}
+.pz b{display:block;color:var(--gold);font-size:9.5pt}
+.pz .a{font-family:"Noto Serif KR",serif;font-size:14pt;font-weight:800;color:var(--ink)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:3mm}
+.bx{border:1px solid var(--line);border-radius:2mm;padding:2.5mm 3.5mm;font-size:9pt;line-height:1.55}
+.bx b{color:var(--green)}
+.bx ul{margin:1mm 0 0;padding-left:4mm}
+.apply{margin-top:auto;background:var(--green);color:#fff;border-radius:3mm;padding:4mm 6mm;display:grid;grid-template-columns:1fr auto;gap:2mm 6mm;align-items:center}
+.apply .h{font-family:"Noto Serif KR",serif;font-size:13pt;font-weight:800;color:#ffd88a}
+.apply p{margin:0;font-size:9.2pt;line-height:1.6}
+.apply .n{font-family:"Noto Serif KR",serif;font-size:21pt;font-weight:800;color:#ffd88a;text-align:right;line-height:1.2}
+.apply .n small{display:block;font-family:"Noto Sans KR";font-size:9pt;color:#fff;font-weight:500}
+.hl{color:var(--red);font-weight:800}
+</style></head><body>
+
+<div class="page p1">
+  <img src="img/hero.jpg" alt="">
+  <div class="body">
+    <div class="k">중국 국가체육총국 주최 · 하이난성 공식 후원</div>
+    <div class="inv">귀하를 정중히 초대합니다</div>
+    <h1>2026 하이난 미션힐스<span>한·중 파크골프 국제오픈</span></h1>
+    <div class="zh">2026中国帕克球巡回赛·海南观澜湖中韩国际公开赛</div>
+    <div class="facts">
+      <div><small>대회 기간</small><b>12.27(일)~1.1(금)</b><small>4박 6일 · 단 1회</small></div>
+      <div><small>항공</small><b>티웨이 직항 전세기</b><small>인천 ↔ 하이커우</small></div>
+      <div><small>1인 참가비</small><b class="price">159만원</b><small>항공·숙박·식사·그린피</small></div>
+      <div><small>모집 인원</small><b>100명 이상</b><small>전세기 출발 기준</small></div>
+    </div>
+    <p class="letter">추운 한국의 겨울, 연평균 24℃의 하이난에서 한 해를 마무리하십시오. 세계적인 미션힐스 리조트 단지 안 파크골프장에서 한·중 국제오픈 공식 대회를 치르고, 저녁에는 천연 화산암 온천에서 쉬는 4박 6일입니다. 티웨이항공 단독 전세기로 한 번에 이동하고 숙소를 옮기지 않는 5성급 원스톱 일정입니다. 2026년 송년과 2027년 새해를 한·중 동호인과 함께 맞이하는 단 한 번의 행사에 귀한 걸음 부탁드립니다.</p>
+    <div class="callbox">
+      <div class="t">참가 신청 및 상담 · WP 월드파크골프 고문이사 고용호</div>
+      <div class="n">010-5622-6576</div>
+      <div class="s">국내 진행 투어유니버스 · 전세기 좌석 소진 시 조기 마감</div>
+    </div>
+  </div>
+</div>
+
+<div class="page p2">
+  <div class="top"><b>2026 하이난 미션힐스 한·중 파크골프 국제오픈</b><span>2026.12.27(일) ~ 2027.1.1(금) · 4박 6일</span></div>
+  <div>
+    <h2>4박 6일 일정</h2>
+    <table class="sched">
+      <tr><td>1일 12/27(일)</td><td>인천 출발 <b>TW9623 21:30</b> → 하이커우 메이란 공항 01:00 도착, 미션힐스 리조트 이동(약 20분)·체크인</td><td>석: 기내/개별</td></tr>
+      <tr><td>2일 12/28(월)</td><td><span class="tag">공식 1차</span>선수 등록·선수팩 수령, 공식 연습라운드 18홀, 한·중 우호의 밤 환영 만찬·조편성 발표, 온천 스파</td><td>조·중·석 환영만찬</td></tr>
+      <tr><td>3일 12/29(화)</td><td><span class="tag">공식 2차</span>개막식·시타식, 남·여 개인전 본선 1R 18홀 + 결선 2R 18홀 (36홀 합산 순위), 만찬 특식</td><td>조·중·석 특식</td></tr>
+      <tr><td>4일 12/30(수)</td><td><span class="tag">공식 3차</span>한·중 친선 교류전·혼합복식 18홀, 윈둥 도서관·센트러빌 문화 투어, 폐회식 갈라디너 시상식</td><td>조·중·석 시상만찬</td></tr>
+      <tr><td>5일 12/31(목)</td><td>체크아웃, 굿바이 친선 라운딩, 치러우 옛거리 탐방, CDF 면세점 VIP 쇼핑, 송년 특별 만찬 후 공항 이동</td><td>조·중·석 송년특식</td></tr>
+      <tr><td>6일 1/1(금)</td><td>하이커우 출발 <b>TW9624 02:00</b> → 인천 06:45 도착</td><td>-</td></tr>
+    </table>
+  </div>
+  <div>
+    <h2>시상 내역 <small style="font-size:9pt;color:var(--muted);font-family:'Noto Sans KR'">각 부문별 지급</small></h2>
+    <div class="grid3">
+      <div class="pz"><b>1위 우승</b><span class="a">현금 300만원</span><br>+ 미션힐스 파크골프 투어 상품권 (159만원 상당)</div>
+      <div class="pz"><b>2위 준우승</b><span class="a">현금 200만원</span><br>+ 최고급 프리미엄 파크골프채</div>
+      <div class="pz"><b>3위 및 본선 입상</b><span class="a">상금·트로피</span><br>부문별 트로피·공인 상장 · 참가자 전원 웰컴 선수팩</div>
+    </div>
+  </div>
+  <div>
+    <h2>참가비 안내</h2>
+    <div class="grid2">
+      <div class="bx"><b>포함 · 1인 <span class="hl">159만원</span> (2인 1실)</b><ul>
+        <li>티웨이 인천–하이커우 왕복 전세기</li><li>5성급 미션힐스 리조트 4박</li><li>전 일정 식사, 환영 만찬·갈라디너</li><li>대회 참가비·그린피·락카, 선수팩</li><li>전용 차량·한국어 가이드·온천·관광</li></ul></div>
+      <div class="bx"><b>불포함 · 준비물</b><ul>
+        <li>미팅·샌딩 1인 $50 (현지 지불)</li><li>1인실 1박 10만원 추가 (4박 40만원)</li><li>개인 경비·매너팁</li><li>여권 (유효기간 6개월 이상), 개인 파크골프채</li><li>최소 출발 100명 (전세기 기준)</li></ul></div>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:1.2fr 1fr;gap:3mm;align-items:stretch">
+    <img src="img/course.jpg" alt="" style="width:100%;height:40mm;object-fit:cover;border-radius:2mm">
+    <div class="bx" style="display:grid;gap:1mm;align-content:center"><b>겨울 하이난을 추천하는 이유</b>
+      <span>· 연평균 24℃, 한파 없는 반팔 라운딩</span><span>· 리조트 안 파크골프장, 도보·카트 이동</span><span>· 라운딩 후 매일 천연 화산암 온천</span><span>· 직항 전세기, 공항–리조트 약 20분</span></div>
+  </div>
+  <div class="apply">
+    <div class="h">신청 방법</div>
+    <div class="n">010-5622-6576<small>WP 월드파크골프 고문이사 고용호</small></div>
+    <p style="grid-column:1/-1">전화 또는 문자로 <b>성명 · 연락처 · 참가 인원 · 객실(2인 1실/1인실) · 동반자 성명 · 소속 동호회</b>를 보내 주세요.<br>담당자가 확인 후 계약금과 여권 정보 제출을 안내해 드립니다. 국내 진행: 투어유니버스</p>
+  </div>
+</div>
+</body></html>
