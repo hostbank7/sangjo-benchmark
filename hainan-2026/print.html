@@ -11,7 +11,7 @@ body{margin:0;font-family:"Noto Sans KR",sans-serif;color:var(--ink);word-break:
 .serif{font-family:"Noto Serif KR",serif}
 /* page 1 invitation */
 .p1{background:var(--green);color:#fff;display:flex;flex-direction:column}
-.p1 img{width:100%;height:92mm;object-fit:cover;display:block}
+.p1 img{width:100%;height:74mm;object-fit:cover;display:block}
 .p1 .body{flex:1;margin:9mm 12mm 10mm;border:1.5px solid #c9a24f;outline:1px solid rgba(201,162,79,.5);outline-offset:5px;padding:9mm 10mm;display:flex;flex-direction:column;gap:5mm;text-align:center}
 .k{color:#e6c77f;font-weight:700;letter-spacing:.05em;font-size:11.5pt}
 .inv{font-family:"Noto Serif KR",serif;color:#f1dfae;font-size:15pt}
@@ -54,6 +54,26 @@ th{background:var(--chip);white-space:nowrap;font-weight:700}
 .apply .n{font-family:"Noto Serif KR",serif;font-size:21pt;font-weight:800;color:#ffd88a;text-align:right;line-height:1.2}
 .apply .n small{display:block;font-family:"Noto Sans KR";font-size:9pt;color:#fff;font-weight:500}
 .hl{color:var(--red);font-weight:800}
+.pod3{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:2.5mm;text-align:left}
+.pd{border:1px solid rgba(255,255,255,.3);border-radius:2.5mm;padding:3mm;display:grid;gap:1mm;align-content:start;background:rgba(255,255,255,.06)}
+.pd span{font-size:9pt;font-weight:700;color:#e6c77f}
+.pd b{font-family:"Noto Serif KR",serif;font-size:17pt;line-height:1.15}
+.pd em{font-style:normal;font-size:8.6pt;line-height:1.45;opacity:.95}
+.pd.g{background:linear-gradient(160deg,#f4d58a,#c99a3c);color:#1d1503;border:0}
+.pd.g span{color:#5a3f08}
+.pd.g b{font-size:22pt}
+.pill{display:grid;grid-template-columns:1fr 1fr;gap:3mm}
+.pill div{border:1px solid var(--line);border-radius:2mm;padding:3mm 3.5mm;font-size:9.2pt;line-height:1.55;display:grid;gap:.6mm}
+.pill i{font-style:normal;font-size:8pt;color:var(--gold);font-weight:700}
+.pill b{font-size:10.5pt;color:var(--green)}
+.vrow{display:grid;grid-template-columns:62mm 1fr;gap:4mm}
+.vcalc{background:var(--green);color:#fff;border-radius:3mm;padding:4mm 5mm;display:grid;gap:1.6mm;align-content:start;font-size:9.4pt}
+.vcalc .big{font-family:"Noto Serif KR",serif;font-weight:800;font-size:24pt;color:#ffd88a;line-height:1.1}
+.vcalc div{display:flex;justify-content:space-between;border-top:1px solid rgba(255,255,255,.22);padding-top:1.4mm}
+.vinc{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:1.8mm;font-size:9pt}
+.vinc li{border:1px solid var(--line);border-radius:1.8mm;padding:1.8mm 2.5mm}
+.vinc li::before{content:"✓ ";color:var(--green);font-weight:800}
+.quote{border-left:3px solid var(--gold);background:#f8f0dd;padding:3mm 4mm;font-size:9.6pt;line-height:1.6;border-radius:0 2mm 2mm 0}
 </style></head><body>
 
 <div class="page p1">
@@ -69,13 +89,52 @@ th{background:var(--chip);white-space:nowrap;font-weight:700}
       <div><small>1인 참가비</small><b class="price">159만원</b><small>항공·숙박·식사·그린피</small></div>
       <div><small>모집 인원</small><b>100명 이상</b><small>전세기 출발 기준</small></div>
     </div>
-    <p class="letter">추운 한국의 겨울, 연평균 24℃의 하이난에서 한 해를 마무리하십시오. 세계적인 미션힐스 리조트 단지 안 파크골프장에서 한·중 국제오픈 공식 대회를 치르고, 저녁에는 천연 화산암 온천에서 쉬는 4박 6일입니다. 티웨이항공 단독 전세기로 한 번에 이동하고 숙소를 옮기지 않는 5성급 원스톱 일정입니다. 2026년 송년과 2027년 새해를 한·중 동호인과 함께 맞이하는 단 한 번의 행사에 귀한 걸음 부탁드립니다.</p>
+    <div class="pod3">
+      <div class="pd g"><span>1위 우승</span><b>현금 300만원</b><em>+ 159만원 상당 하이난 투어 상품권<br><strong>총 459만원 상당</strong></em></div>
+      <div class="pd"><span>2위 준우승</span><b>현금 200만원</b><em>+ 최고급 프리미엄 파크골프채</em></div>
+      <div class="pd"><span>3위·본선 입상</span><b>상금·트로피</b><em>부문별 공인 상장 수여<br>참가자 전원 선수팩</em></div>
+    </div>
+    <p class="letter">중국 국가 공인 파크골프 투어 무대에서 한·중 동호인이 실력을 겨루고 우정을 나눕니다. 티웨이항공 단독 전세기, 5성급 미션힐스 리조트, 천연 온천과 전 일정 식사까지 포함해 <b style="color:#ffd88a">하루 약 26.5만원</b>. 2026년 송년과 2027년 새해를 함께 맞는 단 한 번의 행사에 초대합니다.</p>
     <div class="callbox">
       <div class="t">참가 신청 및 상담 · WP 월드파크골프 고문이사 고용호</div>
       <div class="n">010-5622-6576</div>
       <div class="s">국내 진행 투어유니버스 · 전세기 좌석 소진 시 조기 마감</div>
     </div>
   </div>
+</div>
+
+<div class="page p2">
+  <div class="top"><b>2026 하이난 미션힐스 한·중 파크골프 국제오픈</b><span>KOREA · CHINA PARK GOLF INTERNATIONAL OPEN</span></div>
+  <div>
+    <h2>한·중 민간 체육 교류의 새로운 장</h2>
+    <div class="pill">
+      <div><i>中国帕克球巡回赛</i><b>중국 국가 공인 파크골프 투어 대회</b>중국 국가체육총국 소구운동관리센터의 전국 규격 순회경기 브랜드로 치러지는 공식 경기. 입상 기록과 상장이 공인됩니다.</div>
+      <div><i>海南省 公式后援</i><b>하이난성 공식 후원</b>하이난성 관광청은 12월 1일 서울 포시즌스 호텔에서 ‘2026 하이난 파크골프 설명회’를 열어 한국과의 파크골프 교류를 소개합니다.</div>
+      <div><i>中韩友谊之夜</i><b>한·중 파크골프 우호의 밤</b>대회 전날 양국 선수단이 모이는 환영 만찬과 조편성 발표.</div>
+      <div><i>中韩友谊赛</i><b>한·중 친선 교류전 · 혼합복식</b>개인전 36홀과 별도로 양국 동호인이 함께 어울리는 18홀 친선전.</div>
+      <div><i>开幕式 · 颁奖晚宴</i><b>개막식 · 폐회식 갈라디너</b>공식 개막 시타식과 ‘영광의 밤’ 시상 만찬.</div>
+      <div><i>辞旧迎新</i><b>양국 동호인이 함께 맞는 새해</b>12월 31일 송년 만찬 후 새해 첫날 귀국.</div>
+    </div>
+  </div>
+  <div class="quote">한국 파크골프 동호인에게 겨울은 비수기입니다. 영하의 날씨를 피해 연평균 24℃의 하이난에서 중국 동호인과 실력을 겨루고 우정을 나누는 자리, 이번 국제오픈은 그 무대를 여는 단 한 번의 스페셜 대회입니다.</div>
+  <div>
+    <h2>159만원으로 누리는 혜택</h2>
+    <div class="vrow">
+      <div class="vcalc"><span>4박 6일 전 일정 하루 비용</span><span class="big">약 26.5만원</span>
+        <div><span>1인 참가비 (2인 1실)</span><b>1,590,000원</b></div>
+        <div><span>포함 라운딩</span><b>18홀 × 5회</b></div>
+        <div><span>우승 시 받는 가치</span><b>459만원 상당</b></div>
+        <div><span>현지 추가 지불</span><b>미팅·샌딩 $50</b></div></div>
+      <ul class="vinc">
+        <li>티웨이 인천 직항 전세기 왕복</li><li>5성급 미션힐스 리조트 4박</li>
+        <li>전 일정 식사·환영만찬·갈라디너</li><li>대회 참가비·그린피·락카</li>
+        <li>연습 18 + 본선 36 + 친선 18 + 굿바이 18홀</li><li>천연 화산암 온천 무제한</li>
+        <li>전용 차량·한국어 가이드</li><li>중국 무비자 입국</li>
+        <li>문화 투어·CDF 면세점 VIP 쇼핑</li><li>웰컴 선수팩·기념품·시상식</li>
+      </ul>
+    </div>
+  </div>
+  <img src="img/onsen.jpg" alt="" style="width:100%;flex:1;min-height:30mm;object-fit:cover;border-radius:2mm">
 </div>
 
 <div class="page p2">
