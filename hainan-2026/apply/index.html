@@ -79,7 +79,7 @@ footer small{opacity:.85;font-size:.85rem}
   <form id="f" novalidate>
     <h2>참가 신청서</h2>
     <label for="name"><span>성명 <em>*</em></span><input id="name" autocomplete="name" placeholder="홍길동"></label>
-    <label for="phone"><span>휴대폰 번호 <em>*</em></span><input id="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="010-0000-0000"></label>
+    <label for="phone"><span>휴대폰 번호 <em>*</em></span><input id="phone" type="tel" inputmode="numeric" autocomplete="tel" placeholder="010-1234-5678"></label>
     <div class="row">
       <label for="count">참가 인원<select id="count"></select></label>
       <label for="single">1인실<select id="single"></select></label>
@@ -89,16 +89,19 @@ footer small{opacity:.85;font-size:.85rem}
     <div class="total"><span>예상 참가비</span><b id="total">1,590,000원</b></div>
     <label class="agree" for="agree"><input type="checkbox" id="agree"><span>상담을 위해 위 정보를 담당자에게 보내는 데 동의합니다.</span></label>
     <p class="err" id="err" hidden></p>
-    <button class="btn go" type="submit">신청하기</button>
+    <input type="text" id="hp" name="_honey" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px">
+    <button class="btn go" type="submit" id="send">신청하기</button>
   </form>
 
   <section class="done" id="done" hidden>
-    <h2>메일 앱에서 보내기를 눌러 주세요</h2>
-    <p>메일이 열리지 않으면 아래 버튼으로 문자를 보내거나, 내용을 복사해 보내 주세요. 담당자가 확인 후 연락드립니다.</p>
+    <h2 id="doneTitle">신청이 접수되었습니다</h2>
+    <p id="doneText">담당자 고용호 고문이사가 확인 후 연락드립니다. 감사합니다.</p>
     <pre id="msg"></pre>
-    <a class="btn go" id="mail" href="mailto:hostbank7@gmail.com">이메일로 다시 보내기</a>
+    <div id="fallback" hidden style="display:grid;gap:12px">
+    <a class="btn go" id="mail" href="mailto:hostbank7@gmail.com">메일 앱으로 보내기</a>
     <a class="btn alt" id="sms" href="sms:01056226576">문자로 보내기</a>
     <button class="btn alt" type="button" id="copy">내용 복사</button>
+    </div>
     <p id="note"></p>
   </section>
 </main>
@@ -121,11 +124,27 @@ footer small{opacity:.85;font-size:.85rem}
     single.value=Math.min(c,n);calc()}
   count.addEventListener('change',fillSingle);single.addEventListener('change',calc);fillSingle();
 
+  // 휴대폰 번호: 숫자만 받아 010-1234-5678 형태로 자동 하이픈
+  var phone=$('phone');
+  function fmtPhone(){
+    var d=phone.value.replace(/\D/g,'');if(d.length>11&&/^010/.test(d)) d=d.slice(3);d=d.slice(0,11);
+    phone.value=d.length<4?d:d.length<8?d.slice(0,3)+'-'+d.slice(3):d.slice(0,3)+'-'+d.slice(3,d.length-4)+'-'+d.slice(-4);
+  }
+  phone.addEventListener('input',fmtPhone);
+  phone.addEventListener('focus',function(){if(!phone.value) phone.value='010-';setTimeout(function(){var l=phone.value.length;try{phone.setSelectionRange(l,l)}catch(e){}},0)});
+
+  var ENDPOINT='https://formsubmit.co/ajax/hostbank7@gmail.com';
+  function showFallback(text){
+    $('doneTitle').textContent='전송하지 못했습니다';
+    $('doneText').textContent='인터넷 연결 문제로 신청이 전송되지 않았습니다. 아래 버튼으로 문자나 메일을 보내 주시거나 010-5622-6576 으로 전화 주세요.';
+    $('fallback').hidden=false;
+  }
+
   $('f').addEventListener('submit',function(e){
     e.preventDefault();
     var v=function(id){return $(id).value.trim()}, miss=[];
     if(!v('name')) miss.push('성명');
-    if(!/^0\d{1,2}-?\d{3,4}-?\d{4}$/.test(v('phone').replace(/\s/g,''))) miss.push('휴대폰 번호');
+    if(!/^01[016789]-\d{3,4}-\d{4}$/.test(v('phone'))) miss.push('휴대폰 번호(010-1234-5678)');
     if(!$('agree').checked) miss.push('동의 체크');
     if(miss.length){$('err').textContent=miss.join(', ')+'를 확인해 주세요.';$('err').hidden=false;return}
     $('err').hidden=true;
@@ -137,8 +156,16 @@ footer small{opacity:.85;font-size:.85rem}
     var mail='mailto:hostbank7@gmail.com?subject='+encodeURIComponent('[참가신청] '+v('name')+' '+n+'명')+'&body='+encodeURIComponent(text);
     $('msg').textContent=text;$('mail').href=mail;
     $('sms').href='sms:01056226576?body='+encodeURIComponent(text);
-    $('done').hidden=false;$('done').scrollIntoView({block:'start'});
-    location.href=mail;
+    if($('hp').value) return;
+    var btn=$('send');btn.disabled=true;btn.textContent='보내는 중…';
+    fetch(ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},
+      body:JSON.stringify({_subject:'[참가신청] '+v('name')+' '+n+'명 · 하이난 파크골프 국제오픈대회',_template:'table',_captcha:'false',
+        '성명':v('name'),'연락처':v('phone'),'참가 인원':n+'명','1인실':s?s+'명':'안 함',
+        '동반자':v('companions')||'-','소속':v('club')||'-','예상 참가비':won(n*PRICE+s*SINGLE)})})
+    .then(function(r){return r.json().then(function(j){if(!r.ok||String(j.success)!=='true') throw j;})})
+    .then(function(){$('f').hidden=true;$('fallback').hidden=true;})
+    .catch(function(){showFallback(text);btn.disabled=false;btn.textContent='다시 신청하기';})
+    .then(function(){$('done').hidden=false;$('done').scrollIntoView({block:'start'});});
   });
   $('copy').addEventListener('click',function(){
     var t=$('msg').textContent;
