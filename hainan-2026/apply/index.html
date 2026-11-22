@@ -141,7 +141,7 @@ footer small{opacity:.85;font-size:.85rem}
       <h4>7. 여권 정보 등 추가 정보</h4>
       <p>여권 사본 등 계약에 필요한 정보는 참가 확정 단계에서 주식회사 투어유니버스가 별도 동의를 받아 수집합니다. 지병 등 건강 정보는 신청서에 적지 마시고 담당자 상담 때 알려 주세요.</p>
       <h4>8. 문의 및 열람·정정·삭제 요청</h4>
-      <p>개인정보 담당: WP 월드파크골프 고문이사 고용호 · 010-5622-6576 · hostbank7@gmail.com</p>
+      <p>개인정보 담당: WP 월드파크골프 고문이사 고용호 · 010-5622-6576 · worldparkgolf77@gmail.com</p>
     </div></details>
     <p class="err" id="err" hidden></p>
     <input type="text" id="hp" name="_honey" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px">
@@ -162,7 +162,7 @@ footer small{opacity:.85;font-size:.85rem}
     </div>
     <pre id="msg"></pre>
     <div id="fallback" hidden style="display:grid;gap:12px">
-    <a class="btn go" id="mail" href="mailto:hostbank7@gmail.com">메일 앱으로 보내기</a>
+    <a class="btn go" id="mail" href="mailto:worldparkgolf77@gmail.com">메일 앱으로 보내기</a>
     <a class="btn alt" id="sms" href="sms:01056226576">문자로 보내기</a>
     <button class="btn alt" type="button" id="copy">내용 복사</button>
     <a class="btn kk" href="https://open.kakao.com/o/gaHIYeYi" target="_blank" rel="noopener">카카오톡 상담방으로 보내기</a>
@@ -207,7 +207,7 @@ footer small{opacity:.85;font-size:.85rem}
   // 신청 내용을 FormSubmit 으로 일반 폼 전송(페이지 이동). 끝나면 _next 주소로 돌아옴.
   function postToMail(fields, next){
     var f=document.createElement('form');
-    f.method='POST'; f.action='https://formsubmit.co/hostbank7@gmail.com'; f.acceptCharset='UTF-8'; f.style.display='none';
+    f.method='POST'; f.action='https://formsubmit.co/worldparkgolf77@gmail.com'; f.acceptCharset='UTF-8'; f.style.display='none';
     fields._next=next; fields._captcha='false'; fields._template='table';
     for(var k in fields){var i=document.createElement('input');i.type='hidden';i.name=k;i.value=fields[k];f.appendChild(i);}
     document.body.appendChild(f); f.submit();
@@ -234,7 +234,7 @@ footer small{opacity:.85;font-size:.85rem}
       '인원: '+n+'명'+(s?' (1인실 '+s+'명)':' (2인 1실)'),
       v('companions')?'동반자: '+v('companions'):'', v('club')?'소속: '+v('club'):'',
       '예상 참가비: '+won(n*PRICE+s*SINGLE)].filter(Boolean).join('\n');
-    var mail='mailto:hostbank7@gmail.com?subject='+encodeURIComponent('[참가신청] '+v('name')+' '+n+'명')+'&body='+encodeURIComponent(text);
+    var mail='mailto:worldparkgolf77@gmail.com?subject='+encodeURIComponent('[참가신청] '+v('name')+' '+n+'명')+'&body='+encodeURIComponent(text);
     $('msg').textContent=text;$('mail').href=mail;
     $('sms').href='sms:01056226576?body='+encodeURIComponent(text);
     if($('hp').value) return;
@@ -247,7 +247,7 @@ footer small{opacity:.85;font-size:.85rem}
   });
   $('copy').addEventListener('click',function(){
     var t=$('msg').textContent;
-    if(navigator.clipboard) navigator.clipboard.writeText(t).then(function(){$('note').textContent='복사했습니다. hostbank7@gmail.com 또는 010-5622-6576 으로 보내 주세요.'},function(){$('note').textContent='위 내용을 길게 눌러 복사해 주세요.'});
+    if(navigator.clipboard) navigator.clipboard.writeText(t).then(function(){$('note').textContent='복사했습니다. worldparkgolf77@gmail.com 또는 010-5622-6576 으로 보내 주세요.'},function(){$('note').textContent='위 내용을 길게 눌러 복사해 주세요.'});
     else $('note').textContent='위 내용을 길게 눌러 복사해 주세요.';
   });
   $('copyBank').addEventListener('click',function(){var b=$('copyBank');function d(t){b.textContent=t;setTimeout(function(){b.textContent='계좌번호 복사'},2500)}
