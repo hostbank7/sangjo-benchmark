@@ -171,6 +171,36 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--gold);outline-of
 .inc li{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:.93rem;display:flex;gap:8px;align-items:flex-start;min-width:0}
 .inc li::before{content:"✓";color:var(--green-2);font-weight:800}
 
+
+/* booking & terms */
+.steps{list-style:none;margin:0;padding:0;display:grid;gap:10px;counter-reset:st}
+.steps li{counter-increment:st;display:grid;grid-template-columns:34px 1fr;gap:12px;align-items:start;background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.steps li::before{content:counter(st);width:34px;height:34px;border-radius:50%;background:var(--green);color:var(--on-green);display:grid;place-items:center;font-weight:800}
+.steps b{display:block}
+.steps span{color:var(--muted);font-size:.93rem}
+.pay{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px}
+.pay div{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:14px 16px;display:grid;gap:2px}
+.pay small{color:var(--muted)}
+.pay b{font-size:1.2rem;font-variant-numeric:tabular-nums}
+.bank{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;justify-content:space-between;background:var(--gold-soft);border-radius:12px;padding:14px 16px;margin-bottom:14px}
+.bank b{font-size:1.1rem;font-variant-numeric:tabular-nums}
+.cancel{width:100%;border-collapse:collapse;background:var(--paper);font-variant-numeric:tabular-nums}
+.cancel th,.cancel td{border:1px solid var(--line);padding:10px 12px;text-align:left}
+.cancel th{background:var(--chip)}
+.cancel td:last-child{font-weight:700}
+.terms{display:grid;gap:10px;margin-top:14px}
+.terms details{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:12px 16px}
+.terms summary{cursor:pointer;font-weight:700}
+.terms details[open] summary{margin-bottom:8px}
+.terms ul{margin:0;padding-left:1.1em}
+.terms li{margin:4px 0;font-size:.95rem}
+.biz{margin-top:14px;background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:16px 18px}
+.biz h3{font-size:1.05rem;margin-bottom:8px}
+.biz dl{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;margin:0;font-size:.95rem}
+.biz dt{color:var(--muted)}
+.biz dd{margin:0}
+.copybtn{font:inherit;font-size:.9rem;font-weight:700;padding:8px 14px;border-radius:8px;border:1.5px solid var(--line);background:var(--paper);color:var(--ink);cursor:pointer;min-height:40px}
+@media (max-width:640px){.pay{grid-template-columns:1fr}.biz dl{grid-template-columns:1fr}.biz dt{margin-top:6px}}
 @media (max-width:640px){
   .podium,.pillars,.value,.inc{grid-template-columns:1fr}
   .facts{grid-template-columns:repeat(2,1fr)}
@@ -308,8 +338,9 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
     <tr><th>경기 종목</th><td>남·여 개인전 36홀 스트로크 (본선 1R + 결선 2R)<br>한·중 친선 교류전 및 남녀 혼합복식 18홀<br>공식 연습라운드 18홀, 굿바이 라운딩</td></tr>
     <tr><th>참가비</th><td><span class="hl">1인 159만원</span> (2인 1실 기준)<br><small>1인실 사용 시 1박 10만원 추가 (4박 40만원)</small></td></tr>
     <tr><th>출발 조건</th><td>최소 100명 이상 (전세기 운항 기준)</td></tr>
-    <tr><th>국내 진행</th><td>투어유니버스</td></tr>
-    <tr><th>모객·상담</th><td>WP 월드파크골프 고용호 고문이사 · <b class="flight">010-5622-6576</b></td></tr>
+    <tr><th>신청 마감</th><td><b>2026년 12월 10일(목)</b> · 전세기 좌석이 차면 조기 마감</td></tr>
+    <tr><th>여행 주관</th><td>주식회사 투어유니버스 (참가 계약·결제 담당)</td></tr>
+    <tr><th>접수·상담</th><td>WP 월드파크골프 고용호 고문이사 (접수 대행) · <b class="flight">010-5622-6576</b></td></tr>
   </table>
   </div>
 </div></section>
@@ -359,8 +390,80 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
       <li>1인실 추가 요금 1박 10만원</li>
       <li>개인 경비, 매너팁</li></ul>
       <h3 style="margin-top:14px">준비물</h3><ul>
-      <li>여권 (출국일 기준 유효기간 6개월 이상)</li>
+      <li>여권 (출발일 기준 남은 유효기간 6개월 이상) · 비자 면제</li>
+      <li>중국 전자입국카드 작성 (출발 전 QR 안내)</li>
       <li>개인 파크골프채 (수하물 운송 가능)</li></ul></div>
+  </div>
+</div></section>
+
+<section id="booking"><div class="wrap">
+  <div class="head"><span class="eyebrow">BOOKING</span><h2>예약 · 결제 안내</h2></div>
+  <div class="pay">
+    <div><small>신청 마감</small><b>12월 10일(목)</b><small>좌석이 차면 조기 마감</small></div>
+    <div><small>계약금</small><b>1인 50만원</b><small>신청 확인 후 입금</small></div>
+    <div><small>잔금</small><b>1인 109만원</b><small>출발 3일 전(12월 24일)까지 완납</small></div>
+  </div>
+  <div class="bank">
+    <div><small style="color:var(--muted)">입금 계좌 (예금주 주식회사 투어유니버스)</small><br><b>우리은행 1005-04-658317</b></div>
+    <button class="copybtn" type="button" id="copyBank">계좌번호 복사</button>
+  </div>
+  <ol class="steps">
+    <li><div><b>참가 신청</b><span>아래 신청서, 전화(010-5622-6576) 또는 카카오톡으로 신청합니다.</span></div></li>
+    <li><div><b>담당자 확인 연락</b><span>WP 월드파크골프 고용호 고문이사가 신청 내용을 확인하고 연락드립니다.</span></div></li>
+    <li><div><b>계약금 입금 · 여권 사본 제출</b><span>계약금 1인 50만원을 위 계좌로 입금하고 여권 사본을 보내 주세요. 입금자명은 참가자 성명으로 해 주세요.</span></div></li>
+    <li><div><b>참가 확정</b><span>주식회사 투어유니버스가 계약서·여행약관·일정표를 드리며 참가가 확정됩니다.</span></div></li>
+    <li><div><b>잔금 납부 · 전자입국카드 작성</b><span>출발 3일 전까지 잔금을 내고, 안내받은 QR로 중국 전자입국카드를 작성합니다.</span></div></li>
+  </ol>
+</div></section>
+
+<section id="terms"><div class="wrap">
+  <div class="head"><span class="eyebrow">TERMS</span><h2>취소 · 환불 규정과 여행 약관</h2>
+    <p style="margin:0;color:var(--muted)">공정거래위원회 심의 여행업 표준약관(제10020-1호)을 따릅니다. 약관 전문은 계약할 때 드립니다.</p></div>
+  <div style="overflow-x:auto">
+  <table class="cancel">
+    <tr><th>취소 시점<br><small>출발일 기준</small></th><th>취소료 · 배상<br><small>여행자 취소, 여행사 취소 모두 같음</small></th></tr>
+    <tr><td>20일 전까지</td><td>계약금 환불</td></tr>
+    <tr><td>10일 전까지</td><td>여행경비의 5%</td></tr>
+    <tr><td>8일 전까지</td><td>여행경비의 10%</td></tr>
+    <tr><td>1일 전까지</td><td>여행경비의 20%</td></tr>
+    <tr><td>출발 당일</td><td>여행경비의 50%</td></tr>
+  </table>
+  </div>
+  <div class="terms">
+    <details><summary>취소료가 면제되는 경우</summary><ul>
+      <li>여행자의 3촌 이내 친족이 사망한 경우 (가족관계 서류, 사망진단서 제출)</li>
+      <li>여행자의 중대한 질병이나 부상으로 참가할 수 없는 경우 (진단서 제출)</li>
+      <li>배우자 또는 직계가족이 3일 이상 입원해 출발 전까지 퇴원이 어려운 경우, 그 배우자 또는 보호자 1인 (입원확인서, 가족관계 서류 제출)</li></ul></details>
+    <details><summary>최저 출발 인원 (100명)</summary><ul>
+      <li>최저 인원 충족과 출발 여부는 출발 7일 전까지 확정해 알려 드립니다.</li>
+      <li>인원 미달로 여행을 진행할 수 없으면 약관 제7조에 따라 처리합니다.</li></ul></details>
+    <details><summary>요금 · 일정 변경</summary><ul>
+      <li>천재지변, 정부 명령, 항공사 사정 등 부득이한 경우나 쌍방이 합의한 경우 일정이 바뀔 수 있습니다.</li>
+      <li>항공·숙박 요금이 계약 때보다 5% 이상, 적용 환율이 2% 이상 변하면 그 범위 안에서 요금을 조정할 수 있으며, 인상은 출발 15일 전까지 알려 드립니다.</li></ul></details>
+    <details><summary>건강 및 참가 제한</summary><ul>
+      <li>심장병·고혈압 등 지병이 있거나 거동이 불편한 분은 신청할 때 미리 알려 주세요. 보호자 동행이나 서류를 요청할 수 있습니다.</li>
+      <li>미리 알리지 않은 질병으로 생긴 문제는 여행자 책임입니다.</li></ul></details>
+    <details><summary>보험</summary><ul>
+      <li>여행사는 약관에 따라 여행자보험과 기획여행 보증보험에 가입합니다.</li>
+      <li>보증보험 가입 금액은 확인되는 대로 이곳에 안내해 드립니다.</li></ul></details>
+    <details><summary>개인정보 수집 · 이용 안내</summary><ul>
+      <li>수집 항목: 성명, 연락처, 출생연도, 성별, 참가 인원, 동반자 성명, 소속, 요청 사항</li>
+      <li>이용 목적: 참가 신청 접수, 상담, 여행 계약 진행</li>
+      <li>제공받는 곳: 주식회사 투어유니버스 (여행 계약·항공·숙박 예약)</li>
+      <li>신청서는 메일 전송 서비스(FormSubmit)를 거쳐 담당자에게 전달됩니다.</li>
+      <li>보관 기간: 행사 종료 후 파기 (관계 법령에 따라 보관해야 하는 정보는 그 기간 동안 보관)</li></ul></details>
+  </div>
+  <div class="biz">
+    <h3>여행 주관 · 계약</h3>
+    <dl>
+      <dt>상호</dt><dd>주식회사 투어유니버스</dd>
+      <dt>대표자</dt><dd>CUI CHENXING</dd>
+      <dt>사업자등록번호</dt><dd>717-86-03318</dd>
+      <dt>업태 · 종목</dt><dd>서비스업 · 여행사업</dd>
+      <dt>주소</dt><dd>서울특별시 중구 중림로 5-1, 701호</dd>
+      <dt>입금 계좌</dt><dd>우리은행 1005-04-658317 (주식회사 투어유니버스)</dd>
+      <dt>접수 대행</dt><dd>WP 월드파크골프 고문이사 고용호 · 010-5622-6576</dd>
+    </dl>
   </div>
 </div></section>
 
@@ -379,7 +482,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 
 <section id="apply"><div class="wrap">
   <div class="head"><span class="eyebrow">APPLICATION</span><h2>참가 신청서</h2>
-    <p style="margin:0;color:var(--muted)">아래를 작성하고 <b>이메일로 신청 보내기</b>를 누르면 신청 메일이 자동으로 작성됩니다. 문자나 카카오톡으로 고용호 고문이사(010-5622-6576)에게 보내셔도 됩니다. 담당자가 확인 후 계약금과 여권 정보를 안내해 드립니다.</p></div>
+    <p style="margin:0;color:var(--muted)">아래를 작성하고 <b>이메일로 신청 보내기</b>를 누르면 신청 메일이 자동으로 작성됩니다. 문자나 카카오톡으로 고용호 고문이사(010-5622-6576)에게 보내셔도 됩니다. 담당자가 확인 후 계약금과 여권 정보를 안내해 드립니다. 신청 마감은 <b>12월 10일(목)</b>입니다.</p></div>
   <form id="f" novalidate>
     <div class="row">
       <label for="name"><span>성명 (대표 신청자) <em>*</em></span><input id="name" autocomplete="name" placeholder="홍길동"></label>
@@ -400,7 +503,8 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
     </div>
     <label for="memo">요청 사항<textarea id="memo" rows="3" placeholder="객실 배정, 식사, 거동 관련 등"></textarea></label>
     <div class="total"><span>예상 참가비</span><b id="total">1,590,000원</b></div>
-    <label class="check" for="agree"><input type="checkbox" id="agree"><span>신청 안내와 상담을 위해 성명·연락처 등 위 정보를 담당자에게 제공하는 데 동의합니다. <em>*</em></span></label>
+    <label class="check" for="agreeTerms"><input type="checkbox" id="agreeTerms"><span><a href="#terms">취소·환불 규정과 여행 약관</a>을 확인했습니다. <em>*</em></span></label>
+    <label class="check" for="agree"><input type="checkbox" id="agree"><span><a href="#terms">개인정보 수집·이용</a>과 주식회사 투어유니버스 제공에 동의합니다. <em>*</em></span></label>
     <p class="err" id="err" hidden></p>
     <button class="btn submit" type="submit">신청 문자 만들기</button>
   </form>
@@ -430,7 +534,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
       <a class="btn kk" href="https://open.kakao.com/o/gaHIYeYi" target="_blank" rel="noopener">카카오톡으로 바로 상담하기</a>
       <small>누르면 고용호 고문이사와 1:1 상담방이 바로 열립니다 (친구 추가 필요 없음)</small></div>
     <a class="btn btn-ghost" style="justify-self:center;margin-block:6px" href="hainan-parkgolf-brochure.pdf" target="_blank" rel="noopener">팸플릿 PDF 내려받기</a>
-    <small>신청 메일 hostbank7@gmail.com · 국내 진행 투어유니버스 · 최소 출발 인원 100명 · 전세기 좌석 소진 시 조기 마감</small>
+    <small>신청 메일 hostbank7@gmail.com · 신청 마감 12월 10일 · 최소 출발 인원 100명 · 전세기 좌석 소진 시 조기 마감<br>여행 주관 주식회사 투어유니버스 · 대표 CUI CHENXING · 사업자등록번호 717-86-03318 · 서울특별시 중구 중림로 5-1, 701호</small>
   </div>
 </div></footer>
 
@@ -468,7 +572,8 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
     const miss=[];
     if(!v('name')) miss.push('성명');
     if(!/^01[016789]-\d{3,4}-\d{4}$/.test(v('phone'))) miss.push('연락처(010-1234-5678 형식)');
-    if(!$('agree').checked) miss.push('정보 제공 동의');
+    if(!$('agreeTerms').checked) miss.push('약관 확인');
+    if(!$('agree').checked) miss.push('개인정보 동의');
     if(miss.length){ err.textContent=miss.join(', ')+' 항목을 확인해 주세요.'; err.hidden=false; return; }
     err.hidden=true;
     const n=+count.value, s=+single.value;
@@ -485,7 +590,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
       '희망 종목: '+$('event').value,
       v('memo')?'요청 사항: '+v('memo'):'',
       '예상 참가비: '+won(n*PRICE+s*SINGLE),
-      '정보 제공 동의: 예'
+      '약관 확인·개인정보 동의: 예'
     ].filter(Boolean);
     const text=lines.join('\n');
     $('msg').textContent=text;
@@ -501,7 +606,9 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
     for(const k in fields){const i=document.createElement('input');i.type='hidden';i.name=k;i.value=fields[k];f.appendChild(i);}
     document.body.appendChild(f); f.submit();
   });
-  if(/[?&]ok=1/.test(location.search)){ $('f').hidden=true; $('result').hidden=false; $('resTitle').textContent='신청이 접수되었습니다. 담당자가 확인 후 연락드립니다.'; $('msg').hidden=true; document.querySelector('#result .actions').hidden=true; $('copyNote').hidden=true; }
+  if(/[?&]ok=1/.test(location.search)){ $('f').hidden=true; $('result').hidden=false; $('resTitle').textContent='신청이 접수되었습니다. 담당자가 확인 후 연락드립니다. 계약금(1인 50만원)은 담당자 연락을 받은 뒤 우리은행 1005-04-658317 (주식회사 투어유니버스)로 입금해 주세요.'; $('msg').hidden=true; document.querySelector('#result .actions').hidden=true; $('copyNote').hidden=true; }
+  $('copyBank').addEventListener('click',()=>{const b=$('copyBank');const done=t=>{b.textContent=t;setTimeout(()=>b.textContent='계좌번호 복사',2500)};
+    (navigator.clipboard?navigator.clipboard.writeText('1005-04-658317'):Promise.reject()).then(()=>done('복사했습니다'),()=>done('1005-04-658317'));});
   const phone=$('phone');
   phone.addEventListener('focus',function(){if(!phone.value) phone.value='010-';setTimeout(function(){var l=phone.value.length;try{phone.setSelectionRange(l,l)}catch(e){}},0)});
   phone.addEventListener('input',()=>{
