@@ -11,7 +11,7 @@ head=('<!doctype html>\n<html lang="ko">\n<head>\n<meta charset="utf-8">\n'
  '<style>:root{color-scheme:light} body{margin:0} img{max-width:100%} [hidden]{display:none!important}</style>\n')
 end=s.index('</style>')+8
 html=head+s[:end]+'\n</head>\n<body>\n'+s[end:]+'\n</body>\n</html>\n'
-o='    <small>신청 메일 hostbank7@gmail.com'
+o='    <small>신청 메일 worldparkgolf77@gmail.com'
 html=html.replace(o,'    <a class="btn btn-ghost" style="justify-self:center;margin-block:6px" href="hainan-parkgolf-brochure.pdf" target="_blank" rel="noopener">팸플릿 PDF 내려받기</a>\n'+o,1)
 for out in outs:
     (out/'img').mkdir(parents=True,exist_ok=True)
