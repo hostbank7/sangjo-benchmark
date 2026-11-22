@@ -508,8 +508,6 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
     let d=phone.value.replace(/\D/g,'');if(d.length>11&&/^010/.test(d)) d=d.slice(3);d=d.slice(0,11);
     phone.value=d.length<4?d:d.length<8?d.slice(0,3)+'-'+d.slice(3):d.slice(0,3)+'-'+d.slice(3,d.length-4)+'-'+d.slice(-4);
   });
-
-  });
 })();
 </script>
 
