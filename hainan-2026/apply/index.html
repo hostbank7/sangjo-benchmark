@@ -60,6 +60,17 @@ input:focus,select:focus{outline:none;border-color:var(--green)}
 .next .acct{font-weight:800;font-size:1.15rem;font-variant-numeric:tabular-nums}
 .agree a{color:var(--green);font-weight:700}
 .terms-line{font-size:.82rem;opacity:.8}
+
+.pv{display:grid;gap:6px;font-size:.93rem;line-height:1.65}
+.pv h4{margin:10px 0 0;font-size:.98rem}
+.pv p{margin:0}
+.pv-lead{color:var(--muted)}
+.pvt{width:100%;border-collapse:collapse;font-size:.9rem}
+.pvt th,.pvt td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}
+.pvt th{white-space:nowrap;background:#edf4ee;width:8.5em}
+.pvbox{background:var(--bg);border-radius:10px;padding:10px 14px;margin-top:-6px}
+.pvbox summary{cursor:pointer;font-weight:700;color:var(--green);font-size:.95rem}
+.pvbox[open] summary{margin-bottom:8px}
 footer{margin-top:24px;background:var(--green);color:#fff;text-align:center}
 footer .wrap{padding-block:24px calc(24px + env(safe-area-inset-bottom,0px));display:grid;gap:6px}
 footer .tel{font-family:var(--serif);font-size:2rem;color:#ffd88a;text-decoration:none}
@@ -100,7 +111,38 @@ footer small{opacity:.85;font-size:.85rem}
     <label for="club"><span>소속 동호회 <small>(선택)</small></span><input id="club" placeholder="예) ○○시 파크골프협회"></label>
     <div class="total"><span>예상 참가비</span><b id="total">1,590,000원</b></div>
     <label class="agree" for="agreeTerms"><input type="checkbox" id="agreeTerms"><span><a href="../#terms">취소·환불 규정과 여행 약관</a>을 확인했습니다.</span></label>
-    <label class="agree" for="agree"><input type="checkbox" id="agree"><span><a href="../#terms">개인정보 수집·이용</a>과 주식회사 투어유니버스 제공에 동의합니다.</span></label>
+    <label class="agree" for="agree"><input type="checkbox" id="agree"><span>개인정보 수집·이용과 주식회사 투어유니버스 제공에 동의합니다.</span></label>
+    <details class="pvbox"><summary>개인정보 수집·이용 동의서 보기</summary>
+    <div class="pv">
+      <p class="pv-lead">WP 월드파크골프(이하 “접수처”)는 「2026 하이난 미션힐스 한·중 파크골프 국제오픈대회」 참가 신청을 받기 위해 아래와 같이 개인정보를 수집·이용하고 제공합니다. 내용을 읽고 동의 여부를 정해 주세요.</p>
+      <h4>1. 수집·이용 목적</h4>
+      <p>참가 신청 접수 및 본인 확인, 참가 상담과 안내 연락, 여행 계약 체결과 항공·숙박·대회 참가 등록</p>
+      <h4>2. 수집 항목</h4>
+      <p>필수: 성명, 휴대폰 번호, 참가 인원, 1인실 사용 인원<br>선택: 출생연도, 성별, 동반자 성명, 소속 동호회, 희망 종목, 요청 사항</p>
+      <h4>3. 보유·이용 기간</h4>
+      <p>행사 종료일(2027년 1월 1일)부터 3개월이 지나면 지체 없이 파기합니다. 다만 계약·대금 결제 기록 등 관계 법령에서 보관하도록 정한 정보는 그 기간 동안 보관합니다. 참가하지 않기로 한 분의 정보는 상담이 끝나면 파기합니다.</p>
+      <h4>4. 제3자 제공</h4>
+      <table class="pvt">
+        <tr><th>제공받는 자</th><td>주식회사 투어유니버스 (여행 주관·계약)</td></tr>
+        <tr><th>제공 목적</th><td>여행 계약 체결, 항공·숙박 예약, 대회 참가 등록</td></tr>
+        <tr><th>제공 항목</th><td>위 2번의 수집 항목</td></tr>
+        <tr><th>보유 기간</th><td>위 3번과 같음</td></tr>
+      </table>
+      <h4>5. 처리 위탁 및 국외 이전</h4>
+      <table class="pvt">
+        <tr><th>위탁받는 자</th><td>FormSubmit (formsubmit.co, 신청서 메일 전송 서비스)</td></tr>
+        <tr><th>위탁 업무</th><td>홈페이지 신청서 내용을 접수처 이메일로 전달</td></tr>
+        <tr><th>이전 국가 · 방법</th><td>해외 서버, 신청서 제출 시 인터넷으로 전송</td></tr>
+        <tr><th>이전 항목</th><td>신청서에 입력한 항목</td></tr>
+        <tr><th>보유 기간</th><td>메일 전달 후 해당 서비스의 보관 정책에 따름</td></tr>
+      </table>
+      <h4>6. 동의를 거부할 권리</h4>
+      <p>개인정보 수집·이용과 제3자 제공에 동의하지 않을 수 있습니다. 다만 필수 항목에 동의하지 않으면 홈페이지 신청은 할 수 없으며, 전화(010-5622-6576)로 상담받으실 수 있습니다.</p>
+      <h4>7. 여권 정보 등 추가 정보</h4>
+      <p>여권 사본 등 계약에 필요한 정보는 참가 확정 단계에서 주식회사 투어유니버스가 별도 동의를 받아 수집합니다. 지병 등 건강 정보는 신청서에 적지 마시고 담당자 상담 때 알려 주세요.</p>
+      <h4>8. 문의 및 열람·정정·삭제 요청</h4>
+      <p>개인정보 담당: WP 월드파크골프 고문이사 고용호 · 010-5622-6576 · hostbank7@gmail.com</p>
+    </div></details>
     <p class="err" id="err" hidden></p>
     <input type="text" id="hp" name="_honey" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px">
     <button class="btn go" type="submit" id="send">신청하기</button>
