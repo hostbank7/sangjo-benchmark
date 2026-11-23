@@ -164,6 +164,13 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--gold);outline-of
 
 
 .hint{display:block;font-weight:400;font-size:.88rem;color:var(--muted);line-height:1.5}
+
+.okmodal{position:fixed;inset:0;z-index:100;background:rgba(10,30,22,.55);display:grid;place-items:center;padding:max(16px,env(safe-area-inset-left,0px))}
+.okcard{background:var(--paper);color:var(--ink);border-radius:18px;padding:32px 24px 24px;max-width:420px;width:100%;text-align:center;display:grid;gap:12px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.okcard h2{font-size:1.5rem}
+.okcard p{margin:0;color:var(--muted);font-size:1.08rem;line-height:1.7}
+.okcard .btn{width:100%;justify-content:center;margin-top:8px}
+.okicon{width:64px;height:64px;border-radius:50%;background:var(--green);color:var(--on-green);display:grid;place-items:center;font-size:2rem;font-weight:800;margin:0 auto}
 /* trust */
 .trust-sec{background:var(--paper)}
 .safe{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
@@ -669,11 +676,18 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
     if(!ONLINE){ $('resTitle').textContent='아래 내용을 이메일(worldparkgolf77@gmail.com)이나 문자(010-5622-6576)로 보내 주세요.'; return; }
     $('resTitle').textContent='신청을 보내는 중입니다…';
     const f=document.createElement('form'); f.method='POST'; f.action='https://formsubmit.co/worldparkgolf77@gmail.com'; f.acceptCharset='UTF-8'; f.style.display='none';
-    const fields={_subject:'[참가신청] '+(v('ref')?'[추천 '+refLabel(v('ref'))+'] ':'')+v('name')+' '+n+'명 · 하이난 파크골프 국제오픈대회','추천 코드':refLabel(v('ref'))||'-',_next:location.origin+location.pathname+'?ok=1#apply',_captcha:'false',_template:'table','신청 내용':text};
+    const fields={_subject:'[참가신청] '+(v('ref')?'[추천 '+refLabel(v('ref'))+'] ':'')+v('name')+' '+n+'명 · 하이난 파크골프 국제오픈대회','추천 코드':refLabel(v('ref'))||'-',_next:location.origin+location.pathname+'?ok=1',_captcha:'false',_template:'table','신청 내용':text};
     for(const k in fields){const i=document.createElement('input');i.type='hidden';i.name=k;i.value=fields[k];f.appendChild(i);}
     document.body.appendChild(f); f.submit();
   });
-  if(/[?&]ok=1/.test(location.search)){ $('f').hidden=true; $('result').hidden=false; $('resTitle').textContent='신청이 접수되었습니다. 담당자가 확인 후 연락드립니다. 감사합니다.'; $('msg').hidden=true; document.querySelector('#result .actions').hidden=true; $('copyNote').hidden=true; const h=$('homeBtn'); if(h){ h.hidden=false; h.href=location.pathname; h.addEventListener('click',e=>{ e.preventDefault(); location.replace(location.pathname); }); } }
+  if(/[?&]ok=1/.test(location.search)){
+    $('f').hidden=true;
+    const ov=document.createElement('div'); ov.className='okmodal'; ov.setAttribute('role','dialog'); ov.setAttribute('aria-modal','true');
+    ov.innerHTML='<div class="okcard"><div class="okicon">✓</div><h2>신청이 접수되었습니다</h2><p>담당자가 확인 후 연락드립니다.<br>감사합니다.</p><a class="btn submit" href="'+location.pathname+'" id="okHome">홈으로</a></div>';
+    document.body.appendChild(ov); document.documentElement.style.overflow='hidden';
+    $('okHome').addEventListener('click',e=>{ e.preventDefault(); location.replace(location.pathname); });
+    $('okHome').focus();
+  }
   $('copyBank').addEventListener('click',()=>{const b=$('copyBank');const done=t=>{b.textContent=t;setTimeout(()=>b.textContent='계좌번호 복사',2500)};
     (navigator.clipboard?navigator.clipboard.writeText('1005-04-658317'):Promise.reject()).then(()=>done('복사했습니다'),()=>done('1005-04-658317'));});
   function openPrivacy(){ if(location.hash==='#privacy'){ const d=$('privacy'); if(d){ d.open=true; d.scrollIntoView({block:'start'}); } } }
