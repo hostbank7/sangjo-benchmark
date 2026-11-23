@@ -5,7 +5,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<script id="fresh">(function(){var V="20261123042132";try{fetch("../version.txt?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){t=(t||"").trim();if(!t||t===V)return;var m=location.search.match(/[?&]v=([^&]*)/);if(m&&m[1]===t)return;var q=location.search.replace(/([?&])v=[^&]*&?/,"$1").replace(/[?&]$/,"");location.replace(location.pathname+(q?q+"&":"?")+"v="+t+location.hash)}).catch(function(){})}catch(e){}})();</script>
+<script id="fresh">(function(){var V="20261123043527";try{fetch("../version.txt?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){t=(t||"").trim();if(!t||t===V)return;var m=location.search.match(/[?&]v=([^&]*)/);if(m&&m[1]===t)return;var q=location.search.replace(/([?&])v=[^&]*&?/,"$1").replace(/[?&]$/,"");location.replace(location.pathname+(q?q+"&":"?")+"v="+t+location.hash)}).catch(function(){})}catch(e){}})();</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>참가 신청 · 하이난 파크골프 국제오픈대회</title>
 <meta property="og:title" content="참가 신청 · 2026 하이난 미션힐스 한·중 파크골프 국제오픈대회">
@@ -164,16 +164,7 @@ footer small{opacity:.85;font-size:.85rem}
 
   <section class="done" id="done" hidden>
     <h2 id="doneTitle">신청이 접수되었습니다</h2>
-    <p id="doneText">담당자 고용호 고문이사가 확인 후 연락드립니다. 감사합니다.</p>
-    <div class="next" id="next">
-      <b>다음 순서</b>
-      <ol>
-        <li>담당자 연락을 받으신 뒤 계약금 <b>1인 50만원</b>을 입금해 주세요.<br><span class="acct">우리은행 1005-04-658317</span><br>예금주 주식회사 투어유니버스 · 입금자명은 참가자 성명</li>
-        <li>여권 사본을 보내 주세요. (남은 유효기간 6개월 이상, 비자 면제)</li>
-        <li>잔금 1인 109만원은 출발 3일 전(12월 24일)까지 내 주세요.</li>
-      </ol>
-      <button class="btn alt" type="button" id="copyBank">계좌번호 복사</button>
-    </div>
+    <p id="doneText">담당자가 확인 후 연락드립니다. 감사합니다.</p>
     <pre id="msg"></pre>
     <div id="fallback" hidden style="display:grid;gap:12px">
     <a class="btn go" id="mail" href="mailto:worldparkgolf77@gmail.com">메일 앱으로 보내기</a>
@@ -237,7 +228,7 @@ footer small{opacity:.85;font-size:.85rem}
   }
   var ONLINE=/github\.io$/.test(location.hostname);
   function showFallback(text){
-    $('msg').hidden=false;$('next').hidden=true;
+    $('msg').hidden=false;
     $('doneTitle').textContent='전송하지 못했습니다';
     $('doneText').textContent='인터넷 연결 문제로 신청이 전송되지 않았습니다. 아래 버튼으로 문자나 메일을 보내 주시거나 010-5622-6576 으로 전화 주세요.';
     $('fallback').hidden=false;
@@ -274,8 +265,6 @@ footer small{opacity:.85;font-size:.85rem}
     if(navigator.clipboard) navigator.clipboard.writeText(t).then(function(){$('note').textContent='복사했습니다. worldparkgolf77@gmail.com 또는 010-5622-6576 으로 보내 주세요.'},function(){$('note').textContent='위 내용을 길게 눌러 복사해 주세요.'});
     else $('note').textContent='위 내용을 길게 눌러 복사해 주세요.';
   });
-  $('copyBank').addEventListener('click',function(){var b=$('copyBank');function d(t){b.textContent=t;setTimeout(function(){b.textContent='계좌번호 복사'},2500)}
-    if(navigator.clipboard) navigator.clipboard.writeText('1005-04-658317').then(function(){d('복사했습니다')},function(){d('1005-04-658317')}); else d('1005-04-658317');});
 })();
 </script>
 </body>
