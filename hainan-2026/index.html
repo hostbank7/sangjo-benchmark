@@ -6,7 +6,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<script id="fresh">(function(){var V="20261122154657";try{fetch("version.txt?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){t=(t||"").trim();if(!t||t===V)return;var m=location.search.match(/[?&]v=([^&]*)/);if(m&&m[1]===t)return;var q=location.search.replace(/([?&])v=[^&]*&?/,"$1").replace(/[?&]$/,"");location.replace(location.pathname+(q?q+"&":"?")+"v="+t+location.hash)}).catch(function(){})}catch(e){}})();</script>
+<script id="fresh">(function(){var V="20261123035427";try{fetch("version.txt?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){t=(t||"").trim();if(!t||t===V)return;var m=location.search.match(/[?&]v=([^&]*)/);if(m&&m[1]===t)return;var q=location.search.replace(/([?&])v=[^&]*&?/,"$1").replace(/[?&]$/,"");location.replace(location.pathname+(q?q+"&":"?")+"v="+t+location.hash)}).catch(function(){})}catch(e){}})();</script>
 <meta property="og:title" content="2026 하이난 미션힐스 한·중 파크골프 국제오픈대회">
 <meta property="og:description" content="12.27~1.1 4박6일 · 티웨이 직항 전세기 · 1인 159만원 · 우승 현금 300만원">
 <meta property="og:image" content="https://hostbank7.github.io/sangjo-benchmark/hainan-2026/img/hero.jpg">
@@ -177,6 +177,7 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--gold);outline-of
 
 
 
+.hint{display:block;font-weight:400;font-size:.88rem;color:var(--muted);line-height:1.5}
 /* trust */
 .trust-sec{background:var(--paper)}
 .safe{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
@@ -577,7 +578,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
       <label for="count"><span>참가 인원 (본인 포함) <em>*</em></span><select id="count"></select></label>
       <label for="single">1인실 사용 인원<select id="single"></select></label>
     </div>
-    <label for="companions">동반자 성명·성별<input id="companions" placeholder="예) 김영희(여), 이철수(남)"></label>
+    <label for="companions"><span>동반자 성명·성별</span><small class="hint">동반자가 2인 이상인 경우 본인만 적어 주시고, “별도 문의”라고 남겨 주세요.</small><input id="companions" placeholder="예) 김영희(여) / 별도 문의"></label>
     <div class="row">
       <label for="club">소속 동호회·협회<input id="club" placeholder="예) ○○시 파크골프협회"></label>
       <label for="event">희망 종목<select id="event"><option>개인전 + 혼합복식</option><option>개인전만</option><option>친선 라운딩 위주 (비경쟁)</option></select></label>

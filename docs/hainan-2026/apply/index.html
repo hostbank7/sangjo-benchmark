@@ -5,7 +5,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<script id="fresh">(function(){var V="20261122154657";try{fetch("../version.txt?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){t=(t||"").trim();if(!t||t===V)return;var m=location.search.match(/[?&]v=([^&]*)/);if(m&&m[1]===t)return;var q=location.search.replace(/([?&])v=[^&]*&?/,"$1").replace(/[?&]$/,"");location.replace(location.pathname+(q?q+"&":"?")+"v="+t+location.hash)}).catch(function(){})}catch(e){}})();</script>
+<script id="fresh">(function(){var V="20261123035427";try{fetch("../version.txt?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){t=(t||"").trim();if(!t||t===V)return;var m=location.search.match(/[?&]v=([^&]*)/);if(m&&m[1]===t)return;var q=location.search.replace(/([?&])v=[^&]*&?/,"$1").replace(/[?&]$/,"");location.replace(location.pathname+(q?q+"&":"?")+"v="+t+location.hash)}).catch(function(){})}catch(e){}})();</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>참가 신청 · 하이난 파크골프 국제오픈대회</title>
 <meta property="og:title" content="참가 신청 · 2026 하이난 미션힐스 한·중 파크골프 국제오픈대회">
@@ -37,6 +37,7 @@ h1 span{color:#ecc878;display:block}
 .facts small{color:var(--muted);font-size:.82rem}
 .facts b{font-size:1.05rem}
 .facts .p{color:var(--red);font-size:1.25rem}
+.hint{display:block;font-weight:400;font-size:.88rem;color:var(--muted);line-height:1.5}
 .safe-mini{list-style:none;margin:14px 0 0;padding:12px 14px;background:var(--paper);border:1px solid var(--line);border-radius:10px;display:grid;gap:6px;font-size:.95rem}
 .safe-mini li{display:flex;gap:8px}
 .safe-mini li::before{content:"✓";color:var(--green);font-weight:800}
@@ -119,7 +120,7 @@ footer small{opacity:.85;font-size:.85rem}
       <label for="count">참가 인원<select id="count"></select></label>
       <label for="single">1인실<select id="single"></select></label>
     </div>
-    <label for="companions"><span>동반자 성명 <small>(2명 이상일 때)</small></span><input id="companions" placeholder="예) 김영희, 이철수"></label>
+    <label for="companions"><span>동반자 성명·성별</span><small class="hint">동반자가 2인 이상인 경우 본인만 적어 주시고, “별도 문의”라고 남겨 주세요.</small><input id="companions" placeholder="예) 김영희(여) / 별도 문의"></label>
     <label for="club"><span>소속 동호회 <small>(선택)</small></span><input id="club" placeholder="예) ○○시 파크골프협회"></label>
     <div class="total"><span>예상 참가비</span><b id="total">1,590,000원</b></div>
     <label class="agree" for="agreeTerms"><input type="checkbox" id="agreeTerms"><span><a href="../#terms">취소·환불 규정과 여행 약관</a>을 확인했습니다.</span></label>
