@@ -6,7 +6,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<script id="fresh">(function(){var V="20261123070547";try{fetch("version.txt?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){t=(t||"").trim();if(!t||t===V)return;var m=location.search.match(/[?&]v=([^&]*)/);if(m&&m[1]===t)return;var q=location.search.replace(/([?&])v=[^&]*&?/,"$1").replace(/[?&]$/,"");location.replace(location.pathname+(q?q+"&":"?")+"v="+t+location.hash)}).catch(function(){})}catch(e){}})();</script>
+<script id="fresh">(function(){var V="20261123071522";try{fetch("version.txt?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){t=(t||"").trim();if(!t||t===V)return;var m=location.search.match(/[?&]v=([^&]*)/);if(m&&m[1]===t)return;var q=location.search.replace(/([?&])v=[^&]*&?/,"$1").replace(/[?&]$/,"");location.replace(location.pathname+(q?q+"&":"?")+"v="+t+location.hash)}).catch(function(){})}catch(e){}})();</script>
 <meta property="og:title" content="2026 하이난 미션힐스 한·중 파크골프 국제오픈대회">
 <meta property="og:description" content="12.27~1.1 4박6일 · 티웨이 직항 전세기 · 1인 159만원 · 우승 현금 300만원">
 <meta property="og:image" content="https://hostbank7.github.io/sangjo-benchmark/hainan-2026/img/hero.jpg">
@@ -47,7 +47,7 @@ section .head{display:grid;gap:6px;margin-bottom:22px}
 
 /* hero */
 .hero{background:var(--green);color:var(--on-green)}
-.hero-photo{display:block;width:100%;max-width:100%;height:clamp(240px,36vw,540px);object-fit:cover;object-position:right center}
+.hero-photo{display:block;width:100%;max-width:100%;height:auto}
 .hero .wrap{padding-block:30px 36px;display:grid;gap:18px}
 .frame{border:1.5px solid #c9a24f;outline:1px solid rgba(201,162,79,.45);outline-offset:5px;padding:26px 20px;display:grid;gap:12px;text-align:center}
 .frame .kicker{font-size:.86rem;letter-spacing:.06em;color:#e6c77f;font-weight:700}
@@ -258,7 +258,6 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
   .frame h1{font-size:2rem}
   .facts b{font-size:1.15rem}
   .facts small{font-size:.85rem}
-  .hero-photo{height:auto;aspect-ratio:16/10;object-position:18% center}
   .spec th,.spec td{display:block;width:auto;padding:8px 12px}
   .spec th{border-bottom:0;padding-bottom:2px;background:transparent;color:var(--gold);font-size:.88rem}
   .spec td{padding-top:0}
@@ -279,7 +278,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 
 
 <header class="hero">
-  <img class="hero-photo" src="img/main.jpg" alt="호수와 산이 어우러진 하이난 미션힐스 코스에서 스윙하는 골퍼">
+  <picture><source media="(max-width:640px)" srcset="img/main_m.jpg"><img class="hero-photo" src="img/main.jpg" alt="호수와 산이 어우러진 하이난 미션힐스 코스에서 스윙하는 골퍼"></picture>
   <div class="wrap">
     <div class="frame">
       <div class="kicker">중국 국가체육총국 주최 · 하이난성 공식 후원</div>
