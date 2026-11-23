@@ -6,7 +6,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<script id="fresh">(function(){var V="20261123040153";try{fetch("version.txt?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){t=(t||"").trim();if(!t||t===V)return;var m=location.search.match(/[?&]v=([^&]*)/);if(m&&m[1]===t)return;var q=location.search.replace(/([?&])v=[^&]*&?/,"$1").replace(/[?&]$/,"");location.replace(location.pathname+(q?q+"&":"?")+"v="+t+location.hash)}).catch(function(){})}catch(e){}})();</script>
+<script id="fresh">(function(){var V="20261123042132";try{fetch("version.txt?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){t=(t||"").trim();if(!t||t===V)return;var m=location.search.match(/[?&]v=([^&]*)/);if(m&&m[1]===t)return;var q=location.search.replace(/([?&])v=[^&]*&?/,"$1").replace(/[?&]$/,"");location.replace(location.pathname+(q?q+"&":"?")+"v="+t+location.hash)}).catch(function(){})}catch(e){}})();</script>
 <meta property="og:title" content="2026 하이난 미션힐스 한·중 파크골프 국제오픈대회">
 <meta property="og:description" content="12.27~1.1 4박6일 · 티웨이 직항 전세기 · 1인 159만원 · 우승 현금 300만원">
 <meta property="og:image" content="https://hostbank7.github.io/sangjo-benchmark/hainan-2026/img/hero.jpg">
@@ -603,6 +603,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
       <a class="btn kk" href="https://open.kakao.com/o/gaHIYeYi" target="_blank" rel="noopener">카카오톡 상담방</a>
     </div>
     <p id="copyNote" style="margin:0;color:var(--muted);font-size:.92rem">메일·문자 앱이 열리지 않으면 내용을 복사해 worldparkgolf77@gmail.com 이나 010-5622-6576 로 직접 보내 주세요. 담당자 확인 후 신청이 확정됩니다.</p>
+    <a class="btn submit" id="homeBtn" href="./" hidden>홈으로</a>
   </div>
 </div></section>
 </main>
@@ -690,7 +691,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
     for(const k in fields){const i=document.createElement('input');i.type='hidden';i.name=k;i.value=fields[k];f.appendChild(i);}
     document.body.appendChild(f); f.submit();
   });
-  if(/[?&]ok=1/.test(location.search)){ $('f').hidden=true; $('result').hidden=false; $('resTitle').textContent='신청이 접수되었습니다. 담당자가 확인 후 연락드립니다. 계약금(1인 50만원)은 담당자 연락을 받은 뒤 우리은행 1005-04-658317 (주식회사 투어유니버스)로 입금해 주세요.'; $('msg').hidden=true; document.querySelector('#result .actions').hidden=true; $('copyNote').hidden=true; }
+  if(/[?&]ok=1/.test(location.search)){ $('f').hidden=true; $('result').hidden=false; $('resTitle').textContent='신청이 접수되었습니다. 담당자가 확인 후 연락드립니다. 계약금(1인 50만원)은 담당자 연락을 받은 뒤 우리은행 1005-04-658317 (주식회사 투어유니버스)로 입금해 주세요.'; $('msg').hidden=true; document.querySelector('#result .actions').hidden=true; $('copyNote').hidden=true; const h=$('homeBtn'); if(h){ h.hidden=false; h.href=location.pathname; h.addEventListener('click',e=>{ e.preventDefault(); location.replace(location.pathname); }); } }
   $('copyBank').addEventListener('click',()=>{const b=$('copyBank');const done=t=>{b.textContent=t;setTimeout(()=>b.textContent='계좌번호 복사',2500)};
     (navigator.clipboard?navigator.clipboard.writeText('1005-04-658317'):Promise.reject()).then(()=>done('복사했습니다'),()=>done('1005-04-658317'));});
   function openPrivacy(){ if(location.hash==='#privacy'){ const d=$('privacy'); if(d){ d.open=true; d.scrollIntoView({block:'start'}); } } }
