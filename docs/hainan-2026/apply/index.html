@@ -5,7 +5,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<script id="fresh">(function(){var V="20261123035427";try{fetch("../version.txt?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){t=(t||"").trim();if(!t||t===V)return;var m=location.search.match(/[?&]v=([^&]*)/);if(m&&m[1]===t)return;var q=location.search.replace(/([?&])v=[^&]*&?/,"$1").replace(/[?&]$/,"");location.replace(location.pathname+(q?q+"&":"?")+"v="+t+location.hash)}).catch(function(){})}catch(e){}})();</script>
+<script id="fresh">(function(){var V="20261123040153";try{fetch("../version.txt?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){t=(t||"").trim();if(!t||t===V)return;var m=location.search.match(/[?&]v=([^&]*)/);if(m&&m[1]===t)return;var q=location.search.replace(/([?&])v=[^&]*&?/,"$1").replace(/[?&]$/,"");location.replace(location.pathname+(q?q+"&":"?")+"v="+t+location.hash)}).catch(function(){})}catch(e){}})();</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>참가 신청 · 하이난 파크골프 국제오픈대회</title>
 <meta property="og:title" content="참가 신청 · 2026 하이난 미션힐스 한·중 파크골프 국제오픈대회">
@@ -121,6 +121,7 @@ footer small{opacity:.85;font-size:.85rem}
       <label for="single">1인실<select id="single"></select></label>
     </div>
     <label for="companions"><span>동반자 성명·성별</span><small class="hint">동반자가 2인 이상인 경우 본인만 적어 주시고, “별도 문의”라고 남겨 주세요.</small><input id="companions" placeholder="예) 김영희(여) / 별도 문의"></label>
+    <label for="ref"><span>추천인 코드 <small>(선택)</small></span><small class="hint">소개해 주신 분이 있으면 그분의 추천코드를 적어 주세요. 예) ko</small><input id="ref" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="예) ko"><small class="hint" id="refName" aria-live="polite"></small></label>
     <label for="club"><span>소속 동호회 <small>(선택)</small></span><input id="club" placeholder="예) ○○시 파크골프협회"></label>
     <div class="total"><span>예상 참가비</span><b id="total">1,590,000원</b></div>
     <label class="agree" for="agreeTerms"><input type="checkbox" id="agreeTerms"><span><a href="../#terms">취소·환불 규정과 여행 약관</a>을 확인했습니다.</span></label>
@@ -208,6 +209,14 @@ footer small{opacity:.85;font-size:.85rem}
   if(/[?&]ok=1/.test(location.search)){$('f').hidden=true;$('done').hidden=false;$('msg').hidden=true;}
 
   // 휴대폰 번호: 숫자만 받아 010-1234-5678 형태로 자동 하이픈
+  // ---- 추천코드: 코드 → 담당자 이름 (새 영업자는 여기에 추가)
+  var REFS={ko:'고용호'};
+  function refLabel(c){c=(c||'').trim();if(!c)return '';var k=c.toLowerCase();return REFS[k]?k+' ('+REFS[k]+')':c;}
+  (function(){var el=document.getElementById('ref'),out=document.getElementById('refName');if(!el)return;
+    var m=location.search.match(/[?&]ref=([^&#]*)/),code=m?decodeURIComponent(m[1]):'';
+    try{if(code)localStorage.setItem('hn_ref',code);else code=localStorage.getItem('hn_ref')||'';}catch(e){}
+    function show(){var k=el.value.trim().toLowerCase();out.textContent=REFS[k]?'추천인: '+REFS[k]+' 님':'';}
+    if(code&&!el.value)el.value=code;el.addEventListener('input',show);show();})();
   var phone=$('phone');
   function fmtPhone(){
     var d=phone.value.replace(/\D/g,'');if(d.length>11&&/^010/.test(d)) d=d.slice(3);d=d.slice(0,11);
@@ -246,13 +255,14 @@ footer small{opacity:.85;font-size:.85rem}
     var text=['[하이난 파크골프 국제오픈대회 참가 신청]','성명: '+v('name'),'연락처: '+v('phone'),
       '인원: '+n+'명'+(s?' (1인실 '+s+'명)':' (2인 1실)'),
       v('companions')?'동반자: '+v('companions'):'', v('club')?'소속: '+v('club'):'',
+      v('ref')?'추천 코드: '+refLabel(v('ref')):'',
       '예상 참가비: '+won(n*PRICE+s*SINGLE)].filter(Boolean).join('\n');
     var mail='mailto:worldparkgolf77@gmail.com?subject='+encodeURIComponent('[참가신청] '+v('name')+' '+n+'명')+'&body='+encodeURIComponent(text);
     $('msg').textContent=text;$('mail').href=mail;
     $('sms').href='sms:01056226576?body='+encodeURIComponent(text);
     if($('hp').value) return;
     var btn=$('send');btn.disabled=true;btn.textContent='보내는 중…';
-    var fields={_subject:'[참가신청] '+v('name')+' '+n+'명 · 하이난 파크골프 국제오픈대회',
+    var fields={_subject:'[참가신청] '+(v('ref')?'[추천 '+refLabel(v('ref'))+'] ':'')+v('name')+' '+n+'명 · 하이난 파크골프 국제오픈대회','추천 코드':refLabel(v('ref'))||'-',
       '성명':v('name'),'연락처':v('phone'),'참가 인원':n+'명','1인실':s?s+'명':'안 함',
       '동반자':v('companions')||'-','소속':v('club')||'-','예상 참가비':won(n*PRICE+s*SINGLE),'약관 확인·개인정보 동의':'예'};
     if(!ONLINE){showFallback(text);btn.disabled=false;btn.textContent='신청하기';$('done').hidden=false;$('done').scrollIntoView({block:'start'});return;}
