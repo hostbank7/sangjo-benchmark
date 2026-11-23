@@ -5,7 +5,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<script id="fresh">(function(){var V="20261123044735";try{fetch("../version.txt?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){t=(t||"").trim();if(!t||t===V)return;var m=location.search.match(/[?&]v=([^&]*)/);if(m&&m[1]===t)return;var q=location.search.replace(/([?&])v=[^&]*&?/,"$1").replace(/[?&]$/,"");location.replace(location.pathname+(q?q+"&":"?")+"v="+t+location.hash)}).catch(function(){})}catch(e){}})();</script>
+<script id="fresh">(function(){var V="20261123054539";try{fetch("../version.txt?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){t=(t||"").trim();if(!t||t===V)return;var m=location.search.match(/[?&]v=([^&]*)/);if(m&&m[1]===t)return;var q=location.search.replace(/([?&])v=[^&]*&?/,"$1").replace(/[?&]$/,"");location.replace(location.pathname+(q?q+"&":"?")+"v="+t+location.hash)}).catch(function(){})}catch(e){}})();</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>참가 신청 · 하이난 파크골프 국제오픈대회</title>
 <meta property="og:title" content="참가 신청 · 2026 하이난 미션힐스 한·중 파크골프 국제오픈대회">
@@ -38,6 +38,12 @@ h1 span{color:#ecc878;display:block}
 .facts b{font-size:1.05rem}
 .facts .p{color:var(--red);font-size:1.25rem}
 .hint{display:block;font-weight:400;font-size:.88rem;color:var(--muted);line-height:1.5}
+.okmodal{position:fixed;inset:0;z-index:100;background:rgba(10,30,22,.55);display:grid;place-items:center;padding:16px}
+.okcard{background:var(--paper);color:var(--ink);border-radius:18px;padding:32px 24px 24px;max-width:420px;width:100%;text-align:center;display:grid;gap:12px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.okcard h2{margin:0;font-size:1.45rem;color:var(--green)}
+.okcard p{margin:0;color:var(--muted);font-size:1.08rem;line-height:1.7}
+.okcard .btn{margin-top:8px}
+.okicon{width:64px;height:64px;border-radius:50%;background:var(--green);color:#fff;display:grid;place-items:center;font-size:2rem;font-weight:800;margin:0 auto}
 .safe-mini{list-style:none;margin:14px 0 0;padding:12px 14px;background:var(--paper);border:1px solid var(--line);border-radius:10px;display:grid;gap:6px;font-size:.95rem}
 .safe-mini li{display:flex;gap:8px}
 .safe-mini li::before{content:"✓";color:var(--green);font-weight:800}
@@ -198,7 +204,13 @@ footer small{opacity:.85;font-size:.85rem}
     for(var i=0;i<=n;i++) single.add(new Option(i===0?'안 함':i+'명',i));
     single.value=Math.min(c,n);calc()}
   count.addEventListener('change',fillSingle);single.addEventListener('change',calc);fillSingle();
-  if(/[?&]ok=1/.test(location.search)){$('f').hidden=true;$('done').hidden=false;$('msg').hidden=true;}
+  if(/[?&]ok=1/.test(location.search)){
+    $('f').hidden=true;
+    var ov=document.createElement('div');ov.className='okmodal';ov.setAttribute('role','dialog');ov.setAttribute('aria-modal','true');
+    ov.innerHTML='<div class="okcard"><div class="okicon">✓</div><h2>신청이 접수되었습니다</h2><p>담당자가 확인 후 연락드립니다.<br>감사합니다.</p><a class="btn go" href="../" id="okHome">홈으로</a></div>';
+    document.body.appendChild(ov);document.documentElement.style.overflow='hidden';
+    $('okHome').focus();
+  }
 
   // 휴대폰 번호: 숫자만 받아 010-1234-5678 형태로 자동 하이픈
   // ---- 추천코드: 코드 → 담당자 이름 (새 영업자는 여기에 추가)
