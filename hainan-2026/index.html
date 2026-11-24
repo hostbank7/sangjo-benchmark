@@ -6,7 +6,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<script id="fresh">(function(){var V="20261124141259";try{fetch("version.txt?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){t=(t||"").trim();if(!t||t===V)return;var m=location.search.match(/[?&]v=([^&]*)/);if(m&&m[1]===t)return;var q=location.search.replace(/([?&])v=[^&]*&?/,"$1").replace(/[?&]$/,"");location.replace(location.pathname+(q?q+"&":"?")+"v="+t+location.hash)}).catch(function(){})}catch(e){}})();</script>
+<script id="fresh">(function(){var V="20261124144338";try{fetch("version.txt?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){t=(t||"").trim();if(!t||t===V)return;var m=location.search.match(/[?&]v=([^&]*)/);if(m&&m[1]===t)return;var q=location.search.replace(/([?&])v=[^&]*&?/,"$1").replace(/[?&]$/,"");location.replace(location.pathname+(q?q+"&":"?")+"v="+t+location.hash)}).catch(function(){})}catch(e){}})();</script>
 <meta property="og:title" content="2026 하이난 미션힐스 한·중 파크골프 국제오픈대회">
 <meta property="og:description" content="12.27~1.1 4박6일 · 티웨이 직항 전세기 · 1인 159만원 · 우승 현금 300만원">
 <meta property="og:image" content="https://hostbank7.github.io/sangjo-benchmark/hainan-2026/img/hero.jpg">
@@ -513,11 +513,11 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
       </table>
       <h4>5. 처리 위탁 및 국외 이전</h4>
       <table class="pvt">
-        <tr><th>위탁받는 자</th><td>FormSubmit (formsubmit.co, 신청서 메일 전송 서비스)</td></tr>
-        <tr><th>위탁 업무</th><td>홈페이지 신청서 내용을 접수처 이메일로 전달</td></tr>
+        <tr><th>위탁받는 자</th><td>FormSubmit (formsubmit.co, 신청서 메일 전송 서비스), Google LLC (Google 스프레드시트·Gmail, 신청서 접수 기록·알림)</td></tr>
+        <tr><th>위탁 업무</th><td>홈페이지 신청서 내용을 접수처 이메일로 전달하고 접수 명단(스프레드시트)에 기록</td></tr>
         <tr><th>이전 국가 · 방법</th><td>해외 서버, 신청서 제출 시 인터넷으로 전송</td></tr>
         <tr><th>이전 항목</th><td>신청서에 입력한 항목</td></tr>
-        <tr><th>보유 기간</th><td>메일 전달 후 해당 서비스의 보관 정책에 따름</td></tr>
+        <tr><th>보유 기간</th><td>FormSubmit: 메일 전달 후 해당 서비스의 보관 정책에 따름 / Google: 위 3번 보유 기간 동안 보관 후 삭제</td></tr>
       </table>
       <h4>6. 동의를 거부할 권리</h4>
       <p>개인정보 수집·이용과 제3자 제공에 동의하지 않을 수 있습니다. 다만 필수 항목에 동의하지 않으면 홈페이지 신청은 할 수 없으며, 전화(010-5622-6576)로 상담받으실 수 있습니다.</p>
@@ -700,7 +700,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
     });
   });
   // 신청서 전송: 구글 시트 접수(GAS_URL, 설정 시)와 FormSubmit 메일을 동시에 보내고, 하나라도 성공하면 접수 완료
-  var GAS_URL='';
+  var GAS_URL='https://script.google.com/macros/s/AKfycbywh2d3jpsmJL1ucskJytY3UKFGlzr41kRcAozcTN6iEWr-3gW9LmvYGC2RqpxOirs/exec';
   function sendApp(fields){fields._captcha='false';fields._template='table';
     function withTimeout(p,ms){return new Promise(function(ok,no){var t=setTimeout(function(){no(new Error('timeout'))},ms);p.then(function(v){clearTimeout(t);ok(v)},function(e){clearTimeout(t);no(e)})});}
     var jobs=[];
