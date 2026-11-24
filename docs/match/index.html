@@ -239,6 +239,10 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding-block:22px 36px;
 .corp{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:24px}
 .corp b{color:var(--fg);font-family:var(--display)}
 .corp ul{list-style:none;margin:6px 0 0;padding:0;display:grid;gap:4px}
+/* compare */
+.cmp th{vertical-align:top;min-width:140px}
+.cmp tr.sum td{background:var(--sunk);font-family:var(--display)}
+.cmp td.r .chip,.cmp th .chip{margin-top:4px}
 /* urgent */
 .btn.urgent-fill{background:var(--urgent);border-color:var(--urgent);color:#fff}
 .band .btn.urgent-fill{background:var(--urgent);border-color:var(--urgent);color:#fff}
@@ -961,6 +965,75 @@ function submitUrgent(){
   route(); simulateUrgent(r);
 }
 
+/* ---------- 제안 비교표 · 가족 공유 ---------- */
+let famName=null;
+const SITE='https://hostbank7.github.io/donghaeng-match/';
+const ikey=l=>l.split(' (')[0].replace(/ \d.*$/,'');
+function famLink(r){if(!r.famToken) r.famToken=Math.random().toString(36).slice(2,8); return `fam-${r.id}-${r.famToken}`}
+function revAvg(cid){const rs=REVS.filter(x=>x.cid===cid);return rs.length?(rs.reduce((a,x)=>a+x.stars,0)/rs.length).toFixed(1):null}
+function famPanel(r){
+  const cs=r.comments||[]; if(!cs.length&&!(r.family||[]).length) return '';
+  return `<div class="panel small" style="display:grid;gap:6px"><b>가족 의견${(r.family||[]).length?` · 함께 보는 가족 ${r.family.length}명`:''}</b>
+    ${cs.length?cs.slice(-4).map(c=>`<p><b>${esc(c.name)}</b> <span class="mute">${c.at}</span><br>${esc(c.text)}</p>`).join(''):'<p class="mute">아직 남긴 의견이 없어요.</p>'}
+    <a href="#cmp-${r.id}">비교표에서 가족 추천과 의견 모두 보기 →</a></div>`;
+}
+function cmpTable(r,mode){
+  const os=r.offers.filter(o=>o.status!=='withdrawn'); if(!os.length) return '<div class="waiting">아직 받은 제안이 없어요.</div>';
+  const keys=[]; os.forEach(o=>o.items.forEach(([l])=>{const k=ikey(l); if(!keys.includes(k)) keys.push(k)}));
+  const low=Math.min(...os.map(o=>o.price)), best=Math.max(...os.map(o=>score(CID[o.cid])??0));
+  const cell=(o,k)=>{const it=o.items.find(([l])=>ikey(l)===k); if(!it) return '<td class="r mute">-</td>'; const det=it[0].slice(k.length).trim(); return `<td class="r">${man(it[1])}${det?`<br><span class="small mute">${esc(det.replace(/^\(|\)$/g,''))}</span>`:''}</td>`};
+  const v=r.votes||{};
+  return `<div class="tblwrap"><table class="adm num cmp"><thead><tr><th>항목</th>${os.map(o=>{const c=CID[o.cid],sc=score(c),ra=revAvg(c.id);return `<th class="r"><b>${dn(c,o.status==='matched')}</b><br><span class="small mute" style="font-weight:400">${sc===null?'신규 파트너':`점수 ${sc}`}${ra?` · ★ ${ra}`:''}</span>${o.eta?`<br><span class="chip u">약 ${o.eta}분 도착</span>`:''}${sc!==null&&sc===best?'<br><span class="chip">점수 최고</span>':''}</th>`}).join('')}</tr></thead><tbody>
+    ${keys.map(k=>`<tr><td>${k}</td>${os.map(o=>cell(o,k)).join('')}</tr>`).join('')}
+    ${os.some(o=>o.adj)?`<tr><td>업체 조정</td>${os.map(o=>`<td class="r">${o.adj?`${o.adj>0?'+':''}${man(o.adj)}`:'-'}</td>`).join('')}</tr>`:''}
+    <tr class="sum"><td><b>합계 (발인 후 결제)</b></td>${os.map(o=>`<td class="r"${o.price===low?' style="color:var(--seal)"':''}><b>${man(o.price)}</b>${o.price===low?'<br><span class="small">가장 낮음</span>':''}</td>`).join('')}</tr>
+    <tr><td>인원 조정</td>${os.map(o=>`<td class="r small">${o.staffNote?esc(o.staffNote):'권장 구성 그대로'}</td>`).join('')}</tr>
+    <tr><td>상태</td>${os.map(o=>`<td class="r small">${o.status==='matched'?'<span class="chip">매칭 확정</span>':o.stale?'<span class="chip w">재견적 대기</span>':r.status==='open'?'제안 중':'-'}</td>`).join('')}</tr>
+    <tr><td>가족 추천</td>${os.map(o=>{const vs=v[o.id]||[];return `<td class="r small">${vs.length?`<b>${vs.length}명</b><br><span class="mute">${vs.map(esc).join(', ')}</span>`:'-'}</td>`}).join('')}</tr>
+    <tr><td></td>${os.map(o=>`<td class="r">${mode==='family'?(r.status==='open'?`<button class="btn sm ${(v[o.id]||[]).includes(famName)?'':'ghost'}" type="button" data-vote="${r.id}:${o.id}">${(v[o.id]||[]).includes(famName)?'추천함':'이 업체가 좋아요'}</button>`:''):`<a class="btn sm ghost" href="#chat-${o.id}">채팅·확정</a>`}</td>`).join('')}</tr>
+    </tbody></table></div>`;
+}
+function commentBox(r,mode){
+  const cs=r.comments||[];
+  return `<div class="panel" style="display:grid;gap:8px"><h3>가족 의견</h3>
+    ${cs.map(c=>`<p class="small"><b>${esc(c.name)}</b> <span class="mute">${c.at}</span><br>${esc(c.text)}</p>`).join('')||'<p class="small mute">아직 남긴 의견이 없어요.</p>'}
+    ${r.status==='open'||mode==='owner'?`<form class="send" id="cmtForm" style="padding:0;border:0" data-rid="${r.id}" data-mode="${mode}"><input class="txt" id="cmtIn" placeholder="의견을 남겨 주세요" aria-label="가족 의견"><button class="btn sm" type="submit">남기기</button></form>`:''}</div>`;
+}
+function vCompare(r){
+  return `<div style="display:grid;gap:14px;padding-block:24px 40px">
+    <a class="small" href="#myreq-${r.id}" style="text-decoration:none">← 요청 상세로</a>
+    <div class="sechead" style="margin:0"><div><span class="label">${r.sido} ${r.gu} · ${F.type.o[r.type]}</span><h1 style="font-size:clamp(22px,3vw,28px);margin-top:4px">제안 비교표</h1></div>
+      <button class="btn sm ghost" type="button" data-share="${r.id}">가족과 함께 보기</button></div>
+    <p class="small mute">모든 제안은 동행매치 표준 인력 기준과 각 업체 단가로 같은 항목을 나눠 계산했어요. 가장 낮은 합계는 초록색으로 표시합니다.</p>
+    ${cmpTable(r,'owner')}${commentBox(r,'owner')}</div>`;
+}
+function vFamily(r){
+  if(!famName) return `<form class="panel" id="famForm" style="max-width:520px;margin:30px auto;display:grid;gap:10px">
+    <span class="chip">가족 공유</span><h1 style="font-size:24px">${r.who}님이 장례 제안을 함께 보자고 초대했어요</h1>
+    <p class="small mute">이름을 적으면 받은 제안을 비교하고, 마음에 드는 업체를 추천하거나 의견을 남길 수 있어요. 실제 서비스에서는 휴대폰 인증 후 볼 수 있습니다.</p>
+    <label class="small" for="famIn">내 이름 (예: 큰딸 김OO)</label><input class="txt" id="famIn" value="큰딸 김OO">
+    <button class="btn" type="submit">함께 보기</button></form>`;
+  return `<div style="display:grid;gap:14px;padding-block:24px 40px">
+    <div class="panel" style="display:grid;gap:6px"><span class="chip" style="justify-self:start">가족 공유 · ${esc(famName)}님으로 보는 중</span>
+      <h1 style="font-size:clamp(22px,3vw,28px)">${r.sido} ${r.gu} · ${F.type.o[r.type]}</h1>
+      <div class="conds" style="display:flex;flex-wrap:wrap;gap:4px">${condChips(r)}</div>
+      <p class="small mute">${statusOf(r)[0]} · 매칭 확정과 채팅은 요청한 가족(${r.who}님)만 할 수 있어요. 마음에 드는 업체를 추천하면 함께 볼 수 있습니다.</p></div>
+    ${cmpTable(r,'family')}${commentBox(r,'family')}</div>`;
+}
+function shareModal(r){
+  const link=SITE+'#'+famLink(r), m=$('#modal');
+  m.innerHTML=`<div class="box"><h2>가족과 함께 보기</h2>
+    <p class="small mute">링크를 받은 가족은 받은 제안과 비교표를 보고, 업체를 추천하거나 의견을 남길 수 있어요. 매칭 확정과 채팅은 ${esc(user.name)}님만 할 수 있습니다.</p>
+    <div class="money"><input class="txt" id="shareLink" value="${link}" readonly aria-label="공유 링크" style="font-size:13px;font-weight:400;text-align:left;max-width:none"><button class="btn sm" type="button" data-copy>복사</button></div>
+    <p class="small mute">시연 화면은 저장 서버가 없어 같은 브라우저에서만 열려요. <a href="#${famLink(r)}" data-close-go>가족 화면 미리 보기</a></p>
+    <h3 style="margin-top:6px">알림톡으로 초대</h3>
+    <div class="row2"><input class="txt" id="invName" placeholder="이름 (예: 큰딸)" aria-label="가족 이름"><input class="txt num" id="invPhone" placeholder="010-0000-0000" inputmode="tel" aria-label="가족 휴대폰"></div>
+    <button class="btn sm" type="button" data-invite="${r.id}">초대 보내기</button>
+    ${(r.family||[]).length?`<ul class="small" style="margin:0;padding-left:18px">${r.family.map(f=>`<li>${esc(f.name)} · ${f.phone} · ${f.at} 초대</li>`).join('')}</ul>`:''}
+    <div style="display:flex;justify-content:flex-end"><button class="btn ghost" type="button" data-close>닫기</button></div></div>`;
+  m.hidden=false;
+}
+
 /* ---------- 고객: 내 요청 ---------- */
 const STAGES=['요청 등록','채팅 협의','매칭 확정','장례 진행','발인 후 정산','해피콜 만족도 조사','리뷰 작성'];
 function vMy(){
@@ -976,12 +1049,14 @@ function vMy(){
     <div class="panel" style="display:grid;gap:8px"><div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap"><span>${timingChip(r)} <b>${r.sido} ${r.gu}</b></span><span class="price num" style="font-family:var(--display);font-weight:700;font-size:20px">${r.budgetTBD?'금액 상담 후 결정':man(r.budget)+' 희망'}</span></div>
       <div class="conds" style="display:flex;flex-wrap:wrap;gap:4px">${condChips(r)}</div>${r.memo?`<p class="small mute">${esc(r.memo)}</p>`:''}</div>
     ${matched&&r.stage>=3?`<div class="panel">${extraBlock(matched)}</div>`:''}
-    <h2>받은 제안 <span class="num mute">${r.offers.length}</span></h2>
+    <div class="sechead" style="margin:0"><h2>받은 제안 <span class="num mute">${r.offers.length}</span></h2>
+      ${r.offers.length?`<div class="acts">${r.offers.length>=2?`<a class="btn sm" href="#cmp-${r.id}">제안 비교표 보기</a>`:''}<button class="btn sm ghost" type="button" data-share="${r.id}">가족과 함께 보기${(r.family||[]).length?` (${r.family.length})`:''}</button></div>`:''}</div>
+    ${famPanel(r)}
     ${r.offers.map(o=>{const c=CID[o.cid],s=score(c);return `<div class="offer"><div class="h"><span><b>${dn(c,o.status==='matched')}</b> ${seal(c)} <span class="mute small">${c.area}</span></span>${s===null?'<span class="chip">신규 파트너</span>':`<span class="chip">만족도 점수 ${s}</span>`}</div>
       <div class="p num">${man(o.price)} ${o.eta?`<span class="chip u" style="vertical-align:middle">약 ${o.eta}분 후 도착 가능</span>`:''}</div><p class="small">${esc(o.note)}</p>
       ${o.staffNote?`<p class="small"><span class="chip w">인원 조정</span> ${esc(o.staffNote)}</p>`:''}
       <details class="qd"><summary>항목별 견적 보기</summary>${qlist(o)}</details>
-      <div style="display:flex;gap:8px;flex-wrap:wrap">${o.status==='matched'?'<span class="chip">매칭 확정</span>':''}${o.stale?'<span class="chip w">조건 변경 전 제안 · 업체 재견적 대기</span>':''}<a class="btn sm" href="#chat-${o.id}">채팅으로 협의하기</a></div></div>`}).join('')}
+      <div style="display:flex;gap:8px;flex-wrap:wrap">${o.status==='matched'?'<span class="chip">매칭 확정</span>':''}${o.stale?'<span class="chip w">조건 변경 전 제안 · 업체 재견적 대기</span>':''}${((r.votes||{})[o.id]||[]).length?`<span class="chip">가족 추천 ${r.votes[o.id].length}</span>`:''}<a class="btn sm" href="#chat-${o.id}">채팅으로 협의하기</a></div></div>`}).join('')}
     ${r.offers.length<3&&!matched?'<div class="waiting">상조회사 제안을 기다리는 중이에요. 보통 30분 안에 도착합니다.</div>':''}
   </div>
   <aside class="side"><div class="panel"><h3 style="margin-bottom:12px">진행 상황</h3>${timeline(r)}
@@ -1382,6 +1457,8 @@ function route(){
   const app=$('#app'); let html;
   sweep();
   if(DOCS[h]) html=vDoc(h);
+  else if(h.startsWith('cmp-')){const q=R.find(x=>x.id===+h.slice(4)); html=q&&user&&q.owner===user.phone?vCompare(q):vMyList()}
+  else if(h.startsWith('fam-')){const [,id,tk]=h.split('-'); const q=R.find(x=>x.id===+id); html=q&&q.famToken===tk?vFamily(q):`<div class="panel" style="margin:30px auto;max-width:520px;text-align:center"><h2>링크를 열 수 없어요</h2><p class="small mute">공유 링크가 바뀌었거나 만료됐어요. 요청한 가족에게 새 링크를 받아 주세요.</p></div>`}
   else if(h.startsWith('chat-')) html=vChat(+h.slice(5));
   else if(h.startsWith('myreq-')){const q=R.find(x=>x.id===+h.slice(6)); if(q&&user&&q.owner===user.phone){myReq=q; html=vMy()} else html=vMyList()}
   else if(h==='my') html=vMyList();
@@ -1406,6 +1483,20 @@ document.addEventListener('click',e=>{
   if(d.authmode){auth(d.authmode,auth.after);return}
   if(t.hasAttribute('data-logout')){user=null; myReq=null; histLoaded=histLoaded; toast('로그아웃했어요.'); location.hash='home'; route(); return}
   if(d.myf){myFilter=d.myf; route(); return}
+  if(d.share){shareModal(R.find(x=>x.id===+d.share)); return}
+  if(t.hasAttribute('data-close-go')){$('#modal').hidden=true; return}
+  if(t.hasAttribute('data-copy')){const i=$('#shareLink'); const ok=()=>toast('링크를 복사했어요. 가족에게 보내 주세요.'); try{navigator.clipboard.writeText(i.value).then(ok,()=>{i.select();toast('링크를 선택했어요. 길게 눌러 복사해 주세요.')})}catch(err){i.select();toast('링크를 선택했어요. 길게 눌러 복사해 주세요.')} return}
+  if(d.invite){const r=R.find(x=>x.id===+d.invite); const n=$('#invName').value.trim(), ph=$('#invPhone').value.replace(/[^0-9]/g,'');
+    if(!n||ph.length<10){toast('가족 이름과 휴대폰 번호를 확인해 주세요.');return}
+    r.family=r.family||[]; r.family.push({name:n,phone:ph.replace(/(\d{3})(\d{3,4})(\d{4})/,'$1-****-$3'),at:today()}); famLink(r);
+    toast(`${n}님에게 알림톡으로 초대 링크를 보냈어요. (시연)`); shareModal(r);
+    const fast=matchMedia('(prefers-reduced-motion: reduce)').matches;
+    setTimeout(()=>{ if(r.status!=='open'||!r.offers.length) return; const o=[...r.offers].sort((a,b)=>a.price-b.price)[0];
+      r.votes=r.votes||{}; (r.votes[o.id]=r.votes[o.id]||[]).push(n); r.comments=r.comments||[]; r.comments.push({name:n,text:`${dn(CID[o.cid])}가 견적이 가장 깔끔하고 점수도 좋아 보여요.`,at:nowStr()});
+      toast(`${n}님이 비교표에 의견을 남겼어요.`); if(['#myreq-'+r.id,'#cmp-'+r.id].includes(location.hash)&&$('#modal').hidden) route();},fast?300:2500);
+    return}
+  if(d.vote){const [rid,oid]=d.vote.split(':').map(Number); const r=R.find(x=>x.id===rid); r.votes=r.votes||{}; const a=(r.votes[oid]=r.votes[oid]||[]);
+    Object.keys(r.votes).forEach(k=>{r.votes[k]=r.votes[k].filter(x=>x!==famName)}); if(!a.includes(famName)) r.votes[oid].push(famName); toast('추천을 반영했어요. 요청한 가족에게 보입니다.'); route(); return}
   if(t.hasAttribute('data-avail')){partner.avail=!partner.avail; toast(partner.avail?'출동 가능 상태로 바꿨어요. 긴급 요청 알림을 받습니다.':'출동 불가 상태로 바꿨어요. 긴급 요청 알림을 받지 않습니다.'); route(); return}
   if(d.assign){const r=R.find(x=>x.id===+d.assign); r.assigned='김OO 상담사'; r.counselor='상담사 배정'; toast(`${r.sido} ${r.gu} 긴급 요청에 상담사를 배정했어요.`); route(); return}
   if(t.id==='uSend'){const ph=$('#uPhone').value.replace(/[^0-9]/g,''); const e=$('#uErr'); if(ph.length<10){e.hidden=false;e.textContent='휴대폰 번호를 확인해 주세요.';return} e.hidden=true; $('#uCodeBox').hidden=false; t.textContent='다시 받기'; toast('인증번호를 보냈어요. (시연: 123456)'); $('#uCode').focus(); return}
@@ -1469,6 +1560,9 @@ document.addEventListener('change',e=>{
 document.addEventListener('input',e=>{ if(e.target.dataset.staff){const [t,gi,fi]=e.target.dataset.staff.split(':'); STAFF[t].rows[+gi][+fi]=Math.max(0,parseInt(e.target.value)||0); return}
   if(e.target.dataset.sdays){STAFF[e.target.dataset.sdays].days=Math.max(0,parseInt(e.target.value)||0); return} if(e.target.id==='budget'||e.target.id==='memo'){readForm(); updateFloor();} });
 document.addEventListener('submit',e=>{
+  if(e.target.id==='famForm'){e.preventDefault(); famName=$('#famIn').value.trim()||'가족'; route(); return}
+  if(e.target.id==='cmtForm'){e.preventDefault(); const v=$('#cmtIn').value.trim(); if(!v) return; const r=R.find(x=>x.id===+e.target.dataset.rid);
+    r.comments=r.comments||[]; r.comments.push({name:e.target.dataset.mode==='family'?famName:(user?user.name+' (요청자)':'요청자'),text:v,at:nowStr()}); route(); return}
   if(e.target.id==='urgentForm'){e.preventDefault(); const er=$('#uErr'), fail=m=>{er.hidden=false;er.textContent=m};
     if(!user){ if($('#uCodeBox').hidden) return fail('인증번호 받기를 먼저 눌러 주세요.'); if($('#uCode').value.trim()!=='123456') return fail('인증번호가 맞지 않아요. 시연 화면에서는 123456입니다.'); if(!$('#uAgree').checked) return fail('필수 항목에 동의해 주세요.');
       user={name:'긴급 요청 고객',phone:$('#uPhone').value.trim(),via:'휴대폰 인증 (긴급 간편 접수)',since:today()}; }
