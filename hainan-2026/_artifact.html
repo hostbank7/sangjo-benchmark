@@ -673,7 +673,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
     const ONLINE=/github\.io$/.test(location.hostname);
     if(!ONLINE){ $('resTitle').textContent='아래 내용을 이메일(worldparkgolf77@gmail.com)이나 문자(010-5622-6576)로 보내 주세요.'; return; }
     $('resTitle').textContent='신청을 보내는 중입니다…';
-    const fields={_subject:'[참가신청] '+(v('ref')?'[추천 '+refLabel(v('ref'))+'] ':'')+v('name')+' '+n+'명 · 하이난 파크골프 국제오픈대회','추천 코드':refLabel(v('ref'))||'-','신청 내용':text};
+    const fields={_subject:'[참가신청] '+(v('ref')?'[추천 '+refLabel(v('ref'))+'] ':'')+v('name')+' '+n+'명 · 하이난 파크골프 국제오픈대회','추천 코드':refLabel(v('ref'))||'-','유입 경로':SRC||'-','신청 내용':text};
     const sb=document.querySelector('#f button[type=submit]'); if(sb){sb.disabled=true;sb.textContent='보내는 중… 최대 1분 걸려요. 창을 닫지 마세요';}
     sendApp(fields).then(function(){location.replace(location.pathname+'?ok=1');},function(){
       if(sb){sb.disabled=false;sb.textContent='신청하기';}
@@ -704,11 +704,14 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
   window.addEventListener('hashchange',openPrivacy); openPrivacy();
   document.querySelectorAll('a[href="#privacy"]').forEach(a=>a.addEventListener('click',()=>{ const d=$('privacy'); if(d) d.open=true; }));
   // ---- 추천코드: 코드 → 담당자 이름 (새 영업자는 여기에 추가)
+  var SRC=(function(){var m=location.search.match(/[?&]ref=([^&#]*)/),c='';try{c=m?decodeURIComponent(m[1]):'';}catch(e){}
+    try{if(c)sessionStorage.setItem('hn_src',c);else c=sessionStorage.getItem('hn_src')||'';}catch(e){}return c.trim();})();
   var REFS={ko:'고용호'};
   function refLabel(c){c=(c||'').trim();if(!c)return '';var k=c.toLowerCase();return REFS[k]?k+' ('+REFS[k]+')':c;}
   (function(){var el=document.getElementById('ref'),out=document.getElementById('refName');if(!el)return;
-    var m=location.search.match(/[?&]ref=([^&#]*)/),code=m?decodeURIComponent(m[1]):'';
-    try{if(code)localStorage.setItem('hn_ref',code);else code=localStorage.getItem('hn_ref')||'';}catch(e){}
+    // 등록된 추천인 코드(REFS)만 칸에 자동 입력. insta·kakao 같은 홍보 채널 코드는 칸을 비워 두고 '유입 경로'로만 기록
+    var code=SRC.toLowerCase();if(!REFS[code])code='';
+    try{localStorage.removeItem('hn_ref');}catch(e){}
     function show(){var k=el.value.trim().toLowerCase();out.textContent=REFS[k]?'추천인: '+REFS[k]+' 님':'';}
     if(code&&!el.value)el.value=code;el.addEventListener('input',show);show();})();
   const phone=$('phone');

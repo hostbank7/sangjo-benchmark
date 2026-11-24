@@ -5,7 +5,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<script id="fresh">(function(){var V="20261124144338";try{fetch("../version.txt?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){t=(t||"").trim();if(!t||t===V)return;var m=location.search.match(/[?&]v=([^&]*)/);if(m&&m[1]===t)return;var q=location.search.replace(/([?&])v=[^&]*&?/,"$1").replace(/[?&]$/,"");location.replace(location.pathname+(q?q+"&":"?")+"v="+t+location.hash)}).catch(function(){})}catch(e){}})();</script>
+<script id="fresh">(function(){var V="20261124145429";try{fetch("../version.txt?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){t=(t||"").trim();if(!t||t===V)return;var m=location.search.match(/[?&]v=([^&]*)/);if(m&&m[1]===t)return;var q=location.search.replace(/([?&])v=[^&]*&?/,"$1").replace(/[?&]$/,"");location.replace(location.pathname+(q?q+"&":"?")+"v="+t+location.hash)}).catch(function(){})}catch(e){}})();</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>참가 신청 · 하이난 파크골프 국제오픈대회</title>
 <meta property="og:title" content="참가 신청 · 2026 하이난 미션힐스 한·중 파크골프 국제오픈대회">
@@ -214,11 +214,14 @@ footer small{opacity:.85;font-size:.85rem}
 
   // 휴대폰 번호: 숫자만 받아 010-1234-5678 형태로 자동 하이픈
   // ---- 추천코드: 코드 → 담당자 이름 (새 영업자는 여기에 추가)
+  var SRC=(function(){var m=location.search.match(/[?&]ref=([^&#]*)/),c='';try{c=m?decodeURIComponent(m[1]):'';}catch(e){}
+    try{if(c)sessionStorage.setItem('hn_src',c);else c=sessionStorage.getItem('hn_src')||'';}catch(e){}return c.trim();})();
   var REFS={ko:'고용호'};
   function refLabel(c){c=(c||'').trim();if(!c)return '';var k=c.toLowerCase();return REFS[k]?k+' ('+REFS[k]+')':c;}
   (function(){var el=document.getElementById('ref'),out=document.getElementById('refName');if(!el)return;
-    var m=location.search.match(/[?&]ref=([^&#]*)/),code=m?decodeURIComponent(m[1]):'';
-    try{if(code)localStorage.setItem('hn_ref',code);else code=localStorage.getItem('hn_ref')||'';}catch(e){}
+    // 등록된 추천인 코드(REFS)만 칸에 자동 입력. insta·kakao 같은 홍보 채널 코드는 칸을 비워 두고 '유입 경로'로만 기록
+    var code=SRC.toLowerCase();if(!REFS[code])code='';
+    try{localStorage.removeItem('hn_ref');}catch(e){}
     function show(){var k=el.value.trim().toLowerCase();out.textContent=REFS[k]?'추천인: '+REFS[k]+' 님':'';}
     if(code&&!el.value)el.value=code;el.addEventListener('input',show);show();})();
   var phone=$('phone');
@@ -268,7 +271,7 @@ footer small{opacity:.85;font-size:.85rem}
     $('sms').href='sms:01056226576?body='+encodeURIComponent(text);
     if($('hp').value) return;
     var btn=$('send');btn.disabled=true;btn.textContent='보내는 중… 최대 1분 걸려요. 창을 닫지 마세요';
-    var fields={_subject:'[참가신청] '+(v('ref')?'[추천 '+refLabel(v('ref'))+'] ':'')+v('name')+' '+n+'명 · 하이난 파크골프 국제오픈대회','추천 코드':refLabel(v('ref'))||'-',
+    var fields={_subject:'[참가신청] '+(v('ref')?'[추천 '+refLabel(v('ref'))+'] ':'')+v('name')+' '+n+'명 · 하이난 파크골프 국제오픈대회','추천 코드':refLabel(v('ref'))||'-','유입 경로':SRC||'-',
       '성명':v('name'),'연락처':v('phone'),'참가 인원':n+'명','1인실':s?s+'명':'안 함',
       '동반자':v('companions')||'-','소속':v('club')||'-','예상 참가비':won(n*PRICE+s*SINGLE),'약관 확인·개인정보 동의':'예'};
     if(!ONLINE){showFallback(text);btn.disabled=false;btn.textContent='신청하기';$('done').hidden=false;$('done').scrollIntoView({block:'start'});return;}
