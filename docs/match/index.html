@@ -239,6 +239,9 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding-block:22px 36px;
 .corp{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:24px}
 .corp b{color:var(--fg);font-family:var(--display)}
 .corp ul{list-style:none;margin:6px 0 0;padding:0;display:grid;gap:4px}
+/* saved */
+.svcard{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center;border-top:1px solid var(--line);padding-top:12px}
+@media (max-width:680px){.svcard{grid-template-columns:1fr}}
 /* obituary */
 .obit{max-width:460px;margin:0 auto;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:28px 24px;display:grid;gap:14px}
 .obit .ohead{text-align:center;border-bottom:1px solid var(--line);padding-bottom:12px}
@@ -623,6 +626,7 @@ function vHome(){
       <div><b>24시간</b><span>긴급 요청 상담 운영</span></div>
     </div>
   </section>
+  ${user&&savedList().length?`<div class="panel actbar" style="margin-top:14px"><div><b>${esc(user.name)}님이 저장해 둔 요청서가 ${savedList().length}건 있어요</b><p class="small mute">필요할 때 버튼 하나로 지역 검증 파트너에게 보낼 수 있어요.</p></div><a class="btn sm" href="#my">저장한 요청서 보기</a></div>`:''}
 
   <section class="blk">
     <div class="sechead"><div><span class="label">PARTNER VERIFICATION</span><h2 style="margin-top:4px">상조회사 검증 절차</h2></div><a class="small" href="#join" data-role-link="partner">파트너 검증 신청 안내</a></div>
@@ -696,6 +700,7 @@ function vRequest(){
   return `<div class="formgrid">
   <form id="reqForm" class="panel" novalidate>
     <h1 style="font-size:clamp(22px,3vw,28px)">${editId?'요청서 수정':'장례 요청서'}</h1>
+    ${svNote&&!editId?`<p class="small" style="color:var(--accent);margin-top:6px">${svNote}</p>`:''}
     ${editId?`<p class="small" style="color:var(--warn);margin-top:6px">저장하면 이미 제안한 업체들에게 조건 변경 알림이 가고, 기존 제안은 '조건 변경 전 제안'으로 표시돼요. <a href="#myreq-${editId}" data-canceledit>수정 그만두기</a></p>`:''}
     <p class="mute small" style="margin:4px 0 18px">작성은 무료이며, 동행매치가 직접 검증한 상조회사에만 공개됩니다. 공개되는 것은 조건과 희망 금액뿐이고, 이름과 연락처는 매칭 확정 전까지 업체에 보이지 않습니다.</p>
     <div class="ai">
@@ -715,6 +720,8 @@ function vRequest(){
     <fieldset class="fs"><legend>하고 싶은 말</legend>
       <textarea id="memo" placeholder="고인의 뜻, 꼭 필요한 것, 피하고 싶은 것을 적어 주세요.">${esc(draft.memo)}</textarea></fieldset>
     <button class="btn block" type="submit" id="submitReq">${editId?'수정 내용 저장':'무료로 요청서 올리기'}</button>
+    ${editId?'':`<button class="btn block ghost" type="button" data-savedraft style="margin-top:8px">${svEditId?'저장한 요청서 업데이트':'지금 보내지 않고 저장해 두기'}</button>
+    <p class="small mute" style="margin-top:6px">미리 알아보는 중이라면 저장해 두세요. 필요할 때 문의 내역에서 버튼 하나로 요청을 보낼 수 있고, 예상 금액이 바뀌면 알려 드려요.</p>`}
   </form>
   <aside class="side">
     <div class="panel" id="compBox"></div>
@@ -811,6 +818,8 @@ function loadHistory(){
   const closed={...base,offers:[],id:++RID,date:'2026.10.02',sido:'서울',gu:'마포구',timing:'plan',type:'nobinso',place:'hospital',religion:'none',guests:'g0',burial:'nature',level:'basic',cars:[],budget:100,memo:'어머니가 빈소 없이 조용히 보내 달라고 하셔서 미리 알아보는 중입니다.',status:'closed'};
   R.push(closed); addOffer(closed,1,0,'무빈소 수목장 진행 가능합니다.'); addOffer(closed,5,-3,'마포 인근이라 빠르게 도착합니다.');
   if(myReq&&!myReq.owner) myReq.owner=user.phone;
+  if(!savedList().some(x=>x.demo)){const d={...newDraft(),sido:'경기',gu:'고양시',timing:'plan',type:'family',place:'hospital',religion:'christian',guests:'g1',burial:'nature',level:'standard',budget:'200',memo:'어머니 때를 미리 준비해 두려고 저장합니다. 교회 권사님이세요.'};
+    const fl=floorOf(d); savedList().push({id:++SVID,demo:true,d,est:{lo:fl.lo-6,hi:fl.hi-6,avg:fl.avg-6},savedAt:'2026.10.15'});}
 }
 function statusOf(r){
   if(r.status==='closed') return ['마감 (기간 만료)','n','closed'];
@@ -827,6 +836,7 @@ function vMyList(){
   const sc={ok:'',a:'',w:' w',n:' n'};
   return `<div class="two"><div style="display:grid;gap:14px;min-width:0">
     <div class="sechead" style="margin:0"><div><span class="label">MY INQUIRIES</span><h1 style="font-size:clamp(22px,3vw,28px);margin-top:4px">${esc(user.name)}님의 문의 내역</h1></div><a class="btn sm" href="#request">새 장례 요청하기</a></div>
+    ${savedCards()}
     <div class="filters" role="group" aria-label="상태 필터">${[['all',`전체 ${all.length}`],['ing',`진행 중 ${cnt('ing')}`],['done',`완료 ${cnt('done')}`],['closed',`마감·취소 ${cnt('closed')}`]].map(([k,l])=>`<button type="button" data-myf="${k}" aria-pressed="${myFilter===k}">${l}</button>`).join('')}</div>
     ${list.map(r=>{const st=statusOf(r), m=r.offers.find(o=>o.status==='matched');
       return `<article class="hrow"><div style="min-width:0;display:grid;gap:6px">
@@ -846,6 +856,26 @@ function vMyList(){
 
 let editId=null;
 const RKEYS=['sido','gu','timing','type','place','religion','guests','burial','level','more','cars','extras','memo'];
+const SAVED={}; let SVID=0, svEditId=null, svNote='';
+const savedList=()=>user?(SAVED[user.phone]||(SAVED[user.phone]=[])):[];
+const svLabel=d=>`${F.type.o[d.type]} · ${d.sido} ${d.gu}`;
+function saveDraftNow(){
+  const list=savedList(), d=JSON.parse(JSON.stringify(draft)), fl=floorOf(d), est={lo:fl.lo,hi:fl.hi,avg:fl.avg};
+  if(svEditId){const x=list.find(y=>y.id===svEditId); if(x){x.d=d; x.est=est; x.savedAt=today();} toast('저장한 요청서를 업데이트했어요.');}
+  else {list.unshift({id:++SVID,d,est,savedAt:today()}); toast('요청서를 저장했어요. 문의 내역에서 언제든 바로 보낼 수 있어요.');}
+  svEditId=null; svNote=''; draft=newDraft(); location.hash='my'; route();
+}
+function savedCards(){
+  const list=savedList(); if(!list.length) return '';
+  return `<div class="panel" style="display:grid;gap:12px"><div class="sechead" style="margin:0"><h3>저장한 요청서 <span class="mute num">${list.length}</span></h3><span class="small mute">보내기 전까지 업체에 공개되지 않아요</span></div>
+    ${list.map(x=>{const now=floorOf(x.d), diff=now.avg-x.est.avg;
+      return `<article class="svcard"><div style="min-width:0;display:grid;gap:6px"><div class="small mute num">${x.savedAt} 저장</div><h3>${svLabel(x.d)}</h3>
+        <div class="conds" style="display:flex;flex-wrap:wrap;gap:4px">${condChips(x.d)}</div>
+        <div class="small num">지금 예상 금액 <b>${man(now.lo)} ~ ${man(now.hi)}</b>${x.d.budget?` · 희망 ${man(x.d.budget)}`:''}
+          ${diff?` <span class="chip ${diff>0?'u':''}">저장 때보다 평균 ${diff>0?'+':''}${man(diff)}</span>`:' <span class="chip n">저장 때와 같아요</span>'}</div>
+        ${x.d.budget&&+x.d.budget<now.min?`<p class="small" style="color:var(--warn)">희망 금액이 지금 최소 금액(${man(now.min)})보다 낮아요. 보내기 전에 금액을 조정해 주세요.</p>`:''}</div>
+        <div class="hside"><button class="btn sm urgent-fill" type="button" data-svsend="${x.id}">지금 요청 보내기</button><button class="btn sm ghost" type="button" data-svedit="${x.id}">수정</button><button class="btn sm ghost" type="button" data-svdel="${x.id}">삭제</button></div></article>`}).join('')}</div>`;
+}
 function startEdit(id){const r=R.find(x=>x.id===id); editId=id; draft={...newDraft()}; RKEYS.forEach(k=>draft[k]=JSON.parse(JSON.stringify(r[k]??newDraft()[k]))); draft.budget=String(r.budget); location.hash='request';}
 function requote(o,silent){
   const r=RIDX()[o.rid]; const q=quote(o.cid,comp(r),r);
@@ -898,7 +928,7 @@ function reviewModal(id){
 }
 function submitRequest(){
   const r={id:++RID,who:user.name.slice(0,1)+'**',...JSON.parse(JSON.stringify(draft)),budget:+draft.budget,ago:0,at:Date.now(),offers:[],status:'open',mine:true,owner:user.phone,date:today()};
-  R.unshift(r); myReq=r; draft=newDraft();
+  R.unshift(r); myReq=r; draft=newDraft(); svNote=''; svEditId=null; if(user){const l=savedList(), i=l.findIndex(y=>y.sentPending); if(i>=0) l.splice(i,1);}
   toast(`요청서를 올렸어요. ${DLNAME[r.timing]} 동안 지역 검증 파트너의 제안을 받습니다.`);
   location.hash='myreq-'+r.id;
   simulateOffers(r);
@@ -1648,6 +1678,12 @@ document.addEventListener('click',e=>{
   if(d.assign){const r=R.find(x=>x.id===+d.assign); r.assigned='김OO 상담사'; r.counselor='상담사 배정'; toast(`${r.sido} ${r.gu} 긴급 요청에 상담사를 배정했어요.`); route(); return}
   if(t.id==='uSend'){const ph=$('#uPhone').value.replace(/[^0-9]/g,''); const e=$('#uErr'); if(ph.length<10){e.hidden=false;e.textContent='휴대폰 번호를 확인해 주세요.';return} e.hidden=true; $('#uCodeBox').hidden=false; t.textContent='다시 받기'; toast('인증번호를 보냈어요. (시연: 123456)'); $('#uCode').focus(); return}
   if(d.edit){startEdit(+d.edit); return}
+  if(t.hasAttribute('data-savedraft')){readForm(); if(user) saveDraftNow(); else auth('signup',saveDraftNow); return}
+  if(d.svsend||d.svedit){const id=+(d.svsend||d.svedit), x=savedList().find(y=>y.id===id); draft=JSON.parse(JSON.stringify(x.d)); editId=null;
+    if(d.svsend){svEditId=null; svNote=`저장한 요청서(${x.savedAt})를 불러왔어요. 내용과 희망 금액을 확인하고 올려 주세요.`; if(draft.timing==='plan') draft.timing='soon'; x.sentPending=true;}
+    else {svEditId=id; svNote='저장한 요청서를 수정하고 있어요. 바꾼 뒤 아래 \'저장한 요청서 업데이트\'를 눌러 주세요.';}
+    location.hash='request'; route(); return}
+  if(d.svdel){const l=savedList(), i=l.findIndex(y=>y.id===+d.svdel); const x=l.splice(i,1)[0]; toast(`'${svLabel(x.d)}' 저장한 요청서를 삭제했어요.`); route(); return}
   if(t.hasAttribute('data-canceledit')){editId=null; draft=newDraft(); return}
   if(d.extend){const r=R.find(x=>x.id===+d.extend); r.ext=1; r.offers.forEach(o=>o.msgs.push({from:'sys',text:`고객이 제안 기간을 ${DLNAME[r.timing]} 연장했어요.`})); toast(`제안 받는 기간을 ${DLNAME[r.timing]} 연장했어요.`); route(); return}
   if(d.cancelreq){cancelModal(+d.cancelreq); return}
