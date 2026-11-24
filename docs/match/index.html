@@ -239,6 +239,33 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding-block:22px 36px;
 .corp{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:24px}
 .corp b{color:var(--fg);font-family:var(--display)}
 .corp ul{list-style:none;margin:6px 0 0;padding:0;display:grid;gap:4px}
+/* performance */
+.ktiles{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
+.ktile{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px;display:grid;gap:2px}
+.ktile b{font-family:var(--display);font-size:22px;line-height:1.2}
+.ktile span{font-size:13px;color:var(--mute)}
+.ktile small{font-size:12px}
+.rankbadge{display:grid;justify-items:end;background:var(--accent-soft);color:var(--accent);border-radius:12px;padding:10px 14px}
+.rankbadge b{font-family:var(--display);font-size:24px}
+.rankbadge span{font-size:12px}
+.chartwrap{position:relative}
+.chartwrap svg{width:100%;height:auto;display:block;overflow:visible}
+.chartwrap .grid{stroke:var(--line);stroke-width:1}
+.chartwrap .base{stroke:var(--mute);stroke-width:1}
+.chartwrap .axis{fill:var(--mute);font-size:12px;font-family:var(--body)}
+.chartwrap .val{fill:var(--fg);font-size:13px;font-weight:700;font-family:var(--display)}
+.chartwrap .mark{fill:var(--accent);opacity:.55}
+.chartwrap .cur .mark{opacity:1}
+.chartwrap .hit{fill:transparent}
+.chartwrap .bar:hover .mark,.chartwrap .bar:focus .mark{opacity:1}
+.chartwrap .bar:focus{outline:none}
+.ctip{position:absolute;background:var(--fg);color:var(--bg);font-size:12px;padding:5px 9px;border-radius:6px;pointer-events:none;white-space:nowrap}
+.sbar{display:grid;gap:4px}
+.sbar>div{display:flex;justify-content:space-between;gap:8px}
+.sbar i{display:block;height:8px;border-radius:4px;background:var(--sunk);overflow:hidden}
+.sbar i span{display:block;height:100%;background:var(--accent);border-radius:4px}
+@media (max-width:960px){.ktiles{grid-template-columns:repeat(3,1fr)}}
+@media (max-width:520px){.ktiles{grid-template-columns:1fr 1fr}}
 /* saved */
 .svcard{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center;border-top:1px solid var(--line);padding-top:12px}
 @media (max-width:680px){.svcard{grid-template-columns:1fr}}
@@ -604,7 +631,7 @@ function renderNav(){
   const h=location.hash.slice(1)||'home';
   const items=role==='admin'?[['admin','운영 관리']]:role==='customer'
     ?[['urgent','긴급 출동'],['home','서비스 소개'],['partners','검증 파트너'],['ranking','업체 순위'],['request','장례 요청하기'],['my','내 문의 내역'+(user?` (${myList().length})`:'')]]
-    :[['board','요청 게시판'],['ptalk','내 제안·채팅'],['prices','내 단가표'],['ranking','업체 순위'],['join','파트너 검증 신청']];
+    :[['board','요청 게시판'],['ptalk','내 제안·채팅'],['perf','내 실적'],['prices','내 단가표'],['ranking','업체 순위'],['join','파트너 검증 신청']];
   $('#nav').innerHTML=items.map(([k,v])=>`<a href="#${k}" class="${h===k||h.startsWith(k+'-')||(k==='my'&&h.startsWith('myreq-'))?'on':''}">${v}</a>`).join('');
   document.querySelectorAll('.seg button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.role===role));
   $('#acct').innerHTML=role!=='customer'?'':user?`<span class="small"><b>${esc(user.name)}</b>님</span><button class="btn sm ghost" type="button" data-logout>로그아웃</button>`
@@ -1432,6 +1459,59 @@ function vPtalk(){
     <div class="foot"><span>${r.who}님 · 메시지 ${o.msgs.length}개</span><a class="btn sm" href="#chat-${o.id}">채팅 열기</a></div></article>`}).join('')||'<div class="waiting">아직 보낸 제안이 없어요. 요청 게시판에서 제안을 보내 보세요.</div>'}</div></section>`;
 }
 
+/* ---------- 파트너: 내 실적 ---------- */
+// 지난 달까지 기록 (예시) — 이번 달은 이 화면에서 생긴 매칭이 더해짐
+const PERFH={1:[6,7,9,8,10,8],2:[5,6,6,7,8,5],3:[4,5,5,6,5,4],4:[2,3,4,3,5,5],5:[0,0,0,0,0,0],6:[3,3,2,3,2,2]};
+const PERFM=['6월','7월','8월','9월','10월','11월'];
+const PERFX={1:{recv:41,sent:33,first:18},2:{recv:36,sent:27,first:24},3:{recv:39,sent:25,first:31},4:{recv:28,sent:24,first:12},5:{recv:12,sent:6,first:20},6:{recv:33,sent:15,first:46}};
+function perfBars(vals){
+  const W=600,H=220,pl=34,pr=12,pt=26,pb=30,max=Math.max(5,Math.ceil(Math.max(...vals)/5)*5),bw=(W-pl-pr)/vals.length,y=v=>pt+(H-pt-pb)*(1-v/max);
+  const ticks=[0,max/2,max].map(t=>Math.round(t));
+  return `<div class="chartwrap"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="월별 매칭 확정 건수 막대 그래프">
+    ${ticks.map(t=>`<line x1="${pl}" x2="${W-pr}" y1="${y(t)}" y2="${y(t)}" class="grid"/><text x="${pl-8}" y="${y(t)+4}" class="axis" text-anchor="end">${t}</text>`).join('')}
+    ${vals.map((v,i)=>{const x=pl+i*bw+bw*0.22,w=bw*0.56,top=y(v),h=Math.max(0,H-pb-top),last=i===vals.length-1;
+      return `<g class="bar${last?' cur':''}" data-tip="${PERFM[i]} 매칭 확정 ${v}건${last?' (이번 달, 진행 중)':''}" tabindex="0">
+        <rect x="${x-4}" y="${pt-4}" width="${w+8}" height="${H-pb-pt+4}" class="hit"/>
+        ${h?`<path d="M${x},${H-pb} V${top+4} Q${x},${top} ${x+4},${top} H${x+w-4} Q${x+w},${top} ${x+w},${top+4} V${H-pb} Z" class="mark"/>`:''}
+        ${last?`<text x="${x+w/2}" y="${top-8}" class="val" text-anchor="middle">${v}건</text>`:''}
+        <text x="${x+w/2}" y="${H-10}" class="axis" text-anchor="middle">${PERFM[i]}</text></g>`}).join('')}
+    <line x1="${pl}" x2="${W-pr}" y1="${H-pb}" y2="${H-pb}" class="base"/></svg><div class="ctip" hidden></div></div>`;
+}
+function vPerf(){
+  const c=partner, s=score(c), ranked=[...C].filter(x=>score(x)!==null).sort((a,b)=>score(b)-score(a)), rank=ranked.indexOf(c)+1;
+  const mine=allOffers().filter(o=>o.cid===c.id), mm=mine.filter(o=>o.status==='matched').length;
+  const hist=[...(PERFH[c.id]||[0,0,0,0,0,0])]; hist[5]+=mm;
+  const X=PERFX[c.id]||{recv:10,sent:5,first:30}, sent=X.sent+mine.length, recv=X.recv+R.filter(r=>r.status==='open').length, rate=sent?Math.round(hist[5]/Math.max(1,sent)*100):0;
+  const rs=REVS.filter(x=>x.cid===c.id), ra=rs.length?(rs.reduce((a,x)=>a+x.stars,0)/rs.length).toFixed(1):'-';
+  const parts=[['해피콜 만족도',c.happy,0.4],['인증 리뷰',c.review,0.25],['견적 대비 정산 일치',c.match,0.15],['응답 속도',c.speed,0.1]];
+  const tips=[];
+  if(c.speed<90) tips.push(`첫 제안을 30분 안에 보내면 응답 속도 점수(지금 ${c.speed}점)가 올라가요. 지금 평균 ${X.first}분이 걸리고 있어요.`);
+  if(c.match<97) tips.push(`정산서에 승인 없는 항목이 없게 하면 정산 일치 점수(지금 ${c.match}점)가 올라가요. 추가 비용은 꼭 앱으로 먼저 승인받으세요.`);
+  if(c.happy&&c.happy<92) tips.push(`해피콜에서 가장 많이 나온 의견은 '처음 상담 때 설명'이에요. 상담 초기에 진행 순서와 비용을 한 번 더 안내해 보세요.`);
+  if(c.warn) tips.push(`직거래 유도 경고 ${c.warn}회로 ${c.warn*5}점이 깎였어요. 매칭 확정 전에는 채팅과 050으로만 연락해 주세요.`);
+  if(!c.avail) tips.push('지금 출동 불가 상태예요. 출동 가능으로 바꾸면 긴급 요청 알림을 받을 수 있어요.');
+  if(!tips.length) tips.push('모든 항목이 좋아요. 지금처럼 응답과 정산을 유지하면 상위 순위를 지킬 수 있어요.');
+  const tile=(v,l,sub)=>`<div class="ktile"><b>${v}</b><span>${l}</span>${sub?`<small class="mute">${sub}</small>`:''}</div>`;
+  return `<section class="blk" style="display:grid;gap:16px">
+    <div class="sechead" style="margin:0"><div><span class="label">${c.name} · 검증 파트너 ${c.code}</span><h1 style="font-size:clamp(22px,3vw,28px);margin-top:4px">내 실적</h1></div>
+      <div class="rankbadge num">${s===null?'<b>신규</b><span>첫 5건 기본 노출</span>':`<b>${rank}위</b><span>전체 ${ranked.length}곳 중 · 종합 ${s}점</span>`}</div></div>
+    <div class="ktiles num">
+      ${tile(`${recv}건`,'이번 달 받은 요청','활동 지역 기준')}${tile(`${sent}건`,'보낸 제안')}${tile(`${hist[5]}건`,'매칭 확정',`매칭률 ${rate}%`)}
+      ${tile(`${X.first}분`,'첫 제안까지 평균')}${tile(c.happy?`${c.happy}점`:'-','해피콜 만족도')}${tile(`★ ${ra}`,'인증 리뷰 평균',`${rs.length}개`)}
+    </div>
+    <div class="two" style="padding:0">
+      <div class="panel" style="display:grid;gap:8px;min-width:0"><h3>월별 매칭 확정</h3><p class="small mute">막대에 마우스를 올리면 건수가 보여요. 11월은 진행 중이에요.</p>${perfBars(hist)}</div>
+      <div class="panel" style="display:grid;gap:10px;min-width:0"><h3>점수 구성</h3>
+        ${parts.map(([l,v,w])=>`<div class="sbar"><div class="small"><span>${l} <span class="mute">${Math.round(w*100)}%</span></span><span class="num">${v}점 → ${Math.round(v*w*10)/10}</span></div><i><span style="width:${v}%"></span></i></div>`).join('')}
+        <div class="small num" style="display:flex;justify-content:space-between"><span>매칭 건수 가산</span><span>+${c.done>=20?10:Math.round(c.done/2*10)/10}</span></div>
+        ${c.warn?`<div class="small num" style="display:flex;justify-content:space-between;color:var(--urgent)"><span>직거래 경고 ${c.warn}회</span><span>−${c.warn*5}</span></div>`:''}
+        <div class="small num" style="display:flex;justify-content:space-between;border-top:1px solid var(--line);padding-top:6px"><b>종합</b><b>${s??'신규'}</b></div></div>
+    </div>
+    <div class="panel" style="display:grid;gap:8px"><h3>점수를 올리려면</h3><ul class="checks" style="grid-template-columns:1fr">${tips.map(t=>`<li>${t}</li>`).join('')}</ul></div>
+    <div class="panel" style="display:grid;gap:8px"><h3>최근 인증 리뷰</h3>${rs.slice(0,3).map(r=>`<div class="revsnip"><span class="small"><span class="stars-t">${'★'.repeat(r.stars)}${'☆'.repeat(5-r.stars)}</span> · ${r.label} · ${r.date}</span><p class="small">${esc(r.text)}</p></div>`).join('')||'<p class="small mute">아직 인증 리뷰가 없어요.</p>'}</div>
+  </section>`;
+}
+
 /* ---------- 파트너: 내 단가표 ---------- */
 function vPrices(){
   return `<div class="formgrid"><form class="panel" id="myPriceForm">
@@ -1651,7 +1731,7 @@ function route(){
   else if(h.startsWith('chat-')) html=vChat(+h.slice(5));
   else if(h.startsWith('myreq-')){const q=R.find(x=>x.id===+h.slice(6)); if(q&&user&&q.owner===user.phone){myReq=q; html=vMy()} else html=vMyList()}
   else if(h==='my') html=vMyList();
-  else html=({admin:vAdmin,urgent:vUrgent,prices:vPrices,home:vHome,partners:vPartners,request:vRequest,my:vMy,board:vBoard,ptalk:vPtalk,ranking:vRanking,join:vJoin}[h]||vHome)();
+  else html=({admin:vAdmin,urgent:vUrgent,perf:vPerf,prices:vPrices,home:vHome,partners:vPartners,request:vRequest,my:vMy,board:vBoard,ptalk:vPtalk,ranking:vRanking,join:vJoin}[h]||vHome)();
   const keep=h===route.last; route.last=h;
   app.innerHTML=html; renderNav();
   if(h==='request'){updateFloor()}
@@ -1793,8 +1873,13 @@ document.addEventListener('submit',e=>{
 $('#modal').addEventListener('click',e=>{if(e.target.id==='modal') e.currentTarget.hidden=true});
 document.addEventListener('keydown',e=>{if(e.key==='Escape') $('#modal').hidden=true});
 window.addEventListener('hashchange',route);
+function chartTip(e){const g=e.target.closest&&e.target.closest('[data-tip]'); const wrap=e.target.closest&&e.target.closest('.chartwrap'); if(!wrap) return; const tip=wrap.querySelector('.ctip');
+  if(!g){tip.hidden=true;return} const r=g.getBoundingClientRect(), w=wrap.getBoundingClientRect(); tip.textContent=g.dataset.tip; tip.hidden=false;
+  tip.style.left=Math.min(w.width-tip.offsetWidth,Math.max(0,r.left-w.left+r.width/2-tip.offsetWidth/2))+'px'; tip.style.top=Math.max(0,r.top-w.top+18)+'px';}
+document.addEventListener('mouseover',chartTip); document.addEventListener('focusin',chartTip);
+document.addEventListener('mouseout',e=>{const w=e.target.closest&&e.target.closest('.chartwrap'); if(w&&!w.contains(e.relatedTarget)) w.querySelector('.ctip').hidden=true});
 setInterval(()=>{const ch=sweep(); document.querySelectorAll('[data-ct]').forEach(el=>{const r=R.find(x=>x.id===+el.dataset.ct); if(r) el.textContent=Math.max(0,30-Math.floor(sinceMin(r)))+'분'}); document.querySelectorAll('[data-dl]').forEach(el=>{const r=R.find(x=>x.id===+el.dataset.dl); if(r) el.textContent=dlText(r)}); if(ch&&$('#modal').hidden&&location.hash!=='#request') route();},30000);
-if(['board','ptalk','join','prices'].includes(location.hash.slice(1))) role='partner';
+if(['board','ptalk','join','prices','perf'].includes(location.hash.slice(1))) role='partner';
 if(location.hash==='#admin') role='admin';
 route();
 })();
