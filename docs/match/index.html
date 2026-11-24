@@ -239,6 +239,20 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding-block:22px 36px;
 .corp{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:24px}
 .corp b{color:var(--fg);font-family:var(--display)}
 .corp ul{list-style:none;margin:6px 0 0;padding:0;display:grid;gap:4px}
+/* basic improvements */
+.actbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.acts{display:flex;gap:6px;flex-wrap:wrap}
+.btn.danger{color:var(--urgent);border-color:var(--urgent)}
+.btn.danger-fill{background:var(--urgent);border-color:var(--urgent);color:#fff}
+.stars-t{color:var(--star);letter-spacing:1px;font-weight:400}
+.revsnip{background:var(--sunk);border-radius:10px;padding:10px 12px;display:grid;gap:4px}
+.termsum ul{margin:6px 0 0;padding-left:18px;display:grid;gap:3px;color:var(--mute)}
+.termsum summary{cursor:pointer;color:var(--accent);font-weight:600}
+.doc{max-width:780px;margin:24px auto 40px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:clamp(20px,4vw,44px)}
+.doc section{margin-top:22px}
+.doc h2{font-size:17px;margin-bottom:6px}
+.doc p,.doc li{font-size:15px;color:var(--fg)}
+.doc ul{margin:0;padding-left:20px;display:grid;gap:4px}
 /* account */
 .acct{display:flex;gap:6px;align-items:center;white-space:nowrap}
 .money input#aPhone,#aCode{font-family:var(--body);font-size:15px;font-weight:400;text-align:left;max-width:none}
@@ -329,7 +343,7 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding-block:22px 36px;
   <div class="corp">
     <div><b>동행매치</b><p style="margin-top:6px">직접 검증한 후불제 상조회사와 유족을 연결하는 장례 매칭 플랫폼입니다. 동행매치는 통신판매중개자로서 장례 서비스의 당사자가 아니며, 확정 견적서와 다른 청구가 확인되면 운영 정책에 따라 보상을 지원합니다.</p></div>
     <div><b>회사 정보</b><ul><li>상호 (주)동행매치 · 대표 OOO</li><li>사업자등록번호 000-00-00000</li><li>통신판매중개업 신고 제0000-서울OO-0000호</li><li>서울특별시 OO구 OO로 00</li></ul></div>
-    <div><b>고객센터 (24시간)</b><ul><li class="num">1600-0000</li><li>이용약관 · 개인정보처리방침</li><li>파트너 운영정책 · 검증 기준</li></ul></div>
+    <div><b>고객센터 (24시간)</b><ul><li class="num">1600-0000</li><li><a href="#terms">이용약관</a> · <a href="#privacy">개인정보 처리방침</a></li><li><a href="#policy">파트너 운영정책 · 검증 기준</a></li></ul></div>
   </div>
   <p style="margin-top:14px">이 화면은 시연용입니다. 회사 정보, 업체, 요청, 점수, 전화번호는 모두 예시이며 실제로 전송되지 않습니다.</p>
 </footer>
@@ -450,7 +464,7 @@ const R=[
  {id:5,who:'정**',sido:'경기',gu:'고양시',timing:'soon',type:'oneday',place:'hall',religion:'buddhist',guests:'g1',burial:'charnel',level:'standard',more:false,cars:['limo'],extras:[],budget:200,memo:'스님 염불 연계 가능한 곳이면 좋겠습니다.',ago:150},
  {id:6,who:'윤**',sido:'인천',gu:'연수구',timing:'plan',type:'family',place:'hospital',religion:'none',guests:'g1',burial:'undecided',level:'basic',more:false,cars:[],extras:['concert'],budget:260,memo:'음악을 좋아하셨던 분이라 작은 추모 공연을 넣고 싶어요.',ago:220},
 ];
-R.forEach(r=>{r.offers=[];r.status='open'});
+R.forEach(r=>{r.offers=[];r.status='open';r.at=Date.now()-r.ago*60000});
 function addOffer(r,cid,adj,note,opts={}){
   const cp={...comp(r)}; if(opts.helpers!=null){cp.helpers=opts.helpers; cp.days=cp.helpers?Math.max(1,STAFF[r.type].days):0}
   const q=quote(cid,cp,r);
@@ -484,6 +498,13 @@ const HC=[
  {id:3,cid:4,who:'문**',region:'경기 파주시',type:'무빈소장',end:'11.17',status:'wait'},
 ];
 const SLOG=[];
+const REVS=[
+ {cid:1,stars:5,text:'새벽에 연락드렸는데 40분 만에 오셨어요. 확정 견적서 금액 그대로 정산됐습니다.',date:'2026.11.02',label:'서울 강서구 · 일반 3일장'},
+ {cid:1,stars:5,text:'추가로 필요한 게 생길 때마다 앱으로 먼저 금액을 보여 주고 승인받는 방식이 좋았어요.',date:'2026.10.19',label:'서울 마포구 · 가족장 2일장'},
+ {cid:2,stars:5,text:'어머니가 성당에 다니셨는데 연도 순서를 미리 챙겨 주셔서 마음이 놓였습니다.',date:'2026.10.28',label:'인천 남동구 · 가족장 2일장'},
+ {cid:3,stars:4,text:'친절하셨고 정산도 견적대로였어요. 리무진 도착이 조금 늦었던 점만 아쉬웠습니다.',date:'2026.10.11',label:'경기 수원시 · 일반 3일장'},
+ {cid:6,stars:4,text:'진행은 무난했어요. 처음 상담 때 설명이 조금 더 자세했으면 좋겠습니다.',date:'2026.09.30',label:'경기 성남시 · 무빈소장'},
+];
 const SANCTION=['정상','경고','노출 제한 30일','제안 정지 90일','계약 해지 검토'];
 const sanc=c=>SANCTION[Math.min(c.warn,4)];
 const RIDX=()=>Object.fromEntries(R.map(r=>[r.id,r]));
@@ -496,6 +517,14 @@ draft=newDraft();
 
 /* ---------- 공통 ---------- */
 function toast(m){const t=$('#toast');t.textContent=m;t.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>t.hidden=true,2800)}
+const DL={urgent:120,soon:1440,plan:10080};
+const DLNAME={urgent:'2시간',soon:'24시간',plan:'7일'};
+function today(){const d=new Date();return `${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')}`}
+function sinceMin(r){return r.at?Math.max(0,Math.round((Date.now()-r.at)/60000)):r.ago||0}
+function leftMin(r){return DL[r.timing]*(1+(r.ext||0))-(Date.now()-(r.at||Date.now()))/60000}
+function dlText(r){const m=Math.max(0,Math.floor(leftMin(r)));if(m<=0)return '마감됨';const d=Math.floor(m/1440),h=Math.floor(m%1440/60),mm=m%60;return '마감까지 '+(d?`${d}일 ${h}시간`:h?`${h}시간 ${mm}분`:`${mm}분`)}
+function dlChip(r){return `<span class="chip ${leftMin(r)<60?'u':leftMin(r)<360?'w':'n'} num" data-dl="${r.id}">${dlText(r)}</span>`}
+function sweep(){let ch=false;R.forEach(r=>{if(r.status==='open'&&r.at&&leftMin(r)<=0){r.status='closed';ch=true;r.offers.forEach(o=>o.msgs.push({from:'sys',text:'제안 기간이 끝나 요청이 마감되었어요.'}))}});return ch}
 function ago(m){return m<1?'방금':m<60?`${m}분 전`:`${Math.floor(m/60)}시간 전`}
 function condChips(r){
   const c=[`<span class="chip n">${F.type.o[r.type]}</span>`,`<span class="chip n">${F.place.o[r.place]}</span>`,`<span class="chip n">${F.religion.o[r.religion]}</span>`,`<span class="chip n">${F.guests.o[r.guests]}</span>`,`<span class="chip n">${F.level.o[r.level||'standard']}</span>`,`<span class="chip n">${F.burial.o[r.burial]}</span>`];
@@ -506,12 +535,12 @@ function timingChip(r){return r.timing==='urgent'?'<span class="chip u">긴급</
 function reqCard(r,forPartner){
   const mine=forPartner&&r.offers.some(o=>o.cid===partner.id);
   return `<article class="req">
-    <div class="top"><span>${timingChip(r)} <b>${r.sido} ${r.gu}</b></span><span class="mute small">${ago(r.ago)}</span></div>
+    <div class="top"><span>${timingChip(r)} <b>${r.sido} ${r.gu}</b></span>${r.status==='open'?dlChip(r):''}</div>
     <div class="price num">${man(r.budget)} <span class="small mute" style="font-weight:400">희망</span></div>
     <div class="conds">${condChips(r)}</div>
     <p class="memo">${esc(r.memo)}</p>
-    <div class="foot"><span>${r.who}님 · 제안 <b class="num">${r.offers.length}</b>건</span>
-    ${forPartner?(r.status!=='open'?'<span class="chip n">매칭 완료</span>':mine?'<span class="chip">제안함</span>':`<button class="btn sm" type="button" data-propose="${r.id}">제안하기</button>`):''}</div>
+    <div class="foot"><span>${r.who}님 · 제안 <b class="num">${r.offers.length}</b>건 · ${ago(sinceMin(r))}${r.edited?' · 조건 수정됨':''}</span>
+    ${forPartner?(r.status!=='open'?`<span class="chip n">${{matched:'매칭 완료',closed:'마감',cancelled:'고객 취소'}[r.status]||'마감'}</span>`:mine?'<span class="chip">제안함</span>':`<button class="btn sm" type="button" data-propose="${r.id}">제안하기</button>`):''}</div>
   </article>`;
 }
 function renderNav(){
@@ -532,6 +561,7 @@ function pcard(c){
   return `<article class="pcard"><div class="ph"><div><h3>검증 파트너 ${c.code}</h3><p class="small mute">${c.area} · 업력 ${yrs(c)}</p></div>${seal(c)}</div>
     <div class="stats num"><div><b>${s??'신규'}</b><span>종합 점수</span></div><div><b>${c.done}건</b><span>매칭 완료</span></div><div><b>${dirR(c)}</b><span>장례지도사</span></div></div>
     <ul class="checks">${CHECKS.map(x=>`<li>${x}</li>`).join('')}</ul>
+    ${(()=>{const rs=REVS.filter(x=>x.cid===c.id);return rs.length?`<div class="revsnip"><span class="small"><b>인증 리뷰 ${rs.length}개</b> · 평균 ★ ${(rs.reduce((a,x)=>a+x.stars,0)/rs.length).toFixed(1)}</span><p class="small">“${esc(rs[0].text)}”</p><span class="small mute">${rs[0].label} · ${rs[0].date}</span></div>`:'<p class="small mute">아직 인증 리뷰가 없어요.</p>'})()}
     <p class="small mute num">검증일 ${c.ver} · 재검증 예정 ${recheck(c.ver)}</p></article>`;
 }
 function vHome(){
@@ -624,7 +654,8 @@ function optGroup(key){
 function vRequest(){
   return `<div class="formgrid">
   <form id="reqForm" class="panel" novalidate>
-    <h1 style="font-size:clamp(22px,3vw,28px)">장례 요청서</h1>
+    <h1 style="font-size:clamp(22px,3vw,28px)">${editId?'요청서 수정':'장례 요청서'}</h1>
+    ${editId?`<p class="small" style="color:var(--warn);margin-top:6px">저장하면 이미 제안한 업체들에게 조건 변경 알림이 가고, 기존 제안은 '조건 변경 전 제안'으로 표시돼요. <a href="#myreq-${editId}" data-canceledit>수정 그만두기</a></p>`:''}
     <p class="mute small" style="margin:4px 0 18px">작성은 무료이며, 동행매치가 직접 검증한 상조회사에만 공개됩니다. 공개되는 것은 조건과 희망 금액뿐이고, 이름과 연락처는 매칭 확정 전까지 업체에 보이지 않습니다.</p>
     <div class="ai">
       <label for="aiText"><b>말로 적어도 됩니다</b> <span class="mute small">AI가 아래 항목으로 정리해 드려요</span></label>
@@ -642,7 +673,7 @@ function vRequest(){
       <p id="budgetMsg" class="small"></p></fieldset>
     <fieldset class="fs"><legend>하고 싶은 말</legend>
       <textarea id="memo" placeholder="고인의 뜻, 꼭 필요한 것, 피하고 싶은 것을 적어 주세요.">${esc(draft.memo)}</textarea></fieldset>
-    <button class="btn block" type="submit" id="submitReq">무료로 요청서 올리기</button>
+    <button class="btn block" type="submit" id="submitReq">${editId?'수정 내용 저장':'무료로 요청서 올리기'}</button>
   </form>
   <aside class="side">
     <div class="panel" id="compBox"></div>
@@ -712,7 +743,9 @@ function auth(mode,after){
     <label class="small" for="aPhone">휴대폰 번호 (업체에 공개되지 않음)</label>
     <div class="money"><input class="txt num" id="aPhone" value="010-1234-5678" inputmode="tel" autocomplete="tel"><button class="btn sm ghost" type="button" id="aSend">인증번호 받기</button></div>
     <div id="aCodeBox" hidden><label class="small" for="aCode">인증번호 6자리</label><input class="txt num" id="aCode" inputmode="numeric" maxlength="6" placeholder="123456"><p class="small mute">시연 화면에서는 123456을 입력하세요.</p></div>
-    ${isUp?`<label class="check"><input type="checkbox" id="c1" checked> <span>[필수] 매칭 확정 전에는 사이트 채팅과 050 안심번호로만 연락하는 데 동의합니다.</span></label>
+    ${isUp?`<label class="check"><input type="checkbox" id="c0" checked> <span>[필수] 이용약관과 개인정보 처리방침에 동의합니다.</span></label>
+    <details class="small termsum"><summary>약관 주요 내용 보기</summary><ul><li>동행매치는 중개 플랫폼이며, 장례 서비스 계약은 매칭을 확정한 검증 파트너와 맺습니다.</li><li>결제는 장례를 마친 뒤 확정 견적서 금액으로 하며, 승인하지 않은 추가 비용은 청구되지 않습니다.</li><li>이름과 연락처는 매칭 확정 전까지 업체에 공개되지 않고, 확정 시 해당 업체에만 제공됩니다.</li><li>전문은 사이트 하단의 이용약관과 개인정보 처리방침에서 볼 수 있습니다.</li></ul></details>
+    <label class="check"><input type="checkbox" id="c1" checked> <span>[필수] 매칭 확정 전에는 사이트 채팅과 050 안심번호로만 연락하는 데 동의합니다.</span></label>
     <label class="check"><input type="checkbox" id="c2" checked> <span>[필수] 장례 후 만족도 조사 전화(해피콜)를 받는 데 동의합니다.</span></label>
     <label class="check"><input type="checkbox" id="c3"> <span>[선택] 사후 행정 안내 알림을 받겠습니다.</span></label>`:''}
     <p class="err" id="aErr" hidden></p>
@@ -730,7 +763,7 @@ function loadHistory(){
   const base={who:user.name.slice(0,1)+'**',ago:0,more:false,extras:[],owner:user.phone};
   const done={...base,offers:[],id:++RID,date:'2026.08.14',sido:'경기',gu:'고양시',timing:'urgent',type:'family',place:'hospital',religion:'christian',guests:'g1',burial:'charnel',level:'standard',cars:['limo'],budget:180,memo:'아버지 장례입니다. 교회 장로셨어요.',status:'matched',stage:7,
     review:'새벽에 연락드렸는데 금방 와 주셨고, 입관예배 순서를 교회와 미리 맞춰 주셔서 마음이 놓였습니다. 확정 견적 그대로 정산됐어요.'};
-  R.push(done);
+  R.push(done); REVS.push({rid:done.id,cid:4,stars:5,text:done.review,date:'2026.08.20',label:'경기 고양시 · 가족장 2일장'}); done.stars=5;
   const a=addOffer(done,4,-5,'고양 거점이라 1시간 안에 도착합니다. 입관예배 준비도 도와드릴게요.'); addOffer(done,1,0,'권장 구성 그대로 진행 가능합니다.');
   a.status='matched'; a.extrasReq=[{id:++XID,item:'의전도우미 시간 연장',amount:6,reason:'발인 전날 조문객이 늘어 도우미 2명을 2시간 연장했습니다. (2명 × 2시간 × 시간당 1.5만원)',status:'approved',at:'08.15 21:10'}];
   a.msgs.push({from:'u',text:'입관예배는 오후 3시로 교회와 정했습니다.'},{from:'p',text:'네, 2시 30분까지 준비해 두겠습니다.'},{from:'sys',text:'매칭이 확정되었어요. 확정 견적서가 만들어졌고, 050 안심번호는 정산이 끝날 때까지 유지됩니다.'});
@@ -740,6 +773,7 @@ function loadHistory(){
 }
 function statusOf(r){
   if(r.status==='closed') return ['마감 (기간 만료)','n','closed'];
+  if(r.status==='cancelled') return ['취소함','n','closed'];
   if(r.status==='matched'){ if((r.stage??2)>=7) return ['장례 완료','ok','done']; if(r.stage>=4) return ['정산·해피콜 진행','w','ing']; return ['매칭 확정 · 장례 진행','a','ing']; }
   return r.offers.length?[`제안 ${r.offers.length}건 도착`,'w','ing']:['제안 기다리는 중','n','ing'];
 }
@@ -752,7 +786,7 @@ function vMyList(){
   const sc={ok:'',a:'',w:' w',n:' n'};
   return `<div class="two"><div style="display:grid;gap:14px;min-width:0">
     <div class="sechead" style="margin:0"><div><span class="label">MY INQUIRIES</span><h1 style="font-size:clamp(22px,3vw,28px);margin-top:4px">${esc(user.name)}님의 문의 내역</h1></div><a class="btn sm" href="#request">새 장례 요청하기</a></div>
-    <div class="filters" role="group" aria-label="상태 필터">${[['all',`전체 ${all.length}`],['ing',`진행 중 ${cnt('ing')}`],['done',`완료 ${cnt('done')}`],['closed',`마감 ${cnt('closed')}`]].map(([k,l])=>`<button type="button" data-myf="${k}" aria-pressed="${myFilter===k}">${l}</button>`).join('')}</div>
+    <div class="filters" role="group" aria-label="상태 필터">${[['all',`전체 ${all.length}`],['ing',`진행 중 ${cnt('ing')}`],['done',`완료 ${cnt('done')}`],['closed',`마감·취소 ${cnt('closed')}`]].map(([k,l])=>`<button type="button" data-myf="${k}" aria-pressed="${myFilter===k}">${l}</button>`).join('')}</div>
     ${list.map(r=>{const st=statusOf(r), m=r.offers.find(o=>o.status==='matched');
       return `<article class="hrow"><div style="min-width:0;display:grid;gap:6px">
         <div class="small mute num">${r.date} · ${F.timing.o[r.timing]}</div>
@@ -769,10 +803,62 @@ function vMyList(){
     <div class="panel small" style="display:grid;gap:6px"><b>회원이면 이렇게 쓸 수 있어요</b><p class="mute">지난 장례의 확정 견적서와 정산 내역을 언제든 다시 봅니다. 진행 중인 문의는 다른 기기에서 로그인해도 이어서 볼 수 있습니다.</p></div></aside></div>`;
 }
 
+let editId=null;
+const RKEYS=['sido','gu','timing','type','place','religion','guests','burial','level','more','cars','extras','memo'];
+function startEdit(id){const r=R.find(x=>x.id===id); editId=id; draft={...newDraft()}; RKEYS.forEach(k=>draft[k]=JSON.parse(JSON.stringify(r[k]??newDraft()[k]))); draft.budget=String(r.budget); location.hash='request';}
+function requote(o,silent){
+  const r=RIDX()[o.rid]; const q=quote(o.cid,comp(r),r);
+  o.items=q.lines; o.base=q.total; o.price=Math.max(floorOf(r).min,Math.round(q.total+(o.adj||0))); o.adj=o.price-q.total; o.stale=false; o.staffNote='';
+  o.msgs.push({from:'sys',text:`업체가 바뀐 조건으로 견적을 다시 보냈어요: ${man(o.price)}`});
+  if(!silent) toast(`${dn(CID[o.cid])}가 바뀐 조건으로 견적을 다시 보냈어요.`);
+}
+function saveEdit(){
+  const r=R.find(x=>x.id===editId); const before=JSON.stringify(RKEYS.map(k=>r[k]))+r.budget;
+  RKEYS.forEach(k=>r[k]=JSON.parse(JSON.stringify(draft[k]))); r.budget=+draft.budget;
+  const changed=before!==JSON.stringify(RKEYS.map(k=>r[k]))+r.budget;
+  const id=editId; editId=null; draft=newDraft();
+  if(changed){ r.edited=(r.edited||0)+1;
+    const open=r.offers.filter(o=>o.status==='open');
+    open.forEach(o=>{o.stale=true; o.msgs.push({from:'sys',text:'고객이 요청 조건을 바꿨어요. 바뀐 조건에 맞춰 견적을 다시 보내 주세요.'})});
+    toast(open.length?`요청서를 수정했어요. 제안한 업체 ${open.length}곳에 조건 변경을 알렸습니다.`:'요청서를 수정했어요.');
+    const fast=matchMedia('(prefers-reduced-motion: reduce)').matches;
+    open.filter(o=>role==='customer'||o.cid!==partner.id).forEach((o,i)=>setTimeout(()=>{if(!o.stale||r.status!=='open')return; requote(o); if(['#myreq-'+r.id,'#chat-'+o.id].includes(location.hash)) route();},fast?200*(i+1):1800*(i+1)));
+  } else toast('바뀐 내용이 없어요.');
+  location.hash='myreq-'+id;
+}
+function cancelModal(id){
+  const r=R.find(x=>x.id===id), m=$('#modal');
+  const RS=['다른 곳에서 장례를 진행하기로 했어요','장례 방식이나 일정이 바뀌었어요','제안 금액이 맞지 않아요','아직 필요하지 않게 됐어요','기타'];
+  m.innerHTML=`<form class="box" id="cancelForm"><h2>요청을 취소할까요?</h2>
+    <p class="small mute">취소하면 제안을 보낸 업체 ${r.offers.length}곳에 알림이 가고, 더 이상 제안을 받지 않아요. 취소한 요청은 문의 내역에 남습니다.</p>
+    <fieldset class="fs" style="margin:0"><legend>취소 사유</legend><div style="display:grid;gap:6px">${RS.map((x,i)=>`<label class="check"><input type="radio" name="cr" value="${x}" ${i===0?'checked':''}> <span>${x}</span></label>`).join('')}</div></fieldset>
+    <label class="small" for="crMemo">더 남길 말 (선택)</label><input class="txt" id="crMemo" placeholder="서비스 개선에 참고할게요">
+    <div style="display:flex;gap:8px;justify-content:flex-end"><button class="btn ghost" type="button" data-close>돌아가기</button><button class="btn danger-fill" type="submit">요청 취소</button></div></form>`;
+  m.hidden=false;
+  $('#cancelForm').onsubmit=e=>{e.preventDefault(); const why=m.querySelector('input[name="cr"]:checked').value+($('#crMemo').value.trim()?` (${$('#crMemo').value.trim()})`:'');
+    r.status='cancelled'; r.cancelReason=why; r.offers.forEach(o=>o.msgs.push({from:'sys',text:'고객이 요청을 취소했어요.'}));
+    m.hidden=true; toast('요청을 취소했어요. 제안한 업체들에게 알렸습니다.'); route();};
+}
+function reviewModal(id){
+  const r=R.find(x=>x.id===id), o=r.offers.find(x=>x.status==='matched'), c=CID[o.cid], m=$('#modal'), cur=r.stars||5;
+  m.innerHTML=`<form class="box" id="reviewForm"><span class="chip">정산 완료 인증 리뷰</span><h2>${c.name} 리뷰</h2>
+    <p class="small mute">매칭 확정과 정산을 마친 고객만 쓸 수 있는 리뷰예요. 이름은 가려지고, 다른 유족이 업체를 고를 때 참고합니다.</p>
+    <div class="q"><span class="small"><b>별점</b></span><div class="stars" role="group" aria-label="별점">${[1,2,3,4,5].map(n=>`<button type="button" data-star="0" data-n="${n}" aria-pressed="${n===cur}">${n}</button>`).join('')}</div></div>
+    <label class="small" for="rvText">리뷰 내용</label><textarea id="rvText" class="txt" placeholder="좋았던 점, 아쉬웠던 점, 정산이 견적대로 됐는지 적어 주세요.">${esc(r.review||'처음 확정한 금액 그대로 정산됐고, 새벽에도 친절하게 응대해 주셨어요.')}</textarea>
+    <p class="err" id="rvErr" hidden>리뷰 내용을 10자 이상 적어 주세요.</p>
+    <div style="display:flex;gap:8px;justify-content:flex-end"><button class="btn ghost" type="button" data-close>나중에 쓸게요</button><button class="btn" type="submit">${r.review?'리뷰 수정':'리뷰 남기기'}</button></div></form>`;
+  m.hidden=false;
+  $('#reviewForm').onsubmit=e=>{e.preventDefault(); const t=$('#rvText').value.trim(); if(t.length<10){$('#rvErr').hidden=false;return}
+    const n=+m.querySelector('.stars [aria-pressed="true"]').dataset.n; const first=!r.review;
+    const rv=REVS.find(x=>x.rid===r.id);
+    if(rv){rv.stars=n;rv.text=t} else REVS.unshift({rid:r.id,cid:c.id,stars:n,text:t,date:today(),label:`${r.sido} ${r.gu} · ${F.type.o[r.type]}`});
+    if(first){c.review=Math.round((c.review*Math.max(0,c.done-1)+n*20)/Math.max(1,c.done))}
+    r.review=t; r.stars=n; r.stage=7; m.hidden=true; toast(first?'리뷰를 남겼어요. 업체 순위에 반영됩니다.':'리뷰를 수정했어요.'); route();};
+}
 function submitRequest(){
-  const r={id:++RID,who:user.name.slice(0,1)+'**',...JSON.parse(JSON.stringify(draft)),budget:+draft.budget,ago:0,offers:[],status:'open',mine:true,owner:user.phone,date:'2026.11.21'};
+  const r={id:++RID,who:user.name.slice(0,1)+'**',...JSON.parse(JSON.stringify(draft)),budget:+draft.budget,ago:0,at:Date.now(),offers:[],status:'open',mine:true,owner:user.phone,date:today()};
   R.unshift(r); myReq=r; draft=newDraft();
-  toast('요청서를 올렸어요. 지역 상조회사들에게 알림을 보냈습니다.');
+  toast(`요청서를 올렸어요. ${DLNAME[r.timing]} 동안 지역 검증 파트너의 제안을 받습니다.`);
   location.hash='myreq-'+r.id;
   simulateOffers(r);
 }
@@ -799,7 +885,10 @@ function vMy(){
   return `<div class="two"><div style="display:grid;gap:14px;min-width:0">
     <a class="small" href="#my" style="text-decoration:none">← 문의 내역으로</a>
     ${r.status==='closed'?'<p class="small" style="color:var(--warn)">제안 기간이 끝나 마감된 문의예요. 같은 조건으로 다시 요청하려면 새 장례 요청을 올려 주세요.</p>':''}
-    ${r.review?`<div class="panel small"><b>내가 남긴 리뷰</b><p class="mute" style="margin-top:4px">${esc(r.review)}</p></div>`:''}
+    ${r.status==='cancelled'?`<p class="small" style="color:var(--warn)">취소한 요청이에요. 취소 사유: ${esc(r.cancelReason||'')}</p>`:''}
+    ${r.status==='open'?`<div class="panel actbar"><div><span class="label">제안 받는 기간 (${DLNAME[r.timing]}${r.ext?' + 연장':''})</span><div style="margin-top:4px">${dlChip(r)}</div></div>
+      <div class="acts"><button class="btn sm ghost" type="button" data-edit="${r.id}">요청 수정</button>${r.ext?'':`<button class="btn sm ghost" type="button" data-extend="${r.id}">마감 ${DLNAME[r.timing]} 연장</button>`}<button class="btn sm ghost danger" type="button" data-cancelreq="${r.id}">요청 취소</button></div></div>`:''}
+    ${r.review?`<div class="panel small"><div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap"><b>내가 남긴 리뷰 <span class="stars-t">${'★'.repeat(r.stars||5)}${'☆'.repeat(5-(r.stars||5))}</span></b>${r.stage>=7&&r.offers.some(o=>o.status==='matched')?`<button class="btn sm ghost" type="button" data-review="${r.id}">리뷰 수정</button>`:''}</div><p class="mute" style="margin-top:4px">${esc(r.review)}</p></div>`:''}
     <div class="panel" style="display:grid;gap:8px"><div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap"><span>${timingChip(r)} <b>${r.sido} ${r.gu}</b></span><span class="price num" style="font-family:var(--display);font-weight:700;font-size:20px">${man(r.budget)} 희망</span></div>
       <div class="conds" style="display:flex;flex-wrap:wrap;gap:4px">${condChips(r)}</div>${r.memo?`<p class="small mute">${esc(r.memo)}</p>`:''}</div>
     ${matched&&r.stage>=3?`<div class="panel">${extraBlock(matched)}</div>`:''}
@@ -808,12 +897,13 @@ function vMy(){
       <div class="p num">${man(o.price)}</div><p class="small">${esc(o.note)}</p>
       ${o.staffNote?`<p class="small"><span class="chip w">인원 조정</span> ${esc(o.staffNote)}</p>`:''}
       <details class="qd"><summary>항목별 견적 보기</summary>${qlist(o)}</details>
-      <div style="display:flex;gap:8px;flex-wrap:wrap">${o.status==='matched'?'<span class="chip">매칭 확정</span>':''}<a class="btn sm" href="#chat-${o.id}">채팅으로 협의하기</a></div></div>`}).join('')}
+      <div style="display:flex;gap:8px;flex-wrap:wrap">${o.status==='matched'?'<span class="chip">매칭 확정</span>':''}${o.stale?'<span class="chip w">조건 변경 전 제안 · 업체 재견적 대기</span>':''}<a class="btn sm" href="#chat-${o.id}">채팅으로 협의하기</a></div></div>`}).join('')}
     ${r.offers.length<3&&!matched?'<div class="waiting">상조회사 제안을 기다리는 중이에요. 보통 30분 안에 도착합니다.</div>':''}
   </div>
   <aside class="side"><div class="panel"><h3 style="margin-bottom:12px">진행 상황</h3>${timeline(r)}
   ${matched&&r.stage<4?(xpending(matched)?'<p class="small" style="color:var(--warn);margin-bottom:8px">승인 대기 중인 추가 비용이 있어요. 승인하거나 거절해야 정산할 수 있습니다.</p><button class="btn block" type="button" disabled>다음 단계로 (시연)</button>':`<button class="btn block" type="button" data-advance>다음 단계로 (시연)</button>`):''}
   ${matched&&r.stage===4?`<button class="btn block" type="button" data-happy>해피콜 만족도 조사 받기 (시연)</button>`:''}
+  ${matched&&r.stage===6?`<p class="small mute" style="margin-bottom:8px">해피콜이 끝났어요. 다른 가족들이 참고할 수 있게 리뷰를 남겨 주세요.</p><button class="btn block" type="button" data-review="${r.id}">리뷰 쓰기</button>`:''}
   </div></aside></div>`;
 }
 function timeline(r){
@@ -891,7 +981,9 @@ function vChat(oid){
     ${qlist(o)}
     ${role==='partner'&&!matched?`<div class="field" style="display:grid;gap:4px"><label class="small" for="newPrice">제안 금액 수정 (최소 ${man(floorOf(r).min)})</label><div class="money"><input class="txt num" id="newPrice" value="${o.price}" inputmode="numeric"><b>만원</b><button class="btn sm ghost" type="button" data-reprice="${o.id}">변경</button></div></div>`:''}
     ${matched?extraBlock(o)
-      :role==='customer'?(r.status==='open'?`<button class="btn block" type="button" data-match="${o.id}">이 조건으로 매칭 확정</button><p class="small mute">확정하면 위 내용이 확정 견적서가 되고, 다른 제안은 정중히 마감됩니다.</p>`:'<span class="chip n">다른 업체와 매칭되었습니다</span>')
+      :role==='customer'&&o.stale&&r.status==='open'?'<p class="small" style="color:var(--warn)">요청 조건을 바꾼 뒤라, 업체가 바뀐 조건으로 견적을 다시 보내면 매칭을 확정할 수 있어요.</p>'
+      :role==='partner'&&o.stale&&r.status==='open'?`<p class="small" style="color:var(--warn)">고객이 요청 조건을 바꿨어요. 바뀐 조건과 내 단가로 견적을 다시 계산해 보내 주세요.</p><button class="btn block" type="button" data-requote="${o.id}">바뀐 조건으로 다시 견적 보내기</button>`
+      :role==='customer'?(r.status==='open'?`<button class="btn block" type="button" data-match="${o.id}">이 조건으로 매칭 확정</button><p class="small mute">확정하면 위 내용이 확정 견적서가 되고, 다른 제안은 정중히 마감됩니다.</p>`:(r.status==='cancelled'?'<span class="chip n">고객이 취소한 요청입니다</span>':r.status==='closed'?'<span class="chip n">제안 기간이 끝나 마감된 요청입니다</span>':'<span class="chip n">다른 업체와 매칭되었습니다</span>'))
       :'<p class="small mute">고객이 매칭 확정을 누르면 확정 견적서가 만들어집니다. 수수료는 오픈 후 12개월 동안 0원입니다.</p>'}
   </div></aside></div>`;
 }
@@ -933,7 +1025,6 @@ function happyCall(){
     ${Qs.map((q,i)=>`<div class="q"><span class="small"><b>${q}</b></span><div class="stars" role="group" aria-label="${q}">${[1,2,3,4,5].map(n=>`<button type="button" data-star="${i}" data-n="${n}" aria-pressed="${n===5}">${n}</button>`).join('')}</div></div>`).join('')}
     <div class="q"><span class="small"><b>업체가 사이트 밖에서 연락하거나 계약하자고 한 적이 있나요?</b></span>
       <div class="opts"><label><input type="radio" name="bypass" value="no" checked><span>없었어요</span></label><label><input type="radio" name="bypass" value="yes"><span>있었어요</span></label></div></div>
-    <label class="small" for="rv">한 줄 리뷰</label><textarea id="rv" class="txt">처음 이야기한 금액 그대로 정산됐고, 새벽에도 친절하게 응대해 주셨어요.</textarea>
     <button class="btn" type="submit">제출하기</button></form>`;
   m.hidden=false;
   $('#hcForm').onsubmit=e=>{e.preventDefault();
@@ -943,13 +1034,13 @@ function happyCall(){
     c.happy=Math.round((c.happy*c.done+avg)/(c.done+1)); c.review=Math.round((c.review*c.done+avg)/(c.done+1)); c.match=Math.round((c.match*c.done+vals[1]*20)/(c.done+1)); c.done++;
     if(m.querySelector('input[name="bypass"]:checked').value==='yes'){EV.unshift({id:++EVID,type:'report',cid:c.id,actor:'고객',text:'해피콜: 사이트 밖 연락·계약 제안 신고',when:nowStr(),status:'warned'}); c.warn++; toast(`${c.name}에 직거래 유도 경고 1회가 기록되었어요.`)}
     else toast(`만족도 점수가 반영되었어요. ${c.name} ${before} → ${score(c)}점`);
-    r.stage=7; const h=HC.find(x=>x.rid===r.id); if(h) h.status='done'; m.hidden=true; route();
+    r.stage=6; const h=HC.find(x=>x.rid===r.id); if(h) h.status='done'; m.hidden=true; route();
   };
 }
 
 /* ---------- 업체: 게시판 ---------- */
 function vBoard(){
-  const list=R.filter(r=>r.status!=='closed'&&!((r.stage??0)>=7)).filter(r=>boardFilter==='전체'||r.sido===boardFilter||(boardFilter==='긴급'&&r.timing==='urgent'));
+  const list=R.filter(r=>r.status!=='closed'&&r.status!=='cancelled'&&!((r.stage??0)>=7)).filter(r=>boardFilter==='전체'||r.sido===boardFilter||(boardFilter==='긴급'&&r.timing==='urgent'));
   return `<section class="blk">
     <div class="sechead"><div><span class="label">${partner.name} 님으로 보는 중</span><h1 style="font-size:clamp(22px,3vw,28px);margin-top:4px">고객 요청 게시판</h1></div>
       <div class="filters" role="group" aria-label="지역 필터">${['전체','서울','경기','인천','긴급'].map(f=>`<button type="button" data-bf="${f}" aria-pressed="${boardFilter===f}">${f}</button>`).join('')}</div></div>
@@ -992,7 +1083,7 @@ function proposeModal(rid){
 function vPtalk(){
   const mine=allOffers().filter(o=>o.cid===partner.id);
   return `<section class="blk"><div class="sechead"><h1 style="font-size:clamp(22px,3vw,28px)">내 제안·채팅</h1><span class="chip">${partner.name}</span></div>
-  <div class="reqs">${mine.map(o=>{const r=RIDX()[o.rid];return `<article class="req"><div class="top"><span>${timingChip(r)} <b>${r.sido} ${r.gu}</b></span>${o.status==='matched'?'<span class="chip">매칭 확정</span>':r.status!=='open'?'<span class="chip n">마감</span>':'<span class="chip w">협의 중</span>'}</div>
+  <div class="reqs">${mine.map(o=>{const r=RIDX()[o.rid];return `<article class="req"><div class="top"><span>${timingChip(r)} <b>${r.sido} ${r.gu}</b></span>${o.status==='matched'?'<span class="chip">매칭 확정</span>':r.status!=='open'?`<span class="chip n">${r.status==='cancelled'?'고객 취소':'마감'}</span>`:'<span class="chip w">협의 중</span>'}</div>
     <div class="price num">${man(o.price)} <span class="small mute" style="font-weight:400">제안</span></div><div class="conds">${condChips(r)}</div>
     <div class="foot"><span>${r.who}님 · 메시지 ${o.msgs.length}개</span><a class="btn sm" href="#chat-${o.id}">채팅 열기</a></div></article>`}).join('')||'<div class="waiting">아직 보낸 제안이 없어요. 요청 게시판에서 제안을 보내 보세요.</div>'}</div></section>`;
 }
@@ -1051,7 +1142,7 @@ function vJoin(){
     <fieldset class="fs"><legend>준비 서류</legend><div class="opts">
       <label><input type="checkbox" checked><span>사업자등록증</span></label><label><input type="checkbox" checked><span>장례지도사 자격증</span></label><label><input type="checkbox" checked><span>배상책임보험 증권</span></label><label><input type="checkbox"><span>최근 정산 내역 3건</span></label></div>
       <p class="small mute">서류는 담당자 연락 후 제출합니다. 검증은 보통 2주 안에 마칩니다.</p></fieldset>
-    <label class="check"><input type="checkbox" id="jAgree"> <span>[필수] 현장 실사와 유족 레퍼런스 확인, 매칭 확정 전 직접 연락 금지와 단계별 제재 규정에 동의합니다.</span></label>
+    <label class="check"><input type="checkbox" id="jAgree"> <span>[필수] 파트너 운영정책(하단 메뉴에서 전문 확인)과 현장 실사, 유족 레퍼런스 확인, 매칭 확정 전 직접 연락 금지와 단계별 제재 규정에 동의합니다.</span></label>
     <button class="btn block" type="submit">검증 신청서 제출</button></div></form>
     <aside class="side">
       <div class="panel" style="display:grid;gap:10px"><h3>검증 항목</h3><ul class="checks" style="grid-template-columns:1fr">${CHECKS.map(x=>`<li>${x}</li>`).join('')}</ul></div>
@@ -1146,11 +1237,54 @@ function vAdmin(){
     <div style="display:grid;gap:12px;min-width:0">${body}</div></div>`;
 }
 
+/* ---------- 약관 · 정책 (초안) ---------- */
+const DOCS={
+ terms:{t:'이용약관',s:[
+  ['제1조 목적','이 약관은 (주)동행매치(이하 "회사")가 운영하는 동행매치 서비스에서 이용자와 회사, 검증 파트너 사이의 권리와 의무, 이용 절차를 정합니다.'],
+  ['제2조 용어',['"이용자"는 회원가입 후 장례 요청서를 올리는 고객을 말합니다.','"검증 파트너"는 회사가 서류 심사, 현장 실사, 대면 면접, 레퍼런스 확인을 거쳐 승인한 후불제 상조회사를 말합니다.','"요청서"는 이용자가 장례 조건과 희망 금액을 적어 올리는 문서를 말합니다.','"제안"은 검증 파트너가 요청서에 보내는 항목별 견적을 말합니다.','"확정 견적서"는 이용자가 매칭을 확정할 때 만들어지는 최종 견적과 계약 조건을 말합니다.']],
+  ['제3조 회사의 지위','회사는 이용자와 검증 파트너를 연결하는 통신판매중개자이며, 장례 서비스 계약의 당사자는 이용자와 매칭을 확정한 검증 파트너입니다. 회사는 매칭 확정 전에 해당 파트너의 상호, 대표자, 사업자등록번호, 주소, 연락처를 이용자에게 알립니다.'],
+  ['제4조 회원가입','이용자는 카카오 계정 또는 휴대폰 본인인증으로 가입하며, 가입과 요청서 작성, 제안 받기는 무료입니다.'],
+  ['제5조 요청서와 최소 금액','회사는 장례 형태와 조문객 수에 따른 표준 인력 기준과 검증 파트너 단가표로 예상 금액을 안내하고, 실제 제공이 어려운 금액의 요청은 받지 않습니다. 요청서는 시점에 따라 긴급 2시간, 임박 24시간, 사전 준비 7일 동안 제안을 받으며, 이용자는 한 번 연장할 수 있습니다.'],
+  ['제6조 요청의 수정과 취소','이용자는 매칭 확정 전까지 요청서를 수정하거나 취소할 수 있습니다. 수정하면 기존 제안은 조건 변경 전 제안으로 표시되고, 검증 파트너가 바뀐 조건으로 다시 견적을 보내야 매칭을 확정할 수 있습니다. 매칭 확정 후의 취소와 환불은 확정 견적서와 해당 파트너의 취소 규정을 따릅니다.'],
+  ['제7조 연락 방법','매칭 확정 전에는 사이트 채팅과 050 안심번호로만 연락합니다. 전화번호, 메신저 아이디, 계좌번호, 상호는 자동으로 가려집니다.'],
+  ['제8조 결제와 추가 비용','장례 비용은 장례를 마친 뒤 확정 견적서 금액으로 결제합니다. 장례 중 생기는 추가 비용은 이용자가 승인한 항목만 청구할 수 있으며, 승인하지 않은 비용이 청구되면 회사는 운영 정책에 따라 처리합니다.'],
+  ['제9조 해피콜과 리뷰','회사는 장례 후 이용자에게 만족도 조사 전화를 드리며, 결과와 인증 리뷰는 검증 파트너 순위에 반영됩니다. 리뷰는 정산을 마친 이용자만 쓸 수 있고, 회사는 욕설, 개인정보 노출, 허위 내용이 담긴 리뷰를 가릴 수 있습니다.'],
+  ['제10조 금지 행위',['매칭 확정 전 사이트 밖에서 연락하거나 계약하도록 유도하는 행위','다른 사람의 정보로 가입하거나 허위 요청서를 올리는 행위','허위 리뷰를 쓰거나 대가를 받고 리뷰를 쓰는 행위']],
+  ['제11조 분쟁 처리','이용자는 고객센터(1600-0000, 24시간)로 불만과 분쟁을 접수할 수 있으며, 회사는 확정 견적서와 채팅, 추가 비용 승인 기록을 근거로 조정을 돕습니다.'],
+  ['부칙','이 약관은 서비스 정식 오픈일부터 시행합니다.']]},
+ privacy:{t:'개인정보 처리방침',s:[
+  ['1. 수집하는 항목',['회원가입: 이름, 휴대폰 번호, 카카오 회원번호(카카오 가입 시)','장례 요청: 지역, 장례 형태, 종교, 조문객 수, 장법, 희망 금액, 하고 싶은 말','서비스 이용: 채팅 내용, 050 안심번호 통화 기록(통화 시각, 시간), 추가 비용 승인 기록, 해피콜 응답, 리뷰']],
+  ['2. 이용 목적','요청서 전달과 제안 중개, 매칭 확정과 계약 이행 지원, 추가 비용 승인과 정산 확인, 해피콜과 품질 관리, 직거래 방지와 분쟁 처리에 이용합니다.'],
+  ['3. 제3자 제공','매칭을 확정한 경우에만 해당 검증 파트너에게 이름, 휴대폰 번호, 장례 장소와 요청 내용을 제공합니다. 매칭 전에는 이름과 연락처를 제공하지 않습니다.'],
+  ['4. 처리 위탁',['050 안심번호 제공: 업체명 확정 후 기재','카카오 알림톡 발송: 업체명 확정 후 기재','휴대폰 본인인증: 업체명 확정 후 기재']],
+  ['5. 보유 기간',['회원 정보: 탈퇴할 때까지','계약 또는 청약철회 기록, 대금 결제 기록: 5년 (전자상거래법)','소비자 불만과 분쟁 처리 기록: 3년 (전자상거래법)','050 통화 기록: 정산 완료 후 6개월']],
+  ['6. 이용자의 권리','이용자는 언제든지 자신의 개인정보를 조회, 수정, 삭제하거나 처리 정지를 요청할 수 있으며, 고객센터 또는 개인정보 보호책임자에게 요청할 수 있습니다.'],
+  ['7. 개인정보 보호책임자','성명 OOO · 연락처 1600-0000 · 이메일 privacy@(확정 후 기재)']]},
+ policy:{t:'파트너 운영정책 · 검증 기준',s:[
+  ['1. 검증 기준',CHECKS],
+  ['2. 검증 절차','서류 심사, 현장 실사, 대면 면접, 레퍼런스 확인, 파트너 계약의 다섯 단계를 모두 통과해야 고객 요청을 볼 수 있습니다. 검증은 매년 다시 하며, 해피콜 점수가 기준에 못 미치거나 경고를 받으면 재심사합니다.'],
+  ['3. 단가표',['모든 파트너는 장례 형태별 기본 의전비, 인력, 차량, 용품, 종교 의전과 추가 서비스 단가를 등록합니다.','단가표는 고객에게 공개하지 않으며, 예상 금액 범위와 최소 금액 계산, 제안 견적 자동 작성에 쓰입니다.','단가를 바꾸면 운영자가 실제 정산 내역과 맞는지 확인합니다.']],
+  ['4. 제안 규칙',['제안 금액은 동행매치 최소 금액보다 낮을 수 없습니다.','권장 인원을 바꾸면 사유를 적어야 하며, 사유는 고객에게 표시됩니다.','고객이 조건을 바꾸면 바뀐 조건으로 다시 견적을 보내야 매칭될 수 있습니다.']],
+  ['5. 연락과 추가 비용',['매칭 확정 전에는 사이트 채팅과 050 안심번호로만 연락합니다.','장례 중 추가 비용은 앱으로 고객 승인을 받은 항목만 정산서에 넣을 수 있습니다.']],
+  ['6. 순위 산정','해피콜 만족도 40%, 인증 리뷰 25%, 견적 대비 정산 일치 15%, 응답 속도 10%를 반영하고, 직거래 유도 경고 1회마다 5점을 깎습니다.'],
+  ['7. 제재',['1회: 경고와 점수 5점 감점','2회: 30일 노출 제한','3회: 90일 제안 정지','4회: 파트너 계약 해지 검토','모든 단계에서 소명 기회를 드리며, 매칭 확정 후 장례 진행 중 통화는 제재 대상이 아닙니다.']],
+  ['8. 이용료','오픈 후 12개월 동안 입점, 제안, 매칭 수수료는 무료입니다. 이후 매칭이 성사된 건에만 수수료가 생기며, 30일 전에 미리 안내합니다.']]},
+};
+function vDoc(k){
+  const d=DOCS[k];
+  return `<article class="doc"><span class="chip w">초안 · 법률 검토 전</span><h1 style="font-size:clamp(22px,3vw,30px);margin-top:10px">${d.t}</h1>
+    <p class="small mute">시연용 초안입니다. 실제 서비스 오픈 전에 법률 검토를 거쳐 확정합니다.</p>
+    ${d.s.map(([h,b])=>`<section><h2>${h}</h2>${Array.isArray(b)?`<ul>${b.map(x=>`<li>${x}</li>`).join('')}</ul>`:`<p>${b}</p>`}</section>`).join('')}
+    <p class="small mute" style="margin-top:24px"><a href="#terms">이용약관</a> · <a href="#privacy">개인정보 처리방침</a> · <a href="#policy">파트너 운영정책</a></p></article>`;
+}
+
 /* ---------- 라우팅 ---------- */
 function route(){
   const h=location.hash.slice(1)||(role==='customer'?'home':'board');
   const app=$('#app'); let html;
-  if(h.startsWith('chat-')) html=vChat(+h.slice(5));
+  sweep();
+  if(DOCS[h]) html=vDoc(h);
+  else if(h.startsWith('chat-')) html=vChat(+h.slice(5));
   else if(h.startsWith('myreq-')){const q=R.find(x=>x.id===+h.slice(6)); if(q&&user&&q.owner===user.phone){myReq=q; html=vMy()} else html=vMyList()}
   else if(h==='my') html=vMyList();
   else html=({admin:vAdmin,prices:vPrices,home:vHome,partners:vPartners,request:vRequest,my:vMy,board:vBoard,ptalk:vPtalk,ranking:vRanking,join:vJoin}[h]||vHome)();
@@ -1174,6 +1308,12 @@ document.addEventListener('click',e=>{
   if(d.authmode){auth(d.authmode,auth.after);return}
   if(t.hasAttribute('data-logout')){user=null; myReq=null; histLoaded=histLoaded; toast('로그아웃했어요.'); location.hash='home'; route(); return}
   if(d.myf){myFilter=d.myf; route(); return}
+  if(d.edit){startEdit(+d.edit); return}
+  if(t.hasAttribute('data-canceledit')){editId=null; draft=newDraft(); return}
+  if(d.extend){const r=R.find(x=>x.id===+d.extend); r.ext=1; r.offers.forEach(o=>o.msgs.push({from:'sys',text:`고객이 제안 기간을 ${DLNAME[r.timing]} 연장했어요.`})); toast(`제안 받는 기간을 ${DLNAME[r.timing]} 연장했어요.`); route(); return}
+  if(d.cancelreq){cancelModal(+d.cancelreq); return}
+  if(d.review){reviewModal(+d.review); return}
+  if(d.requote){requote(allOffers().find(x=>x.id===+d.requote)); route(); return}
   if(d.kakao){const up=d.kakao==='signup'; finishAuth({name:up&&$('#aName')?($('#aName').value.trim()||'카카오 사용자'):'김동행',phone:'010-1234-5678',via:'카카오',since:up?'2026.11.21':'2026.08.14'}); return}
   if(t.id==='aSend'){const ph=$('#aPhone').value.replace(/[^0-9]/g,''); if(ph.length<10){const e=$('#aErr');e.hidden=false;e.textContent='휴대폰 번호를 확인해 주세요.';return} $('#aCodeBox').hidden=false; $('#aErr').hidden=true; t.textContent='다시 받기'; toast('인증번호를 보냈어요. (시연: 123456)'); $('#aCode').focus(); return}
   if(t.id==='aiBtn'){readForm(); const txt=$('#aiText').value.trim(); if(!txt){toast('먼저 원하는 장례를 말로 적어 주세요.');return}
@@ -1225,11 +1365,11 @@ document.addEventListener('submit',e=>{
   if(e.target.id==='authForm'){e.preventDefault(); const err=$('#aErr'), fail=msg=>{err.hidden=false;err.textContent=msg};
     if($('#aCodeBox').hidden) return fail('인증번호 받기를 먼저 눌러 주세요.');
     if($('#aCode').value.trim()!=='123456') return fail('인증번호가 맞지 않아요. 시연 화면에서는 123456입니다.');
-    const up=auth.mode==='signup'; if(up&&(!$('#c1').checked||!$('#c2').checked)) return fail('필수 항목에 동의해 주세요.');
+    const up=auth.mode==='signup'; if(up&&(!$('#c0').checked||!$('#c1').checked||!$('#c2').checked)) return fail('필수 항목에 동의해 주세요.');
     const ph=$('#aPhone').value.trim();
     finishAuth({name:up?($('#aName').value.trim()||'고객'):'김동행',phone:ph,via:'휴대폰 인증',since:up?'2026.11.21':'2026.08.14'}); return}
   if(e.target.id==='reqForm'){e.preventDefault(); readForm(); const fl=floorOf(draft); if(+draft.budget<fl.min){updateFloor();return}
-    user?submitRequest():auth('signup',submitRequest);}
+    editId?saveEdit():user?submitRequest():auth('signup',submitRequest);}
   if(e.target.id==='sendForm'){e.preventDefault(); const v=$('#msgIn').value.trim(); if(!v) return; const o=allOffers().find(x=>x.id===+location.hash.slice(6)); sendMsg(o,v);}
   if(e.target.id==='myPriceForm'){e.preventDefault(); PRICE[partner.id]=readPriceForm('mp'); toast('단가표를 저장했어요. 다음 제안부터 새 단가로 견적이 작성됩니다.'); return}
   if(e.target.id==='joinForm'){e.preventDefault(); if(!$('#jAgree').checked){toast('검증 절차와 제재 규정에 동의해 주세요.');return} const area=[...document.querySelectorAll('#joinForm input[name="area"]:checked')].map(i=>i.value);
@@ -1239,6 +1379,7 @@ document.addEventListener('submit',e=>{
 $('#modal').addEventListener('click',e=>{if(e.target.id==='modal') e.currentTarget.hidden=true});
 document.addEventListener('keydown',e=>{if(e.key==='Escape') $('#modal').hidden=true});
 window.addEventListener('hashchange',route);
+setInterval(()=>{const ch=sweep(); document.querySelectorAll('[data-dl]').forEach(el=>{const r=R.find(x=>x.id===+el.dataset.dl); if(r) el.textContent=dlText(r)}); if(ch&&$('#modal').hidden&&location.hash!=='#request') route();},30000);
 if(['board','ptalk','join','prices'].includes(location.hash.slice(1))) role='partner';
 if(location.hash==='#admin') role='admin';
 route();
