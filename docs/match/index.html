@@ -239,6 +239,15 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding-block:22px 36px;
 .corp{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:24px}
 .corp b{color:var(--fg);font-family:var(--display)}
 .corp ul{list-style:none;margin:6px 0 0;padding:0;display:grid;gap:4px}
+/* urgent */
+.btn.urgent-fill{background:var(--urgent);border-color:var(--urgent);color:#fff}
+.band .btn.urgent-fill{background:var(--urgent);border-color:var(--urgent);color:#fff}
+.navl a[href="#urgent"]{color:var(--urgent);font-weight:700}
+.urgenthead{background:var(--urgent-soft);border-radius:14px;padding:18px 20px}
+.callnum{font-family:var(--display);font-size:28px;font-weight:700;color:var(--urgent);user-select:all}
+.availbox{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--mute);border-radius:12px;padding:14px 16px;margin-bottom:12px}
+.availbox.on{border-left-color:var(--seal)}
+.availbox b{font-family:var(--display)}
 /* basic improvements */
 .actbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
 .acts{display:flex;gap:6px;flex-wrap:wrap}
@@ -255,7 +264,7 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding-block:22px 36px;
 .doc ul{margin:0;padding-left:20px;display:grid;gap:4px}
 /* account */
 .acct{display:flex;gap:6px;align-items:center;white-space:nowrap}
-.money input#aPhone,#aCode{font-family:var(--body);font-size:15px;font-weight:400;text-align:left;max-width:none}
+.money input#aPhone,#aCode,.money input#uPhone,#uCode{font-family:var(--body);font-size:15px;font-weight:400;text-align:left;max-width:none}
 .kakao{background:#fee500;border-color:#fee500;color:#191600}
 .or{display:flex;align-items:center;gap:10px;color:var(--mute);font-size:12px}
 .or::before,.or::after{content:"";flex:1;height:1px;background:var(--line)}
@@ -446,6 +455,9 @@ const C=[
  {id:6,code:'F-12',ceo:'한OO',addr:'경기 성남시 OO로 00',tel:'1588-0006',biz:'000-00-00006',name:'바른예식',area:'경기 전역',happy:84,review:86,match:88,speed:70,warn:2,done:15,since:2016,dir:6,cars:4,ver:'2026.09.28'},
 ];
 const CID=Object.fromEntries(C.map(c=>[c.id,c]));
+const ETA={1:{서울:35,경기:60,인천:55},2:{서울:55,경기:50,인천:30},3:{서울:60,경기:40,인천:65},4:{서울:45,경기:35,인천:70},5:{서울:40,경기:70,인천:75},6:{서울:60,경기:45,인천:60}};
+C.forEach(c=>{c.avail=c.id!==6; c.eta=ETA[c.id]});
+const etaOf=(c,sido)=>(c.eta&&c.eta[sido])||60;
 const PRICE=Object.fromEntries(C.map(c=>[c.id,mkPrice({1:1,2:1.05,3:0.95,4:0.92,5:0.9,6:0.97}[c.id])]));
 const CHECKS=['사업자·인허가 확인','장례지도사 자격 확인','배상책임보험 가입 확인','사무실·안치 장비 현장 실사','의전 차량 실사','대표·지도사 대면 면접','최근 이용 유족 레퍼런스 통화','추가금 0원·직거래 금지 서약'];
 const recheck=v=>(+v.slice(0,4)+1)+v.slice(4,7);
@@ -463,12 +475,13 @@ const R=[
  {id:4,who:'최**',sido:'서울',gu:'송파구',timing:'plan',type:'nobinso',place:'hospital',religion:'none',guests:'g0',burial:'sea',level:'basic',more:false,cars:[],extras:['admin'],budget:110,memo:'아버지 뜻대로 빈소 없이 조용히, 해양장으로 모시려 합니다.',ago:95},
  {id:5,who:'정**',sido:'경기',gu:'고양시',timing:'soon',type:'oneday',place:'hall',religion:'buddhist',guests:'g1',burial:'charnel',level:'standard',more:false,cars:['limo'],extras:[],budget:200,memo:'스님 염불 연계 가능한 곳이면 좋겠습니다.',ago:150},
  {id:6,who:'윤**',sido:'인천',gu:'연수구',timing:'plan',type:'family',place:'hospital',religion:'none',guests:'g1',burial:'undecided',level:'basic',more:false,cars:[],extras:['concert'],budget:260,memo:'음악을 좋아하셨던 분이라 작은 추모 공연을 넣고 싶어요.',ago:220},
+ {id:7,who:'한**',sido:'인천',gu:'미추홀구',timing:'urgent',type:'family',place:'hospital',religion:'none',guests:'g1',burial:'undecided',level:'standard',more:false,cars:[],extras:[],budget:150,budgetTBD:true,memo:'긴급 간편 접수 · 요양병원에서 임종하셨습니다.',ago:34},
 ];
 R.forEach(r=>{r.offers=[];r.status='open';r.at=Date.now()-r.ago*60000});
 function addOffer(r,cid,adj,note,opts={}){
   const cp={...comp(r)}; if(opts.helpers!=null){cp.helpers=opts.helpers; cp.days=cp.helpers?Math.max(1,STAFF[r.type].days):0}
   const q=quote(cid,cp,r);
-  const o={id:++OID,rid:r.id,cid,base:q.total,adj:adj||0,price:Math.round(q.total+(adj||0)),items:q.lines,staffNote:opts.why||'',note,status:'open',ago:0,msgs:[{from:'p',text:note}]};
+  const o={id:++OID,rid:r.id,cid,base:q.total,adj:adj||0,price:Math.round(q.total+(adj||0)),items:q.lines,staffNote:opts.why||'',eta:opts.eta||null,note,status:'open',ago:0,msgs:[{from:'p',text:note}]};
   r.offers.push(o); return o;
 }
 addOffer(R[0],1,0,'자택 안치와 입관, 화장장 운구까지 단가표 그대로 진행합니다. 본당 연도 시간에 맞춰 입관 일정을 잡겠습니다.');
@@ -536,17 +549,17 @@ function reqCard(r,forPartner){
   const mine=forPartner&&r.offers.some(o=>o.cid===partner.id);
   return `<article class="req">
     <div class="top"><span>${timingChip(r)} <b>${r.sido} ${r.gu}</b></span>${r.status==='open'?dlChip(r):''}</div>
-    <div class="price num">${man(r.budget)} <span class="small mute" style="font-weight:400">희망</span></div>
+    <div class="price num">${r.budgetTBD?'금액 상담 후 결정':man(r.budget)} <span class="small mute" style="font-weight:400">${r.budgetTBD?'긴급 간편 접수':'희망'}</span></div>
     <div class="conds">${condChips(r)}</div>
     <p class="memo">${esc(r.memo)}</p>
     <div class="foot"><span>${r.who}님 · 제안 <b class="num">${r.offers.length}</b>건 · ${ago(sinceMin(r))}${r.edited?' · 조건 수정됨':''}</span>
-    ${forPartner?(r.status!=='open'?`<span class="chip n">${{matched:'매칭 완료',closed:'마감',cancelled:'고객 취소'}[r.status]||'마감'}</span>`:mine?'<span class="chip">제안함</span>':`<button class="btn sm" type="button" data-propose="${r.id}">제안하기</button>`):''}</div>
+    ${forPartner?(r.status!=='open'?`<span class="chip n">${{matched:'매칭 완료',closed:'마감',cancelled:'고객 취소'}[r.status]||'마감'}</span>`:mine?'<span class="chip">제안함</span>':r.timing==='urgent'&&!partner.avail?'<span class="chip n">출동 불가 상태</span>':`<button class="btn sm" type="button" data-propose="${r.id}">${r.timing==='urgent'?`제안하기 · 약 ${etaOf(partner,r.sido)}분`:'제안하기'}</button>`):''}</div>
   </article>`;
 }
 function renderNav(){
   const h=location.hash.slice(1)||'home';
   const items=role==='admin'?[['admin','운영 관리']]:role==='customer'
-    ?[['home','서비스 소개'],['partners','검증 파트너'],['ranking','업체 순위'],['request','장례 요청하기'],['my','내 문의 내역'+(user?` (${myList().length})`:'')]]
+    ?[['urgent','긴급 출동'],['home','서비스 소개'],['partners','검증 파트너'],['ranking','업체 순위'],['request','장례 요청하기'],['my','내 문의 내역'+(user?` (${myList().length})`:'')]]
     :[['board','요청 게시판'],['ptalk','내 제안·채팅'],['prices','내 단가표'],['ranking','업체 순위'],['join','파트너 검증 신청']];
   $('#nav').innerHTML=items.map(([k,v])=>`<a href="#${k}" class="${h===k||h.startsWith(k+'-')||(k==='my'&&h.startsWith('myreq-'))?'on':''}">${v}</a>`).join('');
   document.querySelectorAll('.seg button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.role===role));
@@ -573,7 +586,7 @@ function vHome(){
       <span class="label">서울 · 경기 · 인천 후불제 상조 매칭</span>
       <h1 style="margin-top:10px">동행매치가 직접 검증한 상조회사만<br>고객의 조건에 맞춰 제안합니다</h1>
       <p class="lead">원하는 장례와 희망 금액을 요청서로 올리면, 서류 심사와 현장 실사를 통과한 후불제 상조회사들이 제안을 보냅니다. 협의는 사이트 안에서 하고, 결제는 장례를 마친 뒤에 합니다.</p>
-      <div class="cta"><a class="btn" href="#request">무료로 장례 요청하기</a><a class="btn ghost" href="#partners">검증 파트너 보기</a></div>
+      <div class="cta"><a class="btn urgent-fill" href="#urgent">지금 임종하셨나요? 긴급 출동</a><a class="btn" href="#request">무료로 장례 요청하기</a><a class="btn ghost" href="#partners">검증 파트너 보기</a></div>
     </div>
     <div class="facts num">
       <div><b>8개 항목</b><span>입점 전 직접 검증</span></div>
@@ -792,7 +805,7 @@ function vMyList(){
         <div class="small mute num">${r.date} · ${F.timing.o[r.timing]}</div>
         <h3>${F.type.o[r.type]} · ${r.sido} ${r.gu}</h3>
         <div class="conds" style="display:flex;flex-wrap:wrap;gap:4px">${condChips(r)}</div>
-        <div class="small num">${m?`<b>${m.status==='matched'&&(r.stage??2)>=4?'최종 정산':'확정 견적'} ${man(m.price+xsum(m))}</b> · ${CID[m.cid].name}`:`희망 ${man(r.budget)} · 받은 제안 ${r.offers.length}건`}</div>
+        <div class="small num">${m?`<b>${m.status==='matched'&&(r.stage??2)>=4?'최종 정산':'확정 견적'} ${man(m.price+xsum(m))}</b> · ${CID[m.cid].name}`:`${r.budgetTBD?'금액 상담 후 결정':'희망 '+man(r.budget)} · 받은 제안 ${r.offers.length}건`}</div>
         ${r.review?`<p class="small mute">내 리뷰: ${esc(r.review)}</p>`:''}</div>
         <div class="hside"><span class="chip${sc[st[1]]}">${st[0]}</span><a class="btn sm ghost" href="#myreq-${r.id}">자세히 보기</a></div></article>`}).join('')||'<div class="waiting">이 상태의 문의가 없어요.</div>'}
   </div>
@@ -863,6 +876,7 @@ function submitRequest(){
   simulateOffers(r);
 }
 function simulateOffers(r){
+  if(r.timing==='urgent') return simulateUrgent(r);
   const fl=floorOf(r); const pool=C.filter(c=>c.id!==partner.id||role==='customer').slice(0,4);
   const picks=[pool[0],pool[3],pool[2]];
   const notes=[
@@ -877,6 +891,76 @@ function simulateOffers(r){
   },fast?200*(i+1):1600*(i+1)));
 }
 
+/* ---------- 긴급 간편 접수 ---------- */
+let urgentId=null, uDraft={sido:'서울',gu:'강서구',place:'hospital',religion:'none'};
+function urgentPartners(sido){return C.filter(c=>c.avail&&PRICE[c.id]).sort((a,b)=>etaOf(a,sido)-etaOf(b,sido))}
+function simulateUrgent(r){
+  const ps=urgentPartners(r.sido).filter(c=>role==='customer'||c.id!==partner.id).slice(0,3);
+  const fast=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(!ps.length){setTimeout(()=>{r.counselor='상담사 연결 중'; if(['#urgent','#myreq-'+r.id].includes(location.hash)) route();},fast?200:1500); return}
+  ps.forEach((c,i)=>setTimeout(()=>{
+    if(r.status!=='open') return;
+    const e=etaOf(c,r.sido);
+    addOffer(r,c.id,0,`지금 출동 가능합니다. ${r.gu}까지 약 ${e}분 걸립니다. 도착 전 ${r.place==='home'?'119 신고와 검안':'병원 안치실 확인'}부터 도와드릴게요.`,{eta:e});
+    renderNav(); if(['#urgent','#my','#myreq-'+r.id].includes(location.hash)) route(); toast(`${dn(c)}: 약 ${e}분 후 도착 가능하다는 제안이 왔어요.`);
+  },fast?150*(i+1):1100*(i+1)));
+}
+function urgentChecklist(place){
+  const a=place==='home'?['119 또는 112에 먼저 신고하세요. 검안 후 시체검안서를 받아야 장례를 진행할 수 있어요.','고인을 편안히 눕히고, 방은 서늘하게 해 주세요.','파트너가 도착하기 전에는 고인을 옮기지 마세요.']
+    :['병원 안치실에 고인을 모셨는지 간호사실에 확인하세요.','사망진단서를 10부 이상 받아 두세요. 사망신고, 보험, 은행 업무에 쓰입니다.','장례식장 빈소 공실은 파트너가 대신 확인해 드려요.'];
+  return a.concat(['가까운 가족과 친지에게 먼저 연락하세요.','고인의 신분증과 가족관계를 알 수 있는 서류를 챙겨 두세요.','종교가 있다면 교회, 성당, 사찰에 알려 주세요.']);
+}
+function vUrgent(){
+  const r=urgentId&&R.find(x=>x.id===urgentId);
+  if(r){
+    const el=Math.floor(sinceMin(r)), left=Math.max(0,30-el), offers=[...r.offers].sort((a,b)=>(a.eta||99)-(b.eta||99));
+    const needC=r.counselor||(offers.length===0&&el>=30);
+    return `<div class="two"><div style="display:grid;gap:14px;min-width:0">
+      <div class="urgenthead"><span class="chip u">긴급 출동 요청 접수</span><h1 style="font-size:clamp(22px,3vw,28px);margin-top:6px">${r.sido} ${r.gu} 근처 출동 가능 파트너를 찾고 있어요</h1>
+        <p class="small">${urgentPartners(r.sido).length}곳의 출동 가능 검증 파트너에게 알림을 보냈어요. 도착 시간이 빠른 순서로 보여 드립니다.</p></div>
+      ${needC?`<div class="panel" style="border-color:var(--urgent)"><b style="color:var(--urgent)">상담사가 직접 연결해 드립니다</b><p class="small" style="margin-top:4px">지금 바로 출동할 수 있는 파트너를 찾지 못했어요. 동행매치 상담사가 5분 안에 전화드려 가장 빠른 업체를 직접 연결합니다.</p></div>`:''}
+      ${offers.map(o=>{const c=CID[o.cid],s=score(c);return `<div class="offer"><div class="h"><span><b>${dn(c,o.status==='matched')}</b> ${seal(c)}</span><span class="chip u">약 ${o.eta||etaOf(c,r.sido)}분 후 도착</span></div>
+        <div class="small num">${s===null?'신규 파트너':`만족도 점수 ${s}`} · 권장 구성 견적 ${man(o.price)} (발인 후 결제)</div><p class="small">${esc(o.note)}</p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">${o.status==='matched'?'<span class="chip">매칭 확정</span>':''}<a class="btn sm" href="#chat-${o.id}">채팅·050 통화로 바로 협의</a></div></div>`}).join('')||(needC?'':'<div class="waiting">가까운 파트너의 응답을 기다리는 중이에요. 보통 몇 분 안에 도착합니다.</div>')}
+      <a class="small" href="#myreq-${r.id}">요청 상세와 진행 상황 보기 →</a>
+    </div>
+    <aside class="side">
+      <div class="panel" style="display:grid;gap:6px"><span class="label">24시간 긴급 상담</span><div class="callnum num">1600-0000</div><p class="small mute">시연용 번호입니다. ${offers.length?'제안이 도착했어요. 바로 협의를 시작하세요.':needC?'상담사가 연결 중입니다.':`<span data-ct="${r.id}">${left}분</span> 안에 제안이 없으면 상담사가 직접 전화드립니다.`}</p></div>
+      <div class="panel"><h3>지금 확인할 것</h3><ul class="checks" style="grid-template-columns:1fr;margin-top:8px">${urgentChecklist(r.place).map(x=>`<li>${x}</li>`).join('')}</ul></div>
+    </aside></div>`;
+  }
+  return `<div class="formgrid"><form class="panel" id="urgentForm" novalidate>
+    <span class="chip u">긴급 간편 접수</span>
+    <h1 style="font-size:clamp(22px,3vw,28px);margin-top:6px">지금 임종하셨나요?</h1>
+    <p class="mute small" style="margin:6px 0 18px">세 가지만 알려 주세요. 지금 출동할 수 있는 가까운 검증 파트너에게 바로 알림을 보냅니다. 장례 형태와 금액은 업체와 이야기하며 정하고, 회원가입은 장례를 마친 뒤 해도 됩니다.</p>
+    <fieldset class="fs"><legend>계신 곳</legend><div class="row2">
+      <select id="uSido" aria-label="시·도">${Object.keys(SIDO).map(x=>`<option ${uDraft.sido===x?'selected':''}>${x}</option>`).join('')}</select>
+      <select id="uGu" aria-label="시·군·구">${SIDO[uDraft.sido].map(g=>`<option ${uDraft.gu===g?'selected':''}>${g}</option>`).join('')}</select></div></fieldset>
+    <fieldset class="fs"><legend>고인이 계신 곳</legend><div class="opts">${[['hospital','병원·요양병원'],['home','자택'],['care','요양원·기타 시설']].map(([v,l])=>`<label><input type="radio" name="uPlace" value="${v}" ${uDraft.place===v?'checked':''}><span>${l}</span></label>`).join('')}</div></fieldset>
+    <fieldset class="fs"><legend>종교 (선택)</legend><div class="opts">${Object.entries(F.religion.o).map(([v,l])=>`<label><input type="radio" name="uRel" value="${v}" ${uDraft.religion===v?'checked':''}><span>${l}</span></label>`).join('')}</div></fieldset>
+    ${user?`<p class="small">연락처: <b>${user.phone.replace(/(\d{3})-?(\d{3,4})-?(\d{4})/,'$1-****-$3')}</b> (${esc(user.name)}님)</p>`
+    :`<fieldset class="fs"><legend>연락받을 휴대폰 번호</legend>
+      <div class="money"><input class="txt num" id="uPhone" value="010-1234-5678" inputmode="tel" aria-label="휴대폰 번호"><button class="btn sm ghost" type="button" id="uSend">인증번호 받기</button></div>
+      <div id="uCodeBox" hidden style="margin-top:8px"><input class="txt num" id="uCode" inputmode="numeric" maxlength="6" placeholder="인증번호 6자리 (시연: 123456)" aria-label="인증번호"></div>
+      <label class="check" style="margin-top:8px"><input type="checkbox" id="uAgree" checked> <span>[필수] 이용약관·개인정보 처리방침, 매칭 확정 전 채팅·050 연락에 동의합니다.</span></label></fieldset>`}
+    <p class="err" id="uErr" hidden></p>
+    <button class="btn block urgent-fill" type="submit">긴급 출동 요청 보내기</button>
+    <p class="small mute" style="margin-top:8px">미리 알아보는 중이라면 <a href="#request">일반 요청서</a>로 여러 제안을 천천히 비교하세요.</p>
+  </form>
+  <aside class="side"><div class="panel" style="display:grid;gap:6px"><span class="label">24시간 긴급 상담</span><div class="callnum num">1600-0000</div><p class="small mute">전화가 더 편하시면 상담사가 대신 접수해 드립니다. (시연용 번호)</p></div>
+    <div class="panel"><h3>임종 직후 확인할 것</h3><ul class="checks" style="grid-template-columns:1fr;margin-top:8px">${urgentChecklist(uDraft.place==='home'?'home':'hospital').map(x=>`<li>${x}</li>`).join('')}</ul></div></aside></div>`;
+}
+function submitUrgent(){
+  const place=uDraft.place, r={id:++RID,who:user.name.slice(0,1)+'**',sido:uDraft.sido,gu:uDraft.gu,timing:'urgent',type:place==='home'?'home':'family',place:place==='home'?'home':'hospital',
+    religion:uDraft.religion,guests:'g1',burial:'undecided',level:'standard',more:false,cars:[],extras:[],budget:0,budgetTBD:true,
+    memo:`긴급 간편 접수 · ${place==='hospital'?'병원·요양병원':place==='home'?'자택':'요양원·기타 시설'}에서 임종하셨습니다. 장례 형태와 금액은 상담하며 정하고 싶어요.`,
+    ago:0,at:Date.now(),offers:[],status:'open',owner:user.phone,date:today()};
+  r.budget=floorOf(r).avg;
+  R.unshift(r); myReq=r; urgentId=r.id;
+  toast('긴급 출동 요청을 보냈어요. 가까운 출동 가능 파트너를 찾고 있어요.');
+  route(); simulateUrgent(r);
+}
+
 /* ---------- 고객: 내 요청 ---------- */
 const STAGES=['요청 등록','채팅 협의','매칭 확정','장례 진행','발인 후 정산','해피콜 만족도 조사','리뷰 작성'];
 function vMy(){
@@ -889,12 +973,12 @@ function vMy(){
     ${r.status==='open'?`<div class="panel actbar"><div><span class="label">제안 받는 기간 (${DLNAME[r.timing]}${r.ext?' + 연장':''})</span><div style="margin-top:4px">${dlChip(r)}</div></div>
       <div class="acts"><button class="btn sm ghost" type="button" data-edit="${r.id}">요청 수정</button>${r.ext?'':`<button class="btn sm ghost" type="button" data-extend="${r.id}">마감 ${DLNAME[r.timing]} 연장</button>`}<button class="btn sm ghost danger" type="button" data-cancelreq="${r.id}">요청 취소</button></div></div>`:''}
     ${r.review?`<div class="panel small"><div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap"><b>내가 남긴 리뷰 <span class="stars-t">${'★'.repeat(r.stars||5)}${'☆'.repeat(5-(r.stars||5))}</span></b>${r.stage>=7&&r.offers.some(o=>o.status==='matched')?`<button class="btn sm ghost" type="button" data-review="${r.id}">리뷰 수정</button>`:''}</div><p class="mute" style="margin-top:4px">${esc(r.review)}</p></div>`:''}
-    <div class="panel" style="display:grid;gap:8px"><div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap"><span>${timingChip(r)} <b>${r.sido} ${r.gu}</b></span><span class="price num" style="font-family:var(--display);font-weight:700;font-size:20px">${man(r.budget)} 희망</span></div>
+    <div class="panel" style="display:grid;gap:8px"><div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap"><span>${timingChip(r)} <b>${r.sido} ${r.gu}</b></span><span class="price num" style="font-family:var(--display);font-weight:700;font-size:20px">${r.budgetTBD?'금액 상담 후 결정':man(r.budget)+' 희망'}</span></div>
       <div class="conds" style="display:flex;flex-wrap:wrap;gap:4px">${condChips(r)}</div>${r.memo?`<p class="small mute">${esc(r.memo)}</p>`:''}</div>
     ${matched&&r.stage>=3?`<div class="panel">${extraBlock(matched)}</div>`:''}
     <h2>받은 제안 <span class="num mute">${r.offers.length}</span></h2>
     ${r.offers.map(o=>{const c=CID[o.cid],s=score(c);return `<div class="offer"><div class="h"><span><b>${dn(c,o.status==='matched')}</b> ${seal(c)} <span class="mute small">${c.area}</span></span>${s===null?'<span class="chip">신규 파트너</span>':`<span class="chip">만족도 점수 ${s}</span>`}</div>
-      <div class="p num">${man(o.price)}</div><p class="small">${esc(o.note)}</p>
+      <div class="p num">${man(o.price)} ${o.eta?`<span class="chip u" style="vertical-align:middle">약 ${o.eta}분 후 도착 가능</span>`:''}</div><p class="small">${esc(o.note)}</p>
       ${o.staffNote?`<p class="small"><span class="chip w">인원 조정</span> ${esc(o.staffNote)}</p>`:''}
       <details class="qd"><summary>항목별 견적 보기</summary>${qlist(o)}</details>
       <div style="display:flex;gap:8px;flex-wrap:wrap">${o.status==='matched'?'<span class="chip">매칭 확정</span>':''}${o.stale?'<span class="chip w">조건 변경 전 제안 · 업체 재견적 대기</span>':''}<a class="btn sm" href="#chat-${o.id}">채팅으로 협의하기</a></div></div>`}).join('')}
@@ -1044,6 +1128,8 @@ function vBoard(){
   return `<section class="blk">
     <div class="sechead"><div><span class="label">${partner.name} 님으로 보는 중</span><h1 style="font-size:clamp(22px,3vw,28px);margin-top:4px">고객 요청 게시판</h1></div>
       <div class="filters" role="group" aria-label="지역 필터">${['전체','서울','경기','인천','긴급'].map(f=>`<button type="button" data-bf="${f}" aria-pressed="${boardFilter===f}">${f}</button>`).join('')}</div></div>
+    <div class="availbox ${partner.avail?'on':''}"><div><b>${partner.avail?'지금 출동 가능':'지금 출동 불가'}</b><p class="small mute">출동 가능 상태일 때만 긴급 요청 알림을 받고 긴급 제안을 보낼 수 있어요. 예상 도착: ${Object.entries(partner.eta||{}).map(([k,v])=>`${k} ${v}분`).join(' · ')}</p></div>
+      <button class="btn sm ${partner.avail?'ghost':''}" type="button" data-avail>${partner.avail?'출동 불가로 바꾸기':'출동 가능으로 바꾸기'}</button></div>
     <p class="mute small" style="margin-bottom:14px">동행매치 검증을 마친 파트너만 볼 수 있는 요청입니다. 제안 발송은 무료입니다. 제안 금액은 요청 조건의 최소 금액보다 낮게 보낼 수 없습니다.</p>
     <div class="reqs">${list.map(r=>reqCard(r,true)).join('')||'<div class="waiting">이 조건의 요청이 없어요.</div>'}</div></section>`;
 }
@@ -1051,7 +1137,7 @@ function proposeModal(rid){
   const r=RIDX()[rid], fl=floorOf(r), cp=fl.cp, m=$('#modal');
   m.innerHTML=`<form class="box" id="propForm" style="max-width:520px"><span class="label">${r.sido} ${r.gu} · ${r.who}님</span><h2>제안 보내기</h2>
     <div style="display:flex;flex-wrap:wrap;gap:4px">${condChips(r)}</div>
-    <p class="small">고객 희망 <b class="num">${man(r.budget)}</b> · 동행매치 최소 금액 <b class="num">${man(fl.min)}</b></p>
+    <p class="small">고객 희망 <b class="num">${r.budgetTBD?'상담 후 결정 (긴급)':man(r.budget)}</b> · 동행매치 최소 금액 <b class="num">${man(fl.min)}</b></p>
     <p class="small mute">권장 구성: 장례지도사 ${cp.dir}명${cp.assist?`, 입관 보조 ${cp.assist}명`:''}, ${cp.helpers?`의전도우미 ${cp.helpers}명 × ${cp.days}일`:'의전도우미 없음'}. 내 단가표로 견적을 미리 채웠어요.</p>
     <div id="pQuote"></div>
     <div class="row2">
@@ -1078,7 +1164,7 @@ function proposeModal(rid){
   ['pHelp','pAdj','pWhy'].forEach(id=>$('#'+id).oninput=calc); calc();
   $('#propForm').onsubmit=e=>{e.preventDefault(); const v=calc(); if(!v.ok) return;
     const why=v.h!==cp.helpers?`도우미 ${cp.helpers}명 → ${v.h}명. ${maskText($('#pWhy').value.trim()).t}`:'';
-    const o=addOffer(r,partner.id,v.adj,maskText($('#pNote').value).t,v.h!==cp.helpers?{helpers:v.h,why}:{}); m.hidden=true; toast('제안을 보냈어요. 고객이 채팅을 시작하면 알림을 드려요.'); location.hash='chat-'+o.id;};
+    const o=addOffer(r,partner.id,v.adj,maskText($('#pNote').value).t,Object.assign(v.h!==cp.helpers?{helpers:v.h,why}:{},r.timing==='urgent'?{eta:etaOf(partner,r.sido)}:{})); m.hidden=true; toast('제안을 보냈어요. 고객이 채팅을 시작하면 알림을 드려요.'); location.hash='chat-'+o.id;};
 }
 function vPtalk(){
   const mine=allOffers().filter(o=>o.cid===partner.id);
@@ -1161,7 +1247,7 @@ function approveApp(id){
   const i=APPS.findIndex(x=>x.id===id), a=APPS[i];
   const code=String.fromCharCode(71+C.length-6)+'-'+String(10+id*7).padStart(2,'0');
   C.push({id:C.length+1,code,ceo:'OOO',addr:a.area+' OO로 00',tel:'1588-00'+(C.length+1),biz:'000-00-000'+(C.length+1),name:a.name,area:a.area,happy:0,review:0,match:0,speed:85,warn:0,done:0,since:2020,dir:5,cars:2,ver:'2026.11.19',isNew:true});
-  CID[C[C.length-1].id]=C[C.length-1]; PRICE[C[C.length-1].id]=a.price||mkPrice(1); APPS.splice(i,1);
+  CID[C[C.length-1].id]=C[C.length-1]; C[C.length-1].avail=true; C[C.length-1].eta={서울:60,경기:60,인천:60}; PRICE[C[C.length-1].id]=a.price||mkPrice(1); APPS.splice(i,1);
   toast(`${a.name} 신청을 승인했어요. 검증 파트너 ${code}로 고객 요청을 볼 수 있습니다.`); route();
 }
 function saveHC(id){
@@ -1178,15 +1264,27 @@ function vAdmin(){
   const hcWait=HC.filter(h=>h.status==='wait'), evOpen=EV.filter(e=>e.status==='open');
   const xs=R.flatMap(r=>r.offers.flatMap(o=>(o.extrasReq||[]).map(x=>({x,o,r}))));
   const xPend=xs.filter(v=>v.x.status==='pending');
-  const tabs=[['overview','현황',''],['verify','파트너 검증',APPS.length],['happy','해피콜',hcWait.length],['suspect','직거래 의심',evOpen.length],['sanction','제재 관리',C.filter(c=>c.warn).length],['extra','추가 비용',xPend.length],['staff','표준 인력 기준',''],['prices','업체 단가표','']];
+  const tabs=[['overview','현황',''],['urgent','긴급 관제',R.filter(r=>r.timing==='urgent'&&r.status==='open').length],['verify','파트너 검증',APPS.length],['happy','해피콜',hcWait.length],['suspect','직거래 의심',evOpen.length],['sanction','제재 관리',C.filter(c=>c.warn).length],['extra','추가 비용',xPend.length],['staff','표준 인력 기준',''],['prices','업체 단가표','']];
   let body='';
+  if(adminTab==='urgent'){const us=R.filter(r=>r.timing==='urgent'&&(r.status==='open'||r.status==='matched')&&!((r.stage??0)>=7));
+    body=`<h1 style="font-size:clamp(22px,3vw,28px)">긴급 관제</h1><p class="mute small">임종 직후 요청을 지켜봅니다. 30분이 지나도 제안이 없으면 상담사를 배정해 직접 전화로 연결합니다.</p>
+    <div class="tblwrap"><table class="adm num"><thead><tr><th>지역</th><th>접수 후</th><th>제안</th><th>가장 빠른 도착</th><th>상태</th><th class="r">처리</th></tr></thead><tbody>
+    ${us.map(r=>{const el=Math.floor(sinceMin(r)),f=r.offers.filter(o=>o.eta).sort((a,b)=>a.eta-b.eta)[0],need=r.status==='open'&&!r.offers.length&&el>=30&&!r.assigned;
+      return `<tr><td><b>${r.sido} ${r.gu}</b><br><span class="small mute">${r.who}님 · ${F.place.o[r.place]}</span></td><td>${el}분</td><td>${r.offers.length}건</td><td>${f?`${CID[f.cid].code} · 약 ${f.eta}분`:'-'}</td>
+      <td>${r.status==='matched'?'<span class="chip">매칭 확정</span>':r.assigned?`<span class="chip">${r.assigned} 배정</span>`:need?'<span class="chip u">상담사 연결 필요</span>':r.offers.length?'<span class="chip w">고객 선택 대기</span>':'<span class="chip n">제안 대기</span>'}</td>
+      <td class="r">${r.status==='open'&&!r.assigned?`<button class="btn sm ${need?'':'ghost'}" type="button" data-assign="${r.id}">상담사 배정</button>`:''}</td></tr>`}).join('')||'<tr><td colspan="6" class="mute">진행 중인 긴급 요청이 없어요.</td></tr>'}
+    </tbody></table></div>
+    <h2 style="margin-top:22px">파트너 출동 가능 현황</h2>
+    <div class="tblwrap" style="margin-top:10px"><table class="adm num"><thead><tr><th>업체</th><th>상태</th><th class="r">서울</th><th class="r">경기</th><th class="r">인천</th></tr></thead><tbody>
+    ${C.map(c=>`<tr><td><b>${c.name}</b> <span class="small mute">${c.code}</span></td><td>${c.avail?'<span class="chip">출동 가능</span>':'<span class="chip n">출동 불가</span>'}</td>${['서울','경기','인천'].map(k=>`<td class="r">${etaOf(c,k)}분</td>`).join('')}</tr>`).join('')}
+    </tbody></table></div>`;}
   if(adminTab==='overview') body=`<h1 style="font-size:clamp(22px,3vw,28px)">운영 현황</h1>
     <div class="tiles num">
       <button class="tile ${APPS.length?'alert':'ok'}" type="button" data-atab="verify"><b>${APPS.length}</b><span>검증 진행 중인 신청 업체</span></button>
       <button class="tile ${hcWait.length?'alert':'ok'}" type="button" data-atab="happy"><b>${hcWait.length}</b><span>해피콜 대기</span></button>
       <button class="tile ${evOpen.length?'alert':'ok'}" type="button" data-atab="suspect"><b>${evOpen.length}</b><span>확인 안 된 직거래 의심 건</span></button>
       <button class="tile ${xPend.length?'alert':'ok'}" type="button" data-atab="extra"><b>${xPend.length}</b><span>고객 승인 대기 추가 비용</span></button>
-      <button class="tile" type="button" data-atab="sanction"><b>${C.length}</b><span>활동 중인 검증 파트너</span></button>
+      <button class="tile" type="button" data-atab="urgent"><b>${C.filter(c=>c.avail).length} / ${C.length}</b><span>지금 출동 가능한 검증 파트너</span></button>
       <button class="tile" type="button" data-atab="extra"><b>${R.filter(r=>r.status==='open').length}</b><span>제안을 기다리는 고객 요청</span></button>
     </div>
     <h2 style="margin-top:24px">재검증 예정</h2>
@@ -1287,7 +1385,7 @@ function route(){
   else if(h.startsWith('chat-')) html=vChat(+h.slice(5));
   else if(h.startsWith('myreq-')){const q=R.find(x=>x.id===+h.slice(6)); if(q&&user&&q.owner===user.phone){myReq=q; html=vMy()} else html=vMyList()}
   else if(h==='my') html=vMyList();
-  else html=({admin:vAdmin,prices:vPrices,home:vHome,partners:vPartners,request:vRequest,my:vMy,board:vBoard,ptalk:vPtalk,ranking:vRanking,join:vJoin}[h]||vHome)();
+  else html=({admin:vAdmin,urgent:vUrgent,prices:vPrices,home:vHome,partners:vPartners,request:vRequest,my:vMy,board:vBoard,ptalk:vPtalk,ranking:vRanking,join:vJoin}[h]||vHome)();
   const keep=h===route.last; route.last=h;
   app.innerHTML=html; renderNav();
   if(h==='request'){updateFloor()}
@@ -1308,6 +1406,9 @@ document.addEventListener('click',e=>{
   if(d.authmode){auth(d.authmode,auth.after);return}
   if(t.hasAttribute('data-logout')){user=null; myReq=null; histLoaded=histLoaded; toast('로그아웃했어요.'); location.hash='home'; route(); return}
   if(d.myf){myFilter=d.myf; route(); return}
+  if(t.hasAttribute('data-avail')){partner.avail=!partner.avail; toast(partner.avail?'출동 가능 상태로 바꿨어요. 긴급 요청 알림을 받습니다.':'출동 불가 상태로 바꿨어요. 긴급 요청 알림을 받지 않습니다.'); route(); return}
+  if(d.assign){const r=R.find(x=>x.id===+d.assign); r.assigned='김OO 상담사'; r.counselor='상담사 배정'; toast(`${r.sido} ${r.gu} 긴급 요청에 상담사를 배정했어요.`); route(); return}
+  if(t.id==='uSend'){const ph=$('#uPhone').value.replace(/[^0-9]/g,''); const e=$('#uErr'); if(ph.length<10){e.hidden=false;e.textContent='휴대폰 번호를 확인해 주세요.';return} e.hidden=true; $('#uCodeBox').hidden=false; t.textContent='다시 받기'; toast('인증번호를 보냈어요. (시연: 123456)'); $('#uCode').focus(); return}
   if(d.edit){startEdit(+d.edit); return}
   if(t.hasAttribute('data-canceledit')){editId=null; draft=newDraft(); return}
   if(d.extend){const r=R.find(x=>x.id===+d.extend); r.ext=1; r.offers.forEach(o=>o.msgs.push({from:'sys',text:`고객이 제안 기간을 ${DLNAME[r.timing]} 연장했어요.`})); toast(`제안 받는 기간을 ${DLNAME[r.timing]} 연장했어요.`); route(); return}
@@ -1354,6 +1455,12 @@ document.addEventListener('click',e=>{
     o.price=v; o.adj=v-o.base; o.msgs.push({from:'sys',text:`업체가 제안 금액을 ${man(v)}으로 변경했어요.`}); route(); return}
 });
 document.addEventListener('change',e=>{
+  if(e.target.closest&&e.target.closest('#urgentForm')){
+    if(e.target.id==='uSido'){uDraft.sido=e.target.value; uDraft.gu=SIDO[uDraft.sido][0]; route(); return}
+    if(e.target.id==='uGu') uDraft.gu=e.target.value;
+    if(e.target.name==='uPlace'){uDraft.place=e.target.value; route(); return}
+    if(e.target.name==='uRel') uDraft.religion=e.target.value;
+    return}
   if(!$('#reqForm')||!e.target.closest('#reqForm')) return;
   if(e.target.id==='sido'){draft.sido=e.target.value; draft.gu=SIDO[draft.sido][0]; readForm(); draft.gu=SIDO[draft.sido][0]; const s=window.scrollY; route(); window.scrollTo(0,s); return}
   if(e.target.name==='type'&&e.target.value==='home'){readForm(); Object.assign(draft,{place:'home'}); const s=window.scrollY; route(); window.scrollTo(0,s); return}
@@ -1362,6 +1469,10 @@ document.addEventListener('change',e=>{
 document.addEventListener('input',e=>{ if(e.target.dataset.staff){const [t,gi,fi]=e.target.dataset.staff.split(':'); STAFF[t].rows[+gi][+fi]=Math.max(0,parseInt(e.target.value)||0); return}
   if(e.target.dataset.sdays){STAFF[e.target.dataset.sdays].days=Math.max(0,parseInt(e.target.value)||0); return} if(e.target.id==='budget'||e.target.id==='memo'){readForm(); updateFloor();} });
 document.addEventListener('submit',e=>{
+  if(e.target.id==='urgentForm'){e.preventDefault(); const er=$('#uErr'), fail=m=>{er.hidden=false;er.textContent=m};
+    if(!user){ if($('#uCodeBox').hidden) return fail('인증번호 받기를 먼저 눌러 주세요.'); if($('#uCode').value.trim()!=='123456') return fail('인증번호가 맞지 않아요. 시연 화면에서는 123456입니다.'); if(!$('#uAgree').checked) return fail('필수 항목에 동의해 주세요.');
+      user={name:'긴급 요청 고객',phone:$('#uPhone').value.trim(),via:'휴대폰 인증 (긴급 간편 접수)',since:today()}; }
+    submitUrgent(); return}
   if(e.target.id==='authForm'){e.preventDefault(); const err=$('#aErr'), fail=msg=>{err.hidden=false;err.textContent=msg};
     if($('#aCodeBox').hidden) return fail('인증번호 받기를 먼저 눌러 주세요.');
     if($('#aCode').value.trim()!=='123456') return fail('인증번호가 맞지 않아요. 시연 화면에서는 123456입니다.');
@@ -1379,7 +1490,7 @@ document.addEventListener('submit',e=>{
 $('#modal').addEventListener('click',e=>{if(e.target.id==='modal') e.currentTarget.hidden=true});
 document.addEventListener('keydown',e=>{if(e.key==='Escape') $('#modal').hidden=true});
 window.addEventListener('hashchange',route);
-setInterval(()=>{const ch=sweep(); document.querySelectorAll('[data-dl]').forEach(el=>{const r=R.find(x=>x.id===+el.dataset.dl); if(r) el.textContent=dlText(r)}); if(ch&&$('#modal').hidden&&location.hash!=='#request') route();},30000);
+setInterval(()=>{const ch=sweep(); document.querySelectorAll('[data-ct]').forEach(el=>{const r=R.find(x=>x.id===+el.dataset.ct); if(r) el.textContent=Math.max(0,30-Math.floor(sinceMin(r)))+'분'}); document.querySelectorAll('[data-dl]').forEach(el=>{const r=R.find(x=>x.id===+el.dataset.dl); if(r) el.textContent=dlText(r)}); if(ch&&$('#modal').hidden&&location.hash!=='#request') route();},30000);
 if(['board','ptalk','join','prices'].includes(location.hash.slice(1))) role='partner';
 if(location.hash==='#admin') role='admin';
 route();
