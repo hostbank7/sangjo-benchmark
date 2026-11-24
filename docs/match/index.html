@@ -548,6 +548,7 @@ const R=[
  {id:7,who:'한**',sido:'인천',gu:'미추홀구',timing:'urgent',type:'family',place:'hospital',religion:'none',guests:'g1',burial:'undecided',level:'standard',more:false,cars:[],extras:[],budget:150,budgetTBD:true,memo:'긴급 간편 접수 · 요양병원에서 임종하셨습니다.',ago:34},
 ];
 R.forEach(r=>{r.offers=[];r.status='open';r.at=Date.now()-r.ago*60000});
+R[0].ref='SEOULCARE'; R[4].ref='HANULHOS'; R[3].ref='SEOULCARE';
 function addOffer(r,cid,adj,note,opts={}){
   const cp={...comp(r)}; if(opts.helpers!=null){cp.helpers=opts.helpers; cp.days=cp.helpers?Math.max(1,STAFF[r.type].days):0}
   const q=quote(cid,cp,r);
@@ -596,7 +597,14 @@ const allOffers=()=>R.flatMap(r=>r.offers);
 
 /* ---------- 상태 ---------- */
 let role='customer', user=null, partner=C[0], myReq=null, boardFilter='전체', draft=null;
-function newDraft(){return {sido:'서울',gu:'은평구',timing:'plan',type:'family',place:'hospital',religion:'none',guests:'g1',burial:'charnel',level:'standard',more:false,cars:[],extras:[],budget:'',memo:''}}
+const INST=[
+ {code:'SEOULCARE',name:'서울OO요양병원',type:'요양병원',region:'서울 강서구',contact:'원무과 담당자',since:'2026.10.01'},
+ {code:'HANULHOS',name:'하늘OO호스피스',type:'호스피스',region:'경기 고양시',contact:'사회복지사',since:'2026.10.12'},
+ {code:'BOMNAL',name:'봄날OO요양원',type:'요양원',region:'인천 연수구',contact:'원장',since:'2026.11.03'},
+];
+let refCode=null;
+const instOf=c=>INST.find(x=>x.code===String(c||'').trim().toUpperCase());
+function newDraft(){return {ref:'',sido:'서울',gu:'은평구',timing:'plan',type:'family',place:'hospital',religion:'none',guests:'g1',burial:'charnel',level:'standard',more:false,cars:[],extras:[],budget:'',memo:''}}
 draft=newDraft();
 
 /* ---------- 공통 ---------- */
@@ -652,6 +660,7 @@ function vHome(){
   const open=R.filter(r=>r.status==='open').slice(0,3);
   const top=[...C].filter(c=>!c.isNew).sort((a,b)=>score(b)-score(a)).slice(0,3);
   return `
+  ${refCode&&instOf(refCode)?`<div class="panel actbar refbar" style="margin-top:20px"><div><span class="chip">제휴 기관 소개</span><p style="margin-top:6px"><b>${instOf(refCode).name}</b> 소개로 오셨어요. 요청서를 올리면 소개 기관 정보가 함께 기록되고, 동행매치 상담사가 기관 담당자와 함께 도와드려요.</p></div><a class="btn sm" href="#request">장례 요청하기</a></div>`:''}
   <section class="band">
     <div>
       <span class="label">서울 · 경기 · 인천 후불제 상조 매칭</span>
@@ -759,6 +768,9 @@ function vRequest(){
       <p id="budgetMsg" class="small"></p></fieldset>
     <fieldset class="fs"><legend>하고 싶은 말</legend>
       <textarea id="memo" placeholder="고인의 뜻, 꼭 필요한 것, 피하고 싶은 것을 적어 주세요.">${esc(draft.memo)}</textarea></fieldset>
+    <fieldset class="fs"><legend>소개받은 기관 코드 (선택)</legend>
+      <input class="txt" id="refIn" value="${esc(draft.ref||refCode||'')}" placeholder="요양병원·요양원·호스피스에서 받은 코드" aria-describedby="refMsg" style="text-transform:uppercase">
+      <p class="small" id="refMsg">${(()=>{const v=draft.ref||refCode;if(!v)return '<span class="mute">소개받은 곳이 있다면 적어 주세요. 기관 담당자와 함께 도와드려요.</span>';const i=instOf(v);return i?`<span class="okm">확인됐어요: ${i.name} (${i.type})</span>`:'<span class="err">등록되지 않은 코드예요. 다시 확인해 주세요.</span>'})()}</p></fieldset>
     <button class="btn block" type="submit" id="submitReq">${editId?'수정 내용 저장':'무료로 요청서 올리기'}</button>
     ${editId?'':`<button class="btn block ghost" type="button" data-savedraft style="margin-top:8px">${svEditId?'저장한 요청서 업데이트':'지금 보내지 않고 저장해 두기'}</button>
     <p class="small mute" style="margin-top:6px">미리 알아보는 중이라면 저장해 두세요. 필요할 때 문의 내역에서 버튼 하나로 요청을 보낼 수 있고, 예상 금액이 바뀌면 알려 드려요.</p>`}
@@ -777,7 +789,7 @@ function readForm(){
     else {const c=f.querySelector(`input[name="${k}"]:checked`); if(c) draft[k]=c.value;}
   });
   draft.more=$('#more')?$('#more').checked:false;
-  draft.budget=$('#budget').value.replace(/[^0-9]/g,''); draft.memo=$('#memo').value;
+  draft.budget=$('#budget').value.replace(/[^0-9]/g,''); draft.memo=$('#memo').value; if($('#refIn')) draft.ref=$('#refIn').value.trim().toUpperCase();
 }
 function updateFloor(){
   const fl=floorOf(draft), cp=fl.cp, b=+draft.budget;
@@ -974,7 +986,7 @@ function reviewModal(id){
     r.review=t; r.stars=n; r.stage=7; m.hidden=true; toast(first?'리뷰를 남겼어요. 업체 순위에 반영됩니다.':'리뷰를 수정했어요.'); route();};
 }
 function submitRequest(){
-  const r={id:++RID,who:user.name.slice(0,1)+'**',...JSON.parse(JSON.stringify(draft)),budget:+draft.budget,ago:0,at:Date.now(),offers:[],status:'open',mine:true,owner:user.phone,date:today()};
+  const r={id:++RID,who:user.name.slice(0,1)+'**',...JSON.parse(JSON.stringify(draft)),budget:+draft.budget,ago:0,at:Date.now(),offers:[],status:'open',mine:true,owner:user.phone,date:today()}; r.ref=instOf(r.ref)?r.ref:(instOf(refCode)?refCode:undefined);
   R.unshift(r); myReq=r; draft=newDraft(); svNote=''; svEditId=null; if(user){const l=savedList(), i=l.findIndex(y=>y.sentPending); if(i>=0) l.splice(i,1);}
   toast(`요청서를 올렸어요. ${DLNAME[r.timing]} 동안 지역 검증 파트너의 제안을 받습니다.`);
   location.hash='myreq-'+r.id;
@@ -1059,7 +1071,7 @@ function submitUrgent(){
   const place=uDraft.place, r={id:++RID,who:user.name.slice(0,1)+'**',sido:uDraft.sido,gu:uDraft.gu,timing:'urgent',type:place==='home'?'home':'family',place:place==='home'?'home':'hospital',
     religion:uDraft.religion,guests:'g1',burial:'undecided',level:'standard',more:false,cars:[],extras:[],budget:0,budgetTBD:true,
     memo:`긴급 간편 접수 · ${place==='hospital'?'병원·요양병원':place==='home'?'자택':'요양원·기타 시설'}에서 임종하셨습니다. 장례 형태와 금액은 상담하며 정하고 싶어요.`,
-    ago:0,at:Date.now(),offers:[],status:'open',owner:user.phone,date:today()};
+    ago:0,at:Date.now(),offers:[],status:'open',owner:user.phone,date:today(),ref:instOf(refCode)?refCode:undefined};
   r.budget=floorOf(r).avg;
   R.unshift(r); myReq=r; urgentId=r.id;
   toast('긴급 출동 요청을 보냈어요. 가까운 출동 가능 파트너를 찾고 있어요.');
@@ -1151,6 +1163,7 @@ function vMy(){
     ${r.review?`<div class="panel small"><div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap"><b>내가 남긴 리뷰 <span class="stars-t">${'★'.repeat(r.stars||5)}${'☆'.repeat(5-(r.stars||5))}</span></b>${r.stage>=7&&r.offers.some(o=>o.status==='matched')?`<button class="btn sm ghost" type="button" data-review="${r.id}">리뷰 수정</button>`:''}</div><p class="mute" style="margin-top:4px">${esc(r.review)}</p></div>`:''}
     <div class="panel" style="display:grid;gap:8px"><div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap"><span>${timingChip(r)} <b>${r.sido} ${r.gu}</b></span><span class="price num" style="font-family:var(--display);font-weight:700;font-size:20px">${r.budgetTBD?'금액 상담 후 결정':man(r.budget)+' 희망'}</span></div>
       <div class="conds" style="display:flex;flex-wrap:wrap;gap:4px">${condChips(r)}</div>${r.memo?`<p class="small mute">${esc(r.memo)}</p>`:''}
+      ${r.ref&&instOf(r.ref)?`<p class="small"><span class="chip">소개 기관</span> ${instOf(r.ref).name}</p>`:''}
       ${(()=>{const hc=hallCost(r), m=r.offers.find(o=>o.status==='matched'), base=m?{lo:m.price+xsum(m),hi:m.price+xsum(m)}:floorOf(r);return `<p class="small num">장례식장 포함 총 예상 <b>${man(base.lo+hc.lo)} ~ ${man(base.hi+hc.hi)}</b> <span class="mute">(${m?'확정 견적':'상조 예상'} + 장례식장 등 ${man(hc.lo)} ~ ${man(hc.hi)})</span></p>`})()}</div>
     ${matched?`<div class="panel actbar"><div><span class="label">모바일 부고장</span><p class="small" style="margin-top:4px">${r.obit?'부고장을 만들었어요. 링크를 친지와 지인에게 보내 주세요.':'장례식장, 발인 일시, 조의금 계좌를 담은 부고장을 무료로 만들어 문자나 카톡으로 보낼 수 있어요.'}</p></div><div class="acts"><a class="btn sm" href="#obit-${r.id}">${r.obit?'부고장 수정·공유':'부고장 만들기'}</a>${r.obit?`<a class="btn sm ghost" href="#${obitLink(r)}">미리 보기</a>`:''}</div></div>`:''}
     ${matched&&r.stage>=3?`<div class="panel">${photoBlock(matched)}</div>`:''}
@@ -1602,7 +1615,7 @@ function vAdmin(){
   const hcWait=HC.filter(h=>h.status==='wait'), evOpen=EV.filter(e=>e.status==='open');
   const xs=R.flatMap(r=>r.offers.flatMap(o=>(o.extrasReq||[]).map(x=>({x,o,r}))));
   const xPend=xs.filter(v=>v.x.status==='pending');
-  const tabs=[['overview','현황',''],['urgent','긴급 관제',R.filter(r=>r.timing==='urgent'&&r.status==='open').length],['verify','파트너 검증',APPS.length],['happy','해피콜',hcWait.length],['suspect','직거래 의심',evOpen.length],['sanction','제재 관리',C.filter(c=>c.warn).length],['extra','추가 비용·정산',xPend.length+DSP.filter(x=>x.status==='open').length],['staff','표준 인력 기준',''],['prices','업체 단가표','']];
+  const tabs=[['overview','현황',''],['urgent','긴급 관제',R.filter(r=>r.timing==='urgent'&&r.status==='open').length],['verify','파트너 검증',APPS.length],['happy','해피콜',hcWait.length],['suspect','직거래 의심',evOpen.length],['sanction','제재 관리',C.filter(c=>c.warn).length],['extra','추가 비용·정산',xPend.length+DSP.filter(x=>x.status==='open').length],['staff','표준 인력 기준',''],['prices','업체 단가표',''],['inst','제휴 기관',INST.length]];
   let body='';
   if(adminTab==='urgent'){const us=R.filter(r=>r.timing==='urgent'&&(r.status==='open'||r.status==='matched')&&!((r.stage??0)>=7));
     body=`<h1 style="font-size:clamp(22px,3vw,28px)">긴급 관제</h1><p class="mute small">임종 직후 요청을 지켜봅니다. 30분이 지나도 제안이 없으면 상담사를 배정해 직접 전화로 연결합니다.</p>
@@ -1662,6 +1675,16 @@ function vAdmin(){
     <div class="tblwrap"><table class="adm num"><thead><tr><th>업체</th><th>유족</th><th>항목</th><th class="r">금액</th><th>요청 시각</th><th>상태</th></tr></thead><tbody>
     ${xs.map(({x,o,r})=>`<tr><td>${CID[o.cid].name}</td><td>${r.who}님 · ${r.sido} ${r.gu}</td><td><b>${esc(x.item)}</b><br><span class="small mute">${esc(x.reason)}</span></td><td class="r">+${man(x.amount)}</td><td>${x.at}</td><td>${xchip(x)}</td></tr>`).join('')||'<tr><td colspan="6" class="mute">추가 비용 요청이 없어요.</td></tr>'}
     </tbody></table></div>`;
+  if(adminTab==='inst') body=`<h1 style="font-size:clamp(22px,3vw,28px)">제휴 기관</h1><p class="mute small">요양병원, 요양원, 호스피스 등 제휴 기관별 소개 링크와 코드입니다. 기관 소개로 들어온 요청과 매칭 결과가 기록됩니다.</p>
+    <div class="tblwrap"><table class="adm num"><thead><tr><th>기관</th><th>소개 코드</th><th class="r">소개 요청</th><th class="r">매칭 확정</th><th>최근 요청</th><th class="r">공유</th></tr></thead><tbody>
+    ${INST.map(i=>{const rs=R.filter(r=>r.ref===i.code), mt=rs.filter(r=>r.status==='matched').length, last=rs.map(r=>r.date||'오늘').sort().pop();
+      return `<tr><td><b>${i.name}</b><br><span class="small mute">${i.type} · ${i.region} · ${i.since} 제휴</span></td><td><code>${i.code}</code></td><td class="r">${rs.length}건</td><td class="r">${mt}건</td><td>${rs.length?(last||'-'):'-'}</td>
+      <td class="r"><div style="display:flex;gap:6px;justify-content:flex-end;flex-wrap:wrap"><button class="btn sm ghost" type="button" data-refcopy="${i.code}">소개 링크 복사</button><button class="btn sm ghost" type="button" data-reftext="${i.code}">안내 문구 복사</button></div></td></tr>`}).join('')}
+    </tbody></table></div>
+    <form class="panel" id="instForm" style="display:grid;gap:10px;margin-top:6px"><h3>제휴 기관 추가</h3>
+      <div class="row2"><input class="txt" id="iName" placeholder="기관 이름" aria-label="기관 이름"><select id="iType" aria-label="기관 유형"><option>요양병원</option><option>요양원</option><option>호스피스</option><option>주간보호센터</option><option>기업·단체</option></select></div>
+      <div class="row2"><input class="txt" id="iRegion" placeholder="지역 (예: 서울 마포구)" aria-label="지역"><input class="txt" id="iContact" placeholder="담당자 (예: 원무과)" aria-label="담당자"></div>
+      <button class="btn sm" type="submit" style="justify-self:start">코드 만들기</button></form>`;
   if(adminTab==='staff') body=`<h1 style="font-size:clamp(22px,3vw,28px)">표준 인력 기준</h1><p class="mute small">고객이 고른 장례 형태와 조문객 수로 권장 구성을 정하는 기준입니다. 숫자는 장례지도사 · 입관 보조 · 의전도우미 순서이며, 바꾸면 고객 요청서와 예상 금액에 바로 적용됩니다.</p>
     <div class="tblwrap"><table class="adm num"><thead><tr><th>장례 형태</th><th>접객 일수</th>${GI.map(g=>`<th>${F.guests.o[g]}<br><span class="small mute" style="font-weight:400">지도사 · 보조 · 도우미</span></th>`).join('')}</tr></thead><tbody>
     ${Object.keys(STAFF).map(t=>`<tr><td><b>${F.type.o[t]}</b></td><td><input class="txt num sinp" data-sdays="${t}" value="${STAFF[t].days}" aria-label="${F.type.o[t]} 접객 일수"></td>
@@ -1723,6 +1746,7 @@ function route(){
   const h=location.hash.slice(1)||(role==='customer'?'home':'board');
   const app=$('#app'); let html;
   sweep();
+  if(h.startsWith('ref-')){const c=h.slice(4).toUpperCase(), i=instOf(c); if(i){refCode=i.code; toast(`${i.name} 소개 링크로 오셨어요.`)} location.replace('#home'); return}
   if(DOCS[h]) html=vDoc(h);
   else if(h.startsWith('obit-')){const q=R.find(x=>x.id===+h.slice(5)); html=q&&user&&q.owner===user.phone?vObitEdit(q):vMyList()}
   else if(h.startsWith('obv-')){const [,id,tk]=h.split('-'); const q=R.find(x=>x.id===+id); html=q&&q.obitToken===tk?vObitView(q):`<div class="panel" style="margin:30px auto;max-width:480px;text-align:center"><h2>부고장을 찾을 수 없어요</h2><p class="small mute">링크가 바뀌었거나 삭제됐어요.</p></div>`}
@@ -1754,6 +1778,8 @@ document.addEventListener('click',e=>{
   if(d.myf){myFilter=d.myf; route(); return}
   if(d.obcopy){const r=R.find(x=>x.id===+location.hash.slice(6)); if(d.obcopy==='link') copyText($('#obLink').value,'부고장 링크를 복사했어요.'); else copyText(obitText(r),'문자·카톡용 문구를 복사했어요.'); return}
   if(d.accopy!==undefined){const r=R.find(x=>x.id===+location.hash.split('-')[1]); const a=(r.obit.acc||'').split('\n').map(t=>t.trim()).filter(Boolean)[+d.accopy]; const num=(a.match(/[0-9][0-9-]{5,}/)||[a])[0]; copyText(num,`계좌번호 ${num}를 복사했어요.`); return}
+  if(d.refcopy){copyText(`${SITE}#ref-${d.refcopy.toLowerCase()}`,'소개 링크를 복사했어요. 기관 담당자에게 전해 주세요.'); return}
+  if(d.reftext){const i=instOf(d.reftext); copyText(`[동행매치 후불제 장례 상담]\n${i.name}과 함께하는 동행매치는 직접 검증한 후불제 상조회사의 견적을 비교해 드립니다. 장례 후 결제, 승인 없는 추가 비용 0원.\n소개 코드: ${i.code}\n${SITE}#ref-${i.code.toLowerCase()}\n24시간 상담 1600-0000`,'안내 문구를 복사했어요. 기관 게시물이나 문자에 붙여 넣으세요.'); return}
   if(d.photook){const o=allOffers().find(x=>x.id===+d.photook); o.photoCheck='ok'; o.msgs.push({from:'sys',text:'고객이 용품이 약속한 등급과 같다고 확인했어요.'}); toast('용품 확인을 기록했어요.'); route(); return}
   if(d.photoissue){const o=allOffers().find(x=>x.id===+d.photoissue); o.photoCheck='issue'; addDispute(o,'용품 등급','고객이 사진 속 용품이 확정 견적서 등급과 다르다고 이의 신청'); o.msgs.push({from:'sys',text:'고객이 용품 등급에 이의를 신청했어요. 동행매치 운영자가 확인합니다.'}); toast('이의를 접수했어요. 운영자가 업체와 확인 후 연락드립니다.'); route(); return}
   if(d.settleok){const o=allOffers().find(x=>x.id===+d.settleok); o.settleOk=true; const c=CID[o.cid]; if(o.settle.lines.some(x=>x.src==='unapproved')) c.match=Math.max(0,c.match-3); o.msgs.push({from:'sys',text:`고객이 정산서를 확인했어요. 결제 금액 ${man(settleTotal(o))}`}); toast('정산서를 확인했어요. 이어서 해피콜이 진행됩니다.'); route(); return}
@@ -1844,11 +1870,14 @@ document.addEventListener('change',e=>{
   if(e.target.name==='type'&&e.target.value==='home'){readForm(); Object.assign(draft,{place:'home'}); const s=window.scrollY; route(); window.scrollTo(0,s); return}
   readForm(); updateFloor();
 });
-document.addEventListener('input',e=>{ if(e.target.dataset.ob){const r=R.find(x=>x.id===+location.hash.slice(6)); if(r&&r.obitDraft){r.obitDraft[e.target.dataset.ob]=e.target.value; $('#obPrev').innerHTML=obitCard(r,r.obitDraft,false);} return} if(e.target.dataset.staff){const [t,gi,fi]=e.target.dataset.staff.split(':'); STAFF[t].rows[+gi][+fi]=Math.max(0,parseInt(e.target.value)||0); return}
+document.addEventListener('input',e=>{ if(e.target.id==='refIn'){const v=e.target.value.trim(), i=instOf(v), m=$('#refMsg'); m.innerHTML=!v?'<span class="mute">소개받은 곳이 있다면 적어 주세요. 기관 담당자와 함께 도와드려요.</span>':i?`<span class="okm">확인됐어요: ${i.name} (${i.type})</span>`:'<span class="err">등록되지 않은 코드예요. 다시 확인해 주세요.</span>'; return} if(e.target.dataset.ob){const r=R.find(x=>x.id===+location.hash.slice(6)); if(r&&r.obitDraft){r.obitDraft[e.target.dataset.ob]=e.target.value; $('#obPrev').innerHTML=obitCard(r,r.obitDraft,false);} return} if(e.target.dataset.staff){const [t,gi,fi]=e.target.dataset.staff.split(':'); STAFF[t].rows[+gi][+fi]=Math.max(0,parseInt(e.target.value)||0); return}
   if(e.target.dataset.sdays){STAFF[e.target.dataset.sdays].days=Math.max(0,parseInt(e.target.value)||0); return} if(e.target.id==='budget'||e.target.id==='memo'){readForm(); updateFloor();} });
 document.addEventListener('submit',e=>{
   if(e.target.id==='obitForm'){e.preventDefault(); const r=R.find(x=>x.id===+location.hash.slice(6)); if(!r.obitDraft.name.trim()||!r.obitDraft.hall.trim()){toast('고인 성함과 빈소는 꼭 적어 주세요.');return}
     const first=!r.obit; r.obit={...r.obitDraft}; obitLink(r); toast(first?'부고장을 만들었어요. 링크를 복사해 보내 주세요.':'부고장을 수정했어요. 같은 링크에 반영됩니다.'); route(); return}
+  if(e.target.id==='instForm'){e.preventDefault(); const n=$('#iName').value.trim(); if(!n){toast('기관 이름을 적어 주세요.');return}
+    const pre={요양병원:'CARE',요양원:'HOME',호스피스:'HOS',주간보호센터:'DAY','기업·단체':'ORG'}[$('#iType').value]||'INST'; let code; do{code=pre+Math.floor(100+Math.random()*900)}while(instOf(code));
+    INST.push({code,name:n,type:$('#iType').value,region:$('#iRegion').value.trim()||'-',contact:$('#iContact').value.trim()||'-',since:today()}); toast(`${n} 제휴 코드 ${code}를 만들었어요.`); route(); return}
   if(e.target.id==='famForm'){e.preventDefault(); famName=$('#famIn').value.trim()||'가족'; route(); return}
   if(e.target.id==='cmtForm'){e.preventDefault(); const v=$('#cmtIn').value.trim(); if(!v) return; const r=R.find(x=>x.id===+e.target.dataset.rid);
     r.comments=r.comments||[]; r.comments.push({name:e.target.dataset.mode==='family'?famName:(user?user.name+' (요청자)':'요청자'),text:v,at:nowStr()}); route(); return}
