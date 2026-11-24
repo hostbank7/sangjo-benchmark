@@ -420,6 +420,19 @@ const STAFF={
  family:{days:1,rows:[[1,0,1],[1,0,2],[1,0,3],[1,1,4]]},
  general:{days:2,rows:[[1,0,2],[1,0,2],[1,1,4],[2,1,6]]},
 };
+// 장례식장 비용 예시 (만원) — 실제 서비스에서는 e하늘 장사정보시스템 공시 가격으로 계산
+const HALL={서울:{room:[35,45,75,120],ice:8,meal:1.6,crem:12},경기:{room:[30,38,62,100],ice:7,meal:1.5,crem:10},인천:{room:[28,36,58,95],ice:7,meal:1.5,crem:10}};
+const GUESTN=[15,40,100,200], ROOMSZ=['소형','소형','중형','대형'];
+function hallCost(r){
+  const H=HALL[r.sido]||HALL['서울'], gi=GI.indexOf(r.guests), L=[];
+  const rd={general:2,family:1,oneday:1,nobinso:0,home:0}[r.type]??1, ic={general:3,family:2,oneday:1,nobinso:1,home:0}[r.type]??1;
+  if(rd&&r.place!=='home') L.push([`빈소 사용료 (${ROOMSZ[gi]}, ${rd}일)`,H.room[gi]*rd]);
+  if(ic&&r.place!=='home') L.push([`안치실 이용료 (${ic}일)`,H.ice*ic]);
+  if(rd) L.push([`접객 식음료 (약 ${GUESTN[gi]+(r.more?40:0)}명)`,Math.round((GUESTN[gi]+(r.more?40:0))*H.meal)]);
+  if(r.burial!=='grave') L.push(['화장장 이용료 (관내 기준)',H.crem]);
+  const t=L.reduce((a,x)=>a+x[1],0);
+  return {lines:L,total:t,lo:Math.round(t*0.85),hi:Math.round(t*1.2)};
+}
 function comp(r){
   const [dir,assist,h0]=STAFF[r.type].rows[GI.indexOf(r.guests)];
   const helpers=h0+(r.more&&r.type!=='nobinso'?2:0);
@@ -726,7 +739,7 @@ function vRequest(){
   <aside class="side">
     <div class="panel" id="compBox"></div>
     <div class="panel floor" id="floorBox"></div>
-    <div class="panel small mute">장례식장 이용료, 화장장 이용료, 식대는 상조 서비스와 별도입니다. 예상 금액은 동행매치 검증 파트너들이 등록한 단가표로 계산합니다.</div>
+    <div class="panel" id="totalBox"></div>
   </aside></div>`;
 }
 function readForm(){
@@ -752,6 +765,13 @@ function updateFloor(){
     <div class="v num">${man(fl.lo)} ~ ${man(fl.hi)}</div>
     <p class="small mute num">평균 ${man(fl.avg)} · 가장 낮은 금액 ${man(fl.min)}부터 요청할 수 있어요</p>
     <div class="meter" aria-hidden="true"><span style="left:${pos(fl.lo)}%;width:${Math.max(1,pos(fl.hi)-pos(fl.lo))}%"></span>${b?`<i style="left:${pos(b)}%"></i>`:''}</div>`;
+  const hc=hallCost(draft);
+  $('#totalBox').innerHTML=`<span class="label">장례식장 포함 총비용 (예상)</span>
+    <div class="v num" style="font-family:var(--display);font-size:22px;font-weight:700;margin-top:4px">${man(fl.lo+hc.lo)} ~ ${man(fl.hi+hc.hi)}</div>
+    <div class="brk num" style="margin-top:8px"><span>상조 서비스 (검증 파트너 단가)</span><span>${man(fl.lo)} ~ ${man(fl.hi)}</span>
+      ${hc.lines.map(x=>`<span class="mute">${x[0]}</span><span>${man(x[1])}</span>`).join('')}
+      ${hc.lines.length?`<span><b>장례식장 등 소계</b></span><span><b>${man(hc.lo)} ~ ${man(hc.hi)}</b></span>`:'<span class="mute">장례식장 비용</span><span>없음</span>'}</div>
+    <p class="small mute" style="margin-top:8px">${draft.sido} 지역 평균을 바탕으로 한 예시 값이에요. 실제 서비스에서는 장사정보시스템 공시 가격과 선택한 장례식장으로 계산합니다. 장지(봉안당·수목장) 사용료는 별도입니다.</p>`;
   const msg=$('#budgetMsg'), btn=$('#submitReq');
   if(!b){msg.className='small mute';msg.textContent=`${man(fl.min)} 이상 입력할 수 있어요.`;btn.disabled=true}
   else if(b<fl.min){msg.className='err';msg.textContent=`이 조건은 검증 파트너 단가 기준 최소 ${man(fl.min)}부터 요청할 수 있어요. 금액을 올리거나 원하는 수준, 차량, 추가 서비스를 조정해 주세요.`;btn.disabled=true}
@@ -1041,6 +1061,8 @@ function cmpTable(r,mode){
     ${keys.map(k=>`<tr><td>${k}</td>${os.map(o=>cell(o,k)).join('')}</tr>`).join('')}
     ${os.some(o=>o.adj)?`<tr><td>업체 조정</td>${os.map(o=>`<td class="r">${o.adj?`${o.adj>0?'+':''}${man(o.adj)}`:'-'}</td>`).join('')}</tr>`:''}
     <tr class="sum"><td><b>합계 (발인 후 결제)</b></td>${os.map(o=>`<td class="r"${o.price===low?' style="color:var(--seal)"':''}><b>${man(o.price)}</b>${o.price===low?'<br><span class="small">가장 낮음</span>':''}</td>`).join('')}</tr>
+    ${(()=>{const hc=hallCost(r);return hc.lines.length?`<tr><td>장례식장 등 별도 비용 (예상)<br><span class="small mute">빈소·안치·식음료·화장장, 모든 업체 같음</span></td>${os.map(()=>`<td class="r">${man(hc.lo)} ~ ${man(hc.hi)}</td>`).join('')}</tr>
+    <tr class="sum"><td><b>총 예상 비용</b></td>${os.map(o=>`<td class="r"><b>${man(o.price+hc.lo)} ~ ${man(o.price+hc.hi)}</b></td>`).join('')}</tr>`:''})()}
     <tr><td>인원 조정</td>${os.map(o=>`<td class="r small">${o.staffNote?esc(o.staffNote):'권장 구성 그대로'}</td>`).join('')}</tr>
     <tr><td>상태</td>${os.map(o=>`<td class="r small">${o.status==='matched'?'<span class="chip">매칭 확정</span>':o.stale?'<span class="chip w">재견적 대기</span>':r.status==='open'?'제안 중':'-'}</td>`).join('')}</tr>
     <tr><td>가족 추천</td>${os.map(o=>{const vs=v[o.id]||[];return `<td class="r small">${vs.length?`<b>${vs.length}명</b><br><span class="mute">${vs.map(esc).join(', ')}</span>`:'-'}</td>`}).join('')}</tr>
@@ -1101,7 +1123,8 @@ function vMy(){
       <div class="acts"><button class="btn sm ghost" type="button" data-edit="${r.id}">요청 수정</button>${r.ext?'':`<button class="btn sm ghost" type="button" data-extend="${r.id}">마감 ${DLNAME[r.timing]} 연장</button>`}<button class="btn sm ghost danger" type="button" data-cancelreq="${r.id}">요청 취소</button></div></div>`:''}
     ${r.review?`<div class="panel small"><div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap"><b>내가 남긴 리뷰 <span class="stars-t">${'★'.repeat(r.stars||5)}${'☆'.repeat(5-(r.stars||5))}</span></b>${r.stage>=7&&r.offers.some(o=>o.status==='matched')?`<button class="btn sm ghost" type="button" data-review="${r.id}">리뷰 수정</button>`:''}</div><p class="mute" style="margin-top:4px">${esc(r.review)}</p></div>`:''}
     <div class="panel" style="display:grid;gap:8px"><div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap"><span>${timingChip(r)} <b>${r.sido} ${r.gu}</b></span><span class="price num" style="font-family:var(--display);font-weight:700;font-size:20px">${r.budgetTBD?'금액 상담 후 결정':man(r.budget)+' 희망'}</span></div>
-      <div class="conds" style="display:flex;flex-wrap:wrap;gap:4px">${condChips(r)}</div>${r.memo?`<p class="small mute">${esc(r.memo)}</p>`:''}</div>
+      <div class="conds" style="display:flex;flex-wrap:wrap;gap:4px">${condChips(r)}</div>${r.memo?`<p class="small mute">${esc(r.memo)}</p>`:''}
+      ${(()=>{const hc=hallCost(r), m=r.offers.find(o=>o.status==='matched'), base=m?{lo:m.price+xsum(m),hi:m.price+xsum(m)}:floorOf(r);return `<p class="small num">장례식장 포함 총 예상 <b>${man(base.lo+hc.lo)} ~ ${man(base.hi+hc.hi)}</b> <span class="mute">(${m?'확정 견적':'상조 예상'} + 장례식장 등 ${man(hc.lo)} ~ ${man(hc.hi)})</span></p>`})()}</div>
     ${matched?`<div class="panel actbar"><div><span class="label">모바일 부고장</span><p class="small" style="margin-top:4px">${r.obit?'부고장을 만들었어요. 링크를 친지와 지인에게 보내 주세요.':'장례식장, 발인 일시, 조의금 계좌를 담은 부고장을 무료로 만들어 문자나 카톡으로 보낼 수 있어요.'}</p></div><div class="acts"><a class="btn sm" href="#obit-${r.id}">${r.obit?'부고장 수정·공유':'부고장 만들기'}</a>${r.obit?`<a class="btn sm ghost" href="#${obitLink(r)}">미리 보기</a>`:''}</div></div>`:''}
     ${matched&&r.stage>=3?`<div class="panel">${photoBlock(matched)}</div>`:''}
     ${matched&&r.stage>=3?`<div class="panel">${extraBlock(matched)}</div>`:''}
