@@ -20,7 +20,7 @@
 
 const SHEET = '협회 연락처';
 const ATTACH_FILE_ID = '여기에_공문_PDF_파일_ID';
-const SENDER_NAME = 'WP 월드파크골프 고용호 고문이사';
+const SENDER_NAME = 'WP 월드파크골프 고용호 고문';
 const PAGE_URL = 'https://hostbank7.github.io/sangjo-benchmark/hainan-2026/';
 const PHONE = '010-5622-6576';
 const MAX_PER_RUN = 40; // 개인 Gmail 하루 발송 한도(약 100통)보다 넉넉히 낮게
@@ -42,7 +42,7 @@ function buildMail_(assoc, region) {
   const html =
     '<div style="font-family:sans-serif;font-size:15px;line-height:1.7;color:#222">' +
     '<p>' + assoc + ' 관계자님께,</p>' +
-    '<p>얼마 전 전화로 인사드린 WP 월드파크골프 고용호 고문이사입니다. 말씀드린 대로 공문과 안내 자료를 보내 드립니다.</p>' +
+    '<p>얼마 전 전화로 인사드린 WP 월드파크골프 고용호 고문입니다. 말씀드린 대로 공문과 안내 자료를 보내 드립니다.</p>' +
     '<p>중국 국가체육총국이 주최하고 하이난성이 공식 후원하는 <b>「2026 하이난 미션힐스 한·중 파크골프 국제오픈대회」</b>에 ' +
     '한국 파크골프 동호인을 초대하고자 합니다. 회원님들께 안내해 주시면 감사하겠습니다.</p>' +
     '<ul>' +
