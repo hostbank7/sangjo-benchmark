@@ -5,7 +5,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<script id="fresh">(function(){var V="20261124084517";try{fetch("../version.txt?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){t=(t||"").trim();if(!t||t===V)return;var m=location.search.match(/[?&]v=([^&]*)/);if(m&&m[1]===t)return;var q=location.search.replace(/([?&])v=[^&]*&?/,"$1").replace(/[?&]$/,"");location.replace(location.pathname+(q?q+"&":"?")+"v="+t+location.hash)}).catch(function(){})}catch(e){}})();</script>
+<script id="fresh">(function(){var V="20261124141259";try{fetch("../version.txt?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){t=(t||"").trim();if(!t||t===V)return;var m=location.search.match(/[?&]v=([^&]*)/);if(m&&m[1]===t)return;var q=location.search.replace(/([?&])v=[^&]*&?/,"$1").replace(/[?&]$/,"");location.replace(location.pathname+(q?q+"&":"?")+"v="+t+location.hash)}).catch(function(){})}catch(e){}})();</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>참가 신청 · 하이난 파크골프 국제오픈대회</title>
 <meta property="og:title" content="참가 신청 · 2026 하이난 미션힐스 한·중 파크골프 국제오픈대회">
@@ -230,13 +230,15 @@ footer small{opacity:.85;font-size:.85rem}
   phone.addEventListener('focus',function(){if(!phone.value) phone.value='010-';setTimeout(function(){var l=phone.value.length;try{phone.setSelectionRange(l,l)}catch(e){}},0)});
 
 
-  // 신청 내용을 FormSubmit 으로 일반 폼 전송(페이지 이동). 끝나면 _next 주소로 돌아옴.
-  function postToMail(fields, next){
-    var f=document.createElement('form');
-    f.method='POST'; f.action='https://formsubmit.co/worldparkgolf77@gmail.com'; f.acceptCharset='UTF-8'; f.style.display='none';
-    fields._next=next; fields._captcha='false'; fields._template='table';
-    for(var k in fields){var i=document.createElement('input');i.type='hidden';i.name=k;i.value=fields[k];f.appendChild(i);}
-    document.body.appendChild(f); f.submit();
+  // 신청 내용을 FormSubmit AJAX 로 전송 (일반 폼 전송은 FormSubmit 쪽 오류로 실패할 때가 있음)
+  // 신청서 전송: 구글 시트 접수(GAS_URL, 설정 시)와 FormSubmit 메일을 동시에 보내고, 하나라도 성공하면 접수 완료
+  var GAS_URL='';
+  function sendApp(fields){fields._captcha='false';fields._template='table';
+    function withTimeout(p,ms){return new Promise(function(ok,no){var t=setTimeout(function(){no(new Error('timeout'))},ms);p.then(function(v){clearTimeout(t);ok(v)},function(e){clearTimeout(t);no(e)})});}
+    var jobs=[];
+    if(GAS_URL) jobs.push(withTimeout(fetch(GAS_URL,{method:'POST',body:JSON.stringify(fields)}).then(function(r){return r.json()}).then(function(j){if(!j||!j.ok)throw new Error('gas');return j}),30000));
+    jobs.push(withTimeout(fetch('https://formsubmit.co/ajax/worldparkgolf77@gmail.com',{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify(fields)}).then(function(r){return r.json()}).then(function(j){if(!j||String(j.success)!=='true')throw new Error('fs');return j}),75000));
+    return new Promise(function(ok,no){var left=jobs.length;jobs.forEach(function(p){p.then(ok,function(){if(--left===0)no(new Error('all failed'))})});});
   }
   var ONLINE=/github\.io$/.test(location.hostname);
   function showFallback(text){
@@ -265,12 +267,15 @@ footer small{opacity:.85;font-size:.85rem}
     $('msg').textContent=text;$('mail').href=mail;
     $('sms').href='sms:01056226576?body='+encodeURIComponent(text);
     if($('hp').value) return;
-    var btn=$('send');btn.disabled=true;btn.textContent='보내는 중…';
+    var btn=$('send');btn.disabled=true;btn.textContent='보내는 중… 최대 1분 걸려요. 창을 닫지 마세요';
     var fields={_subject:'[참가신청] '+(v('ref')?'[추천 '+refLabel(v('ref'))+'] ':'')+v('name')+' '+n+'명 · 하이난 파크골프 국제오픈대회','추천 코드':refLabel(v('ref'))||'-',
       '성명':v('name'),'연락처':v('phone'),'참가 인원':n+'명','1인실':s?s+'명':'안 함',
       '동반자':v('companions')||'-','소속':v('club')||'-','예상 참가비':won(n*PRICE+s*SINGLE),'약관 확인·개인정보 동의':'예'};
     if(!ONLINE){showFallback(text);btn.disabled=false;btn.textContent='신청하기';$('done').hidden=false;$('done').scrollIntoView({block:'start'});return;}
-    postToMail(fields, location.origin+location.pathname+'?ok=1');
+    sendApp(fields).then(function(){location.replace(location.pathname+'?ok=1');},function(){
+      showFallback(text);$('doneText').textContent='신청이 전송되지 않았습니다. 아래 버튼으로 문자나 메일을 보내 주시거나 010-5622-6576 으로 전화 주세요.';
+      btn.disabled=false;btn.textContent='신청하기';$('done').hidden=false;$('done').scrollIntoView({block:'start'});
+    });
   });
   $('copy').addEventListener('click',function(){
     var t=$('msg').textContent;
