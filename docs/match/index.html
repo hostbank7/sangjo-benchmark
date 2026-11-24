@@ -239,6 +239,19 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding-block:22px 36px;
 .corp{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:24px}
 .corp b{color:var(--fg);font-family:var(--display)}
 .corp ul{list-style:none;margin:6px 0 0;padding:0;display:grid;gap:4px}
+/* obituary */
+.obit{max-width:460px;margin:0 auto;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:28px 24px;display:grid;gap:14px}
+.obit .ohead{text-align:center;border-bottom:1px solid var(--line);padding-bottom:12px}
+.obit .ohead h1{font-size:30px;letter-spacing:.3em;margin-top:2px;padding-left:.3em}
+.obit .olead{text-align:center;font-size:16px;line-height:1.8}
+.odl{display:grid;grid-template-columns:auto 1fr;gap:10px 16px;margin:0;border-block:1px solid var(--line);padding-block:14px}
+.odl dt{color:var(--mute);font-size:14px}
+.odl dd{margin:0}
+.oacc{display:grid;gap:6px}
+.accrow{display:flex;justify-content:space-between;align-items:center;gap:8px;background:var(--sunk);border-radius:8px;padding:8px 10px;flex-wrap:wrap}
+.omsg{font-size:14px;color:var(--mute);text-align:center}
+.ofoot{text-align:center;border-top:1px solid var(--line);padding-top:12px}
+#obPrev .obit{max-width:none}
 /* settle & photos */
 .photos{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
 .photos figure{margin:0;display:grid;gap:4px}
@@ -1059,6 +1072,7 @@ function vMy(){
     ${r.review?`<div class="panel small"><div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap"><b>내가 남긴 리뷰 <span class="stars-t">${'★'.repeat(r.stars||5)}${'☆'.repeat(5-(r.stars||5))}</span></b>${r.stage>=7&&r.offers.some(o=>o.status==='matched')?`<button class="btn sm ghost" type="button" data-review="${r.id}">리뷰 수정</button>`:''}</div><p class="mute" style="margin-top:4px">${esc(r.review)}</p></div>`:''}
     <div class="panel" style="display:grid;gap:8px"><div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap"><span>${timingChip(r)} <b>${r.sido} ${r.gu}</b></span><span class="price num" style="font-family:var(--display);font-weight:700;font-size:20px">${r.budgetTBD?'금액 상담 후 결정':man(r.budget)+' 희망'}</span></div>
       <div class="conds" style="display:flex;flex-wrap:wrap;gap:4px">${condChips(r)}</div>${r.memo?`<p class="small mute">${esc(r.memo)}</p>`:''}</div>
+    ${matched?`<div class="panel actbar"><div><span class="label">모바일 부고장</span><p class="small" style="margin-top:4px">${r.obit?'부고장을 만들었어요. 링크를 친지와 지인에게 보내 주세요.':'장례식장, 발인 일시, 조의금 계좌를 담은 부고장을 무료로 만들어 문자나 카톡으로 보낼 수 있어요.'}</p></div><div class="acts"><a class="btn sm" href="#obit-${r.id}">${r.obit?'부고장 수정·공유':'부고장 만들기'}</a>${r.obit?`<a class="btn sm ghost" href="#${obitLink(r)}">미리 보기</a>`:''}</div></div>`:''}
     ${matched&&r.stage>=3?`<div class="panel">${photoBlock(matched)}</div>`:''}
     ${matched&&r.stage>=3?`<div class="panel">${extraBlock(matched)}</div>`:''}
     ${matched&&r.stage>=4?`<div class="panel">${settleBlock(matched)}</div>`:''}
@@ -1123,6 +1137,66 @@ function decideExtra(key,ok){
   o.msgs.push({from:'sys',text:`고객이 '${x.item}' 추가 비용을 ${ok?'승인했어요. 정산 금액에 반영됩니다.':'거절했어요. 이 항목은 청구할 수 없습니다.'}`});
   toast(ok?`${x.item} +${man(x.amount)} 승인했어요.`:`${x.item} 요청을 거절했어요. 청구되지 않습니다.`); route();
 }
+
+/* ---------- 모바일 부고장 ---------- */
+const RELMSG={none:'삼가 고인의 명복을 빕니다.',christian:'주님의 위로와 평안이 유족과 함께하시길 빕니다.',catholic:'고인의 영원한 안식을 빕니다.',buddhist:'고인의 극락왕생을 기원합니다.'};
+function obitLink(r){if(!r.obitToken) r.obitToken=Math.random().toString(36).slice(2,8); return `obv-${r.id}-${r.obitToken}`}
+function ymd(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
+function obitDefault(r){
+  const d=new Date(), add=n=>{const x=new Date(d); x.setDate(x.getDate()+n); return ymd(x)};
+  const days={general:2,family:1,oneday:0,nobinso:0,home:1}[r.type]??1;
+  return {name:'김OO',age:'86',date:ymd(d),chief:'장남 김OO\n장녀 김OO\n자부 이OO\n손 김OO',
+    hall:r.place==='home'?'자택':'OO병원 장례식장',room:r.place==='home'?'':'특1호실',addr:`${r.sido} ${r.gu} OO로 00`,
+    ipgwan:`${add(Math.min(1,days))}T10:00`,balin:`${add(days)}T07:00`,jangji:F.burial.o[r.burial]==='아직 미정'?'':F.burial.o[r.burial],
+    acc:'국민은행 000000-00-000000 김OO (장남)\n신한은행 000-000-000000 김OO (장녀)',msg:'바쁘신 중에도 마지막 길을 함께해 주시면 감사하겠습니다. 직접 연락드리지 못함을 너그러이 양해해 주시기 바랍니다.'};
+}
+const OBF=[['name','고인 성함'],['age','향년'],['date','별세일'],['chief','상주 (줄마다 관계와 이름)'],['hall','빈소 (장례식장)'],['room','호실'],['addr','주소'],['ipgwan','입관 일시'],['balin','발인 일시'],['jangji','장지'],['acc','마음 전하실 곳 (줄마다 은행, 계좌, 예금주)'],['msg','전하는 말']];
+function fmtDT(v){if(!v) return ''; const [d,t]=v.split('T'); const [y,m,dd]=d.split('-'); const w='일월화수목금토'[new Date(d).getDay()]; return `${+m}월 ${+dd}일(${w})${t?` ${t}`:''}`}
+function obitCard(r,o,viewer){
+  const lines=x=>(x||'').split('\n').map(t=>t.trim()).filter(Boolean);
+  const [y,m,d]=(o.date||'').split('-');
+  return `<article class="obit">
+    <div class="ohead"><span class="small mute">訃告</span><h1>부고</h1></div>
+    <p class="olead">故 <b>${esc(o.name)}</b> 님께서 ${y?`${y}년 ${+m}월 ${+d}일 `:''}${o.age?`향년 ${esc(o.age)}세로 `:''}별세하셨기에 삼가 알려 드립니다.</p>
+    <p class="small mute" style="text-align:center">${RELMSG[r.religion]||RELMSG.none}</p>
+    <dl class="odl">
+      ${lines(o.chief).length?`<dt>상주</dt><dd>${lines(o.chief).map(esc).join('<br>')}</dd>`:''}
+      <dt>빈소</dt><dd>${esc(o.hall)}${o.room?` ${esc(o.room)}`:''}<br><span class="small mute">${esc(o.addr)}</span>${viewer&&o.addr?`<br><a class="small" href="https://map.naver.com/p/search/${encodeURIComponent(o.addr)}" target="_blank" rel="noopener">지도에서 보기</a>`:''}</dd>
+      ${o.ipgwan?`<dt>입관</dt><dd>${fmtDT(o.ipgwan)}</dd>`:''}
+      ${o.balin?`<dt>발인</dt><dd>${fmtDT(o.balin)}</dd>`:''}
+      ${o.jangji?`<dt>장지</dt><dd>${esc(o.jangji)}</dd>`:''}
+    </dl>
+    ${lines(o.acc).length?`<div class="oacc"><span class="label">마음 전하실 곳</span>${lines(o.acc).map((a,i)=>`<div class="accrow"><span class="small">${esc(a)}</span>${viewer?`<button class="btn sm ghost" type="button" data-accopy="${i}">복사</button>`:''}</div>`).join('')}</div>`:''}
+    ${o.msg?`<p class="omsg">${esc(o.msg)}</p>`:''}
+    <p class="ofoot small mute">동행매치로 준비한 장례입니다 · <a href="${SITE}">동행매치</a></p>
+  </article>`;
+}
+function vObitEdit(r){
+  const o=r.obitDraft||(r.obitDraft={...(r.obit||obitDefault(r))});
+  const field=([k,l])=>{const v=esc(o[k]||'');const ta=['chief','acc','msg'].includes(k);const type=k==='date'?'date':['ipgwan','balin'].includes(k)?'datetime-local':'text';
+    return `<div class="field" style="display:grid;gap:4px"><label class="small" for="ob-${k}">${l}</label>${ta?`<textarea class="txt" id="ob-${k}" data-ob="${k}">${v}</textarea>`:`<input class="txt" id="ob-${k}" data-ob="${k}" type="${type}" value="${v}">`}</div>`};
+  return `<div class="formgrid"><form class="panel" id="obitForm" style="display:grid;gap:12px">
+    <a class="small" href="#myreq-${r.id}" style="text-decoration:none">← 요청 상세로</a>
+    <h1 style="font-size:clamp(22px,3vw,28px)">모바일 부고장</h1>
+    <p class="small mute">입력하는 대로 오른쪽 미리 보기에 바로 반영돼요. 저장하면 공유 링크가 만들어집니다. 개인정보가 담기니 보낼 분에게만 링크를 전해 주세요.</p>
+    <div class="row2">${OBF.slice(0,3).map(field).join('')}</div>
+    ${field(OBF[3])}
+    <div class="row2">${OBF.slice(4,6).map(field).join('')}</div>${field(OBF[6])}
+    <div class="row2">${OBF.slice(7,9).map(field).join('')}</div>${field(OBF[9])}${field(OBF[10])}${field(OBF[11])}
+    <button class="btn block" type="submit">${r.obit?'수정 내용 저장':'부고장 저장하고 링크 만들기'}</button>
+    ${r.obit?`<div class="panel" style="display:grid;gap:8px;background:var(--sunk)"><b>공유하기</b>
+      <div class="money"><input class="txt" id="obLink" value="${SITE}#${obitLink(r)}" readonly aria-label="부고장 링크" style="font-size:13px;font-weight:400;text-align:left;max-width:none"><button class="btn sm" type="button" data-obcopy="link">링크 복사</button></div>
+      <button class="btn sm ghost" type="button" data-obcopy="text" style="justify-self:start">문자·카톡용 문구 복사</button>
+      <p class="small mute">시연 화면은 저장 서버가 없어 같은 브라우저에서만 열려요.</p></div>`:''}
+  </form>
+  <aside class="side"><span class="label">미리 보기</span><div id="obPrev">${obitCard(r,o,false)}</div></aside></div>`;
+}
+function obitText(r){const o=r.obit;return `[부고] 故 ${o.name} 님께서 별세하셨기에 삼가 알려 드립니다.\n빈소: ${o.hall}${o.room?' '+o.room:''}\n발인: ${fmtDT(o.balin)}\n자세히 보기: ${SITE}#${obitLink(r)}`}
+function vObitView(r){
+  if(!r.obit) return `<div class="panel" style="margin:30px auto;max-width:480px;text-align:center"><h2>부고장을 찾을 수 없어요</h2></div>`;
+  return `<div style="padding-block:24px 40px">${obitCard(r,r.obit,true)}</div>`;
+}
+function copyText(v,okMsg){const ok=()=>toast(okMsg);try{navigator.clipboard.writeText(v).then(ok,()=>toast('복사하지 못했어요. 길게 눌러 직접 복사해 주세요.'))}catch(e){toast('복사하지 못했어요. 길게 눌러 직접 복사해 주세요.')}}
 
 /* ---------- 용품 사진 · 정산서 ---------- */
 function photoSrc(kind,grade,hue){
@@ -1517,6 +1591,8 @@ function route(){
   const app=$('#app'); let html;
   sweep();
   if(DOCS[h]) html=vDoc(h);
+  else if(h.startsWith('obit-')){const q=R.find(x=>x.id===+h.slice(5)); html=q&&user&&q.owner===user.phone?vObitEdit(q):vMyList()}
+  else if(h.startsWith('obv-')){const [,id,tk]=h.split('-'); const q=R.find(x=>x.id===+id); html=q&&q.obitToken===tk?vObitView(q):`<div class="panel" style="margin:30px auto;max-width:480px;text-align:center"><h2>부고장을 찾을 수 없어요</h2><p class="small mute">링크가 바뀌었거나 삭제됐어요.</p></div>`}
   else if(h.startsWith('cmp-')){const q=R.find(x=>x.id===+h.slice(4)); html=q&&user&&q.owner===user.phone?vCompare(q):vMyList()}
   else if(h.startsWith('fam-')){const [,id,tk]=h.split('-'); const q=R.find(x=>x.id===+id); html=q&&q.famToken===tk?vFamily(q):`<div class="panel" style="margin:30px auto;max-width:520px;text-align:center"><h2>링크를 열 수 없어요</h2><p class="small mute">공유 링크가 바뀌었거나 만료됐어요. 요청한 가족에게 새 링크를 받아 주세요.</p></div>`}
   else if(h.startsWith('chat-')) html=vChat(+h.slice(5));
@@ -1543,6 +1619,8 @@ document.addEventListener('click',e=>{
   if(d.authmode){auth(d.authmode,auth.after);return}
   if(t.hasAttribute('data-logout')){user=null; myReq=null; histLoaded=histLoaded; toast('로그아웃했어요.'); location.hash='home'; route(); return}
   if(d.myf){myFilter=d.myf; route(); return}
+  if(d.obcopy){const r=R.find(x=>x.id===+location.hash.slice(6)); if(d.obcopy==='link') copyText($('#obLink').value,'부고장 링크를 복사했어요.'); else copyText(obitText(r),'문자·카톡용 문구를 복사했어요.'); return}
+  if(d.accopy!==undefined){const r=R.find(x=>x.id===+location.hash.split('-')[1]); const a=(r.obit.acc||'').split('\n').map(t=>t.trim()).filter(Boolean)[+d.accopy]; const num=(a.match(/[0-9][0-9-]{5,}/)||[a])[0]; copyText(num,`계좌번호 ${num}를 복사했어요.`); return}
   if(d.photook){const o=allOffers().find(x=>x.id===+d.photook); o.photoCheck='ok'; o.msgs.push({from:'sys',text:'고객이 용품이 약속한 등급과 같다고 확인했어요.'}); toast('용품 확인을 기록했어요.'); route(); return}
   if(d.photoissue){const o=allOffers().find(x=>x.id===+d.photoissue); o.photoCheck='issue'; addDispute(o,'용품 등급','고객이 사진 속 용품이 확정 견적서 등급과 다르다고 이의 신청'); o.msgs.push({from:'sys',text:'고객이 용품 등급에 이의를 신청했어요. 동행매치 운영자가 확인합니다.'}); toast('이의를 접수했어요. 운영자가 업체와 확인 후 연락드립니다.'); route(); return}
   if(d.settleok){const o=allOffers().find(x=>x.id===+d.settleok); o.settleOk=true; const c=CID[o.cid]; if(o.settle.lines.some(x=>x.src==='unapproved')) c.match=Math.max(0,c.match-3); o.msgs.push({from:'sys',text:`고객이 정산서를 확인했어요. 결제 금액 ${man(settleTotal(o))}`}); toast('정산서를 확인했어요. 이어서 해피콜이 진행됩니다.'); route(); return}
@@ -1627,9 +1705,11 @@ document.addEventListener('change',e=>{
   if(e.target.name==='type'&&e.target.value==='home'){readForm(); Object.assign(draft,{place:'home'}); const s=window.scrollY; route(); window.scrollTo(0,s); return}
   readForm(); updateFloor();
 });
-document.addEventListener('input',e=>{ if(e.target.dataset.staff){const [t,gi,fi]=e.target.dataset.staff.split(':'); STAFF[t].rows[+gi][+fi]=Math.max(0,parseInt(e.target.value)||0); return}
+document.addEventListener('input',e=>{ if(e.target.dataset.ob){const r=R.find(x=>x.id===+location.hash.slice(6)); if(r&&r.obitDraft){r.obitDraft[e.target.dataset.ob]=e.target.value; $('#obPrev').innerHTML=obitCard(r,r.obitDraft,false);} return} if(e.target.dataset.staff){const [t,gi,fi]=e.target.dataset.staff.split(':'); STAFF[t].rows[+gi][+fi]=Math.max(0,parseInt(e.target.value)||0); return}
   if(e.target.dataset.sdays){STAFF[e.target.dataset.sdays].days=Math.max(0,parseInt(e.target.value)||0); return} if(e.target.id==='budget'||e.target.id==='memo'){readForm(); updateFloor();} });
 document.addEventListener('submit',e=>{
+  if(e.target.id==='obitForm'){e.preventDefault(); const r=R.find(x=>x.id===+location.hash.slice(6)); if(!r.obitDraft.name.trim()||!r.obitDraft.hall.trim()){toast('고인 성함과 빈소는 꼭 적어 주세요.');return}
+    const first=!r.obit; r.obit={...r.obitDraft}; obitLink(r); toast(first?'부고장을 만들었어요. 링크를 복사해 보내 주세요.':'부고장을 수정했어요. 같은 링크에 반영됩니다.'); route(); return}
   if(e.target.id==='famForm'){e.preventDefault(); famName=$('#famIn').value.trim()||'가족'; route(); return}
   if(e.target.id==='cmtForm'){e.preventDefault(); const v=$('#cmtIn').value.trim(); if(!v) return; const r=R.find(x=>x.id===+e.target.dataset.rid);
     r.comments=r.comments||[]; r.comments.push({name:e.target.dataset.mode==='family'?famName:(user?user.name+' (요청자)':'요청자'),text:v,at:nowStr()}); route(); return}
