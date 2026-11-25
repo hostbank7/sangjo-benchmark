@@ -6,7 +6,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<script id="fresh">(function(){var V="20261124145948";try{fetch("version.txt?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){t=(t||"").trim();if(!t||t===V)return;var m=location.search.match(/[?&]v=([^&]*)/);if(m&&m[1]===t)return;var q=location.search.replace(/([?&])v=[^&]*&?/,"$1").replace(/[?&]$/,"");location.replace(location.pathname+(q?q+"&":"?")+"v="+t+location.hash)}).catch(function(){})}catch(e){}})();</script>
+<script id="fresh">(function(){var V="20261125160259";try{fetch("version.txt?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){t=(t||"").trim();if(!t||t===V)return;var m=location.search.match(/[?&]v=([^&]*)/);if(m&&m[1]===t)return;var q=location.search.replace(/([?&])v=[^&]*&?/,"$1").replace(/[?&]$/,"");location.replace(location.pathname+(q?q+"&":"?")+"v="+t+location.hash)}).catch(function(){})}catch(e){}})();</script>
 <meta property="og:title" content="2026 하이난 미션힐스 한·중 파크골프 국제오픈대회">
 <meta property="og:description" content="12.27~1.1 4박6일 · 티웨이 직항 전세기 · 1인 159만원 · 우승 현금 300만원">
 <meta property="og:image" content="https://hostbank7.github.io/sangjo-benchmark/hainan-2026/img/hero.jpg">
@@ -692,20 +692,33 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
     if(!ONLINE){ $('resTitle').textContent='아래 내용을 이메일(worldparkgolf77@gmail.com)이나 문자(010-5622-6576)로 보내 주세요.'; return; }
     $('resTitle').textContent='신청을 보내는 중입니다…';
     const fields={_subject:'[참가신청] '+(v('ref')?'[추천 '+refLabel(v('ref'))+'] ':'')+v('name')+' '+n+'명 · 하이난 파크골프 국제오픈대회','추천 코드':refLabel(v('ref'))||'-','유입 경로':SRC||'-','신청 내용':text};
-    const sb=document.querySelector('#f button[type=submit]'); if(sb){sb.disabled=true;sb.textContent='보내는 중… 최대 1분 걸려요. 창을 닫지 마세요';}
+    const sb=document.querySelector('#f button[type=submit]'); if(sb){sb.disabled=true;sb.textContent='보내는 중…';}
+    busyShow();
     sendApp(fields).then(function(){location.replace(location.pathname+'?ok=1');},function(){
+      busyHide();
       if(sb){sb.disabled=false;sb.textContent='신청하기';}
       $('resTitle').textContent='전송하지 못했습니다. 아래 [이메일로 신청 보내기]나 [문자 앱 열기]를 눌러 보내 주시거나 010-5622-6576으로 전화 주세요.';
       $('result').scrollIntoView({block:'start'});
     });
   });
+
+  // 전송 중 안내창 (지난 시간 표시)
+  var __busy=null,__busyT=null;
+  function busyShow(msg){
+    if(!document.getElementById('busyCss')){var st=document.createElement('style');st.id='busyCss';st.textContent='.busy{position:fixed;inset:0;z-index:200;background:rgba(10,30,22,.6);display:grid;place-items:center;padding:16px}.busy .bc{background:#fff;color:#1b2621;border-radius:18px;padding:28px 22px;max-width:400px;width:100%;text-align:center;display:grid;gap:10px;box-shadow:0 20px 60px rgba(0,0,0,.3)}.busy .sp{width:54px;height:54px;border-radius:50%;border:5px solid #dfe8e2;border-top-color:#0f4a33;margin:0 auto;animation:bspin 0.9s linear infinite}.busy h2{margin:0;font-size:1.3rem;color:#0f4a33}.busy p{margin:0;color:#56655d;font-size:1rem;line-height:1.6}.busy .sec{font-weight:700;color:#0f4a33;font-variant-numeric:tabular-nums}@keyframes bspin{to{transform:rotate(360deg)}}@media (prefers-reduced-motion:reduce){.busy .sp{animation-duration:3s}}';document.head.appendChild(st);}
+    __busy=document.createElement('div');__busy.className='busy';__busy.setAttribute('role','alertdialog');__busy.setAttribute('aria-live','polite');
+    __busy.innerHTML='<div class="bc"><div class="sp"></div><h2>'+(msg||'신청을 보내고 있습니다')+'</h2><p>보통 5초 정도 걸립니다.<br>창을 닫지 말고 잠시만 기다려 주세요.</p><p class="sec" id="busySec">0초</p></div>';
+    document.body.appendChild(__busy);var s0=Date.now();
+    __busyT=setInterval(function(){var e=document.getElementById('busySec');if(!e)return;var t=Math.round((Date.now()-s0)/1000);e.textContent=t+'초'+(t>=15?' · 인터넷이 느리면 조금 더 걸릴 수 있어요':'');},500);
+  }
+  function busyHide(){if(__busyT)clearInterval(__busyT);if(__busy&&__busy.parentNode)__busy.parentNode.removeChild(__busy);__busy=null;}
   // 신청서 전송: 구글 시트 접수(GAS_URL, 설정 시)와 FormSubmit 메일을 동시에 보내고, 하나라도 성공하면 접수 완료
   var GAS_URL='https://script.google.com/macros/s/AKfycbywh2d3jpsmJL1ucskJytY3UKFGlzr41kRcAozcTN6iEWr-3gW9LmvYGC2RqpxOirs/exec';
   function sendApp(fields){fields._captcha='false';fields._template='table';
     function withTimeout(p,ms){return new Promise(function(ok,no){var t=setTimeout(function(){no(new Error('timeout'))},ms);p.then(function(v){clearTimeout(t);ok(v)},function(e){clearTimeout(t);no(e)})});}
     var jobs=[];
     if(GAS_URL) jobs.push(withTimeout(fetch(GAS_URL,{method:'POST',body:JSON.stringify(fields)}).then(function(r){return r.json()}).then(function(j){if(!j||!j.ok)throw new Error('gas');return j}),30000));
-    jobs.push(withTimeout(fetch('https://formsubmit.co/ajax/worldparkgolf77@gmail.com',{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify(fields)}).then(function(r){return r.json()}).then(function(j){if(!j||String(j.success)!=='true')throw new Error('fs');return j}),75000));
+    jobs.push(withTimeout(fetch('https://formsubmit.co/ajax/worldparkgolf77@gmail.com',{method:'POST',keepalive:true,headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify(fields)}).then(function(r){return r.json()}).then(function(j){if(!j||String(j.success)!=='true')throw new Error('fs');return j}),75000));
     return new Promise(function(ok,no){var left=jobs.length;jobs.forEach(function(p){p.then(ok,function(){if(--left===0)no(new Error('all failed'))})});});
   }
   if(/[?&]ok=1/.test(location.search)){

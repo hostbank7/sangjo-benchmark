@@ -250,6 +250,17 @@ input:focus,select:focus{outline:none;border-color:var(--g)}
   }
   if(/[?&]ok=1/.test(location.search)) showOk();
   // 구글 시트(빠름)와 FormSubmit 메일(최대 1분 이상)을 동시에 보내고, 먼저 성공한 쪽으로 완료 표시
+
+  // 전송 중 안내창 (지난 시간 표시)
+  var __busy=null,__busyT=null;
+  function busyShow(msg){
+    if(!document.getElementById('busyCss')){var st=document.createElement('style');st.id='busyCss';st.textContent='.busy{position:fixed;inset:0;z-index:200;background:rgba(10,30,22,.6);display:grid;place-items:center;padding:16px}.busy .bc{background:#fff;color:#1b2621;border-radius:18px;padding:28px 22px;max-width:400px;width:100%;text-align:center;display:grid;gap:10px;box-shadow:0 20px 60px rgba(0,0,0,.3)}.busy .sp{width:54px;height:54px;border-radius:50%;border:5px solid #dfe8e2;border-top-color:#0f4a33;margin:0 auto;animation:bspin 0.9s linear infinite}.busy h2{margin:0;font-size:1.3rem;color:#0f4a33}.busy p{margin:0;color:#56655d;font-size:1rem;line-height:1.6}.busy .sec{font-weight:700;color:#0f4a33;font-variant-numeric:tabular-nums}@keyframes bspin{to{transform:rotate(360deg)}}@media (prefers-reduced-motion:reduce){.busy .sp{animation-duration:3s}}';document.head.appendChild(st);}
+    __busy=document.createElement('div');__busy.className='busy';__busy.setAttribute('role','alertdialog');__busy.setAttribute('aria-live','polite');
+    __busy.innerHTML='<div class="bc"><div class="sp"></div><h2>'+(msg||'신청을 보내고 있습니다')+'</h2><p>보통 5초 정도 걸립니다.<br>창을 닫지 말고 잠시만 기다려 주세요.</p><p class="sec" id="busySec">0초</p></div>';
+    document.body.appendChild(__busy);var s0=Date.now();
+    __busyT=setInterval(function(){var e=document.getElementById('busySec');if(!e)return;var t=Math.round((Date.now()-s0)/1000);e.textContent=t+'초'+(t>=15?' · 인터넷이 느리면 조금 더 걸릴 수 있어요':'');},500);
+  }
+  function busyHide(){if(__busyT)clearInterval(__busyT);if(__busy&&__busy.parentNode)__busy.parentNode.removeChild(__busy);__busy=null;}
   var GAS_URL='https://script.google.com/macros/s/AKfycbywh2d3jpsmJL1ucskJytY3UKFGlzr41kRcAozcTN6iEWr-3gW9LmvYGC2RqpxOirs/exec';
   function withTimeout(p,ms){return new Promise(function(ok,no){var t=setTimeout(function(){no(new Error('timeout'))},ms);p.then(function(v){clearTimeout(t);ok(v)},function(e){clearTimeout(t);no(e)})});}
   function sendRsvp(fields){
@@ -271,9 +282,9 @@ input:focus,select:focus{outline:none;border-color:var(--g)}
     var fields={_subject:'[설명회 '+att+'] '+v('name')+(v('org')?' · '+v('org'):'')+' · 12/1 하이난 파크골프 설명회',
       _captcha:'false',_template:'table','구분':'설명회 회신',
       '참석 여부':att,'성명':v('name'),'연락처':v('phone'),'소속·직함':v('org')||'-','참석 인원':att==='참석'?$('count').value:'-'};
-    var btn=$('send');btn.disabled=true;btn.textContent='보내는 중…';
-    sendRsvp(fields).then(function(){btn.textContent='회신 완료';$('f').hidden=true;showOk();},
-      function(){btn.disabled=false;btn.textContent='회신 보내기';$('err').textContent='전송하지 못했습니다. 잠시 후 다시 누르시거나 010-5622-6576 으로 연락 주세요.';$('err').hidden=false;});
+    var btn=$('send');btn.disabled=true;btn.textContent='보내는 중…';busyShow('회신을 보내고 있습니다');
+    sendRsvp(fields).then(function(){busyHide();btn.textContent='회신 완료';$('f').hidden=true;showOk();},
+      function(){busyHide();btn.disabled=false;btn.textContent='회신 보내기';$('err').textContent='전송하지 못했습니다. 잠시 후 다시 누르시거나 010-5622-6576 으로 연락 주세요.';$('err').hidden=false;});
   });
 })();
 </script>
