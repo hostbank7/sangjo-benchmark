@@ -423,7 +423,8 @@ const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'
 const man=n=>Number(n).toLocaleString('ko-KR')+'만원';
 
 /* ---------- 선택지, 표준 인력 기준, 단가표 (예시 기준) ---------- */
-const SIDO={'서울':['강남구','강서구','관악구','노원구','마포구','송파구','은평구','종로구'],'경기':['고양시','부천시','성남시','수원시','안산시','용인시','의정부시','화성시'],'인천':['남동구','미추홀구','부평구','서구','연수구','계양구']};
+// 서울 25개 구, 경기 31개 시·군, 인천 10개 구·군 (가나다순)
+const SIDO={'서울':['강남구','강동구','강북구','강서구','관악구','광진구','구로구','금천구','노원구','도봉구','동대문구','동작구','마포구','서대문구','서초구','성동구','성북구','송파구','양천구','영등포구','용산구','은평구','종로구','중구','중랑구'],'경기':['가평군','고양시','과천시','광명시','광주시','구리시','군포시','김포시','남양주시','동두천시','부천시','성남시','수원시','시흥시','안산시','안성시','안양시','양주시','양평군','여주시','연천군','오산시','용인시','의왕시','의정부시','이천시','파주시','평택시','포천시','하남시','화성시'],'인천':['강화군','계양구','남동구','동구','미추홀구','부평구','서구','연수구','옹진군','중구']};
 const F={
  timing:{t:'언제 필요하세요?',o:{urgent:'임종 직후 (긴급)',soon:'임종이 임박했어요',plan:'미리 준비해요'}},
  type:{t:'장례 형태',o:{home:'자택장 (주택장)',nobinso:'무빈소장',oneday:'1일장',family:'가족장 2일장',general:'일반 3일장'}},
@@ -827,7 +828,7 @@ function aiParse(t){
   if(/실속|저렴|간소/.test(t)){d.level='basic';got.push('실속')} else if(/품격|고급|성대/.test(t)){d.level='premium';got.push('품격')}
   const bur=[[/수목|자연장/,'nature'],[/해양/,'sea'],[/매장|선산/,'grave'],[/봉안|납골/,'charnel']].find(x=>x[0].test(t)); if(bur){d.burial=bur[1];got.push(F.burial.o[d.burial])}
   if(/방금|돌아가셨|임종하셨|긴급/.test(t)){d.timing='urgent';got.push('긴급')} else if(/임박|위독/.test(t)){d.timing='soon';got.push('임박')}
-  for(const s of Object.keys(SIDO)){ if(t.includes(s)){d.sido=s; const g=SIDO[s].find(g=>t.includes(g)||t.includes(g.replace(/[시구]$/,''))); d.gu=g||SIDO[s][0]; got.push(`${s} ${g||''}`.trim())} }
+  for(const s of Object.keys(SIDO)){ if(t.includes(s)){d.sido=s; const g=SIDO[s].find(g=>t.includes(g))||SIDO[s].find(g=>{const b=g.replace(/[시군구]$/,'');return b.length>=2&&t.includes(b)}); d.gu=g||SIDO[s][0]; got.push(`${s} ${g||''}`.trim())} }
   if(/영상/.test(t)&&!d.extras.includes('video')) d.extras=[...d.extras,'video'];
   if(/공연|음악/.test(t)&&!d.extras.includes('concert')) d.extras=[...d.extras,'concert'];
   if(!d.memo) d.memo=t;
