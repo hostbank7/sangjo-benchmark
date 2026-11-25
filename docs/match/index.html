@@ -2080,7 +2080,7 @@ function vDoc(k){
 
 /* ---------- 라우팅 ---------- */
 function route(){
-  const h=location.hash.slice(1)||(role==='customer'?'home':'board');
+  const h=location.hash.slice(1)||(role==='customer'?'home':role==='admin'?'admin':'join');
   const app=$('#app'); let html;
   sweep();
   if(h.startsWith('ref-')){const c=h.slice(4).toUpperCase(), i=instOf(c); if(i){refCode=i.code; toast(`${i.name} 소개 링크로 오셨어요.`)} location.replace('#home'); return}
@@ -2100,7 +2100,7 @@ function route(){
   if(!keep) window.scrollTo(0,0);
   if(h.startsWith('chat-')&&keep){const i=$('#msgIn'); i&&i.focus()}
 }
-function setRole(r){role=r; location.hash=r==='customer'?'home':r==='admin'?'admin':'board'; route()}
+function setRole(r){role=r; location.hash=r==='customer'?'home':r==='admin'?'admin':'join'; route()}
 
 document.addEventListener('click',e=>{
   const t=e.target.closest('button,a'); if(!t) return;
