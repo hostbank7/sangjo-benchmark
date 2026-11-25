@@ -601,8 +601,13 @@ body[data-role="admin"] .catbar{display:none}
 .brandtag{display:grid;gap:1px;padding-left:16px;border-left:1px solid var(--line);font-size:12px;line-height:1.45;color:var(--mute);white-space:nowrap;flex:none}
 .brandtag b{font-size:12.5px;font-weight:700;color:var(--fg);letter-spacing:-.01em}
 .brandtag span:last-child{color:var(--accent);font-weight:600}
-@media (max-width:1180px){.brandtag span{display:none}.brandtag{align-self:center}}
-@media (max-width:960px){.brandtag{display:none}}
+@media (max-width:1180px) and (min-width:961px){.brandtag span{display:none}.brandtag{align-self:center}}
+@media (max-width:960px){
+  .bar{flex-wrap:wrap;row-gap:8px}
+  .brandtag{order:2;flex:1 1 100%;border-left:0;padding:0 0 4px;white-space:normal;gap:2px}
+  .brandtag span{display:inline}
+  .hsearch{order:3}
+}
 </style>
 
 <header class="top">
