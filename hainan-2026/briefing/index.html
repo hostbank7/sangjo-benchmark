@@ -243,10 +243,21 @@ input:focus,select:focus{outline:none;border-color:var(--g)}
   phone.addEventListener('focus',function(){if(!phone.value)phone.value='010-';});
   phone.addEventListener('input',function(){var d=phone.value.replace(/\D/g,'');if(d.length>11&&/^010/.test(d))d=d.slice(3);d=d.slice(0,11);
     phone.value=d.length<4?d:d.length<8?d.slice(0,3)+'-'+d.slice(3):d.slice(0,3)+'-'+d.slice(3,d.length-4)+'-'+d.slice(-4);});
-  if(/[?&]ok=1/.test(location.search)){
+  function showOk(){
     var ov=document.createElement('div');ov.className='okmodal';ov.setAttribute('role','dialog');ov.setAttribute('aria-modal','true');
     ov.innerHTML='<div class="okcard"><div class="okicon">✓</div><h2>회신해 주셔서 감사합니다</h2><p>12월 1일 포시즌스 호텔 서울에서<br>뵙기를 기다리겠습니다.</p><a class="btn" href="'+location.pathname+'" id="okHome">확인</a></div>';
     document.body.appendChild(ov);document.documentElement.style.overflow='hidden';$('okHome').focus();
+  }
+  if(/[?&]ok=1/.test(location.search)) showOk();
+  // 구글 시트(빠름)와 FormSubmit 메일(최대 1분 이상)을 동시에 보내고, 먼저 성공한 쪽으로 완료 표시
+  var GAS_URL='https://script.google.com/macros/s/AKfycbywh2d3jpsmJL1ucskJytY3UKFGlzr41kRcAozcTN6iEWr-3gW9LmvYGC2RqpxOirs/exec';
+  function withTimeout(p,ms){return new Promise(function(ok,no){var t=setTimeout(function(){no(new Error('timeout'))},ms);p.then(function(v){clearTimeout(t);ok(v)},function(e){clearTimeout(t);no(e)})});}
+  function sendRsvp(fields){
+    var jobs=[
+      withTimeout(fetch(GAS_URL,{method:'POST',body:JSON.stringify(fields)}).then(function(r){return r.json()}).then(function(j){if(!j||!j.ok)throw new Error('gas');return j}),30000),
+      withTimeout(fetch('https://formsubmit.co/ajax/worldparkgolf77@gmail.com',{method:'POST',keepalive:true,headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify(fields)}).then(function(r){return r.json()}).then(function(j){if(!j||String(j.success)!=='true')throw new Error('fs');return j}),90000)
+    ];
+    return new Promise(function(ok,no){var left=jobs.length;jobs.forEach(function(p){p.then(ok,function(){if(--left===0)no(new Error('all failed'))})});});
   }
   $('f').addEventListener('submit',function(e){
     e.preventDefault();
@@ -258,12 +269,11 @@ input:focus,select:focus{outline:none;border-color:var(--g)}
     $('err').hidden=true;
     var att=document.querySelector('input[name=att]:checked').value;
     var fields={_subject:'[설명회 '+att+'] '+v('name')+(v('org')?' · '+v('org'):'')+' · 12/1 하이난 파크골프 설명회',
-      _next:location.origin+location.pathname+'?ok=1',_captcha:'false',_template:'table',
+      _captcha:'false',_template:'table','구분':'설명회 회신',
       '참석 여부':att,'성명':v('name'),'연락처':v('phone'),'소속·직함':v('org')||'-','참석 인원':att==='참석'?$('count').value:'-'};
-    var f=document.createElement('form');f.method='POST';f.action='https://formsubmit.co/worldparkgolf77@gmail.com';f.acceptCharset='UTF-8';f.style.display='none';
-    for(var k in fields){var i=document.createElement('input');i.type='hidden';i.name=k;i.value=fields[k];f.appendChild(i);}
-    $('send').disabled=true;$('send').textContent='보내는 중…';
-    document.body.appendChild(f);f.submit();
+    var btn=$('send');btn.disabled=true;btn.textContent='보내는 중…';
+    sendRsvp(fields).then(function(){btn.textContent='회신 완료';$('f').hidden=true;showOk();},
+      function(){btn.disabled=false;btn.textContent='회신 보내기';$('err').textContent='전송하지 못했습니다. 잠시 후 다시 누르시거나 010-5622-6576 으로 연락 주세요.';$('err').hidden=false;});
   });
 })();
 </script>
