@@ -10,8 +10,10 @@
 <style>
 /* Layout: two-sided request marketplace — sticky header with customer/partner switch; request form with live price floor; partner request board; chat thread with masked contacts; ranking table */
 :root{
-  --bg:#f3f5f8; --surface:#ffffff; --sunk:#e8ecf2; --line:#d5dce6;
-  --fg:#141c26; --mute:#556173; --accent:#1c3f66; --accent-fg:#ffffff; --accent-soft:#e0e8f2;
+  --bg:#ffffff; --surface:#ffffff; --sunk:#f4f6f9; --line:#e3e7ee; --soft:#f8f9fb;
+  --fg:#18202b; --mute:#5f6b7a; --accent:#1f4373; --accent-fg:#ffffff; --accent-soft:#eaf0f8;
+  --shadow:0 1px 2px rgba(20,32,52,.05),0 6px 18px rgba(20,32,52,.06);
+  --hh:150px;
   --band:#122a45; --band-fg:#eef3f9; --band-mute:#a9b9cc; --band-line:#2a4462; --seal:#1f6b4c; --seal-soft:#dff0e7;
   --urgent:#b3402e; --urgent-soft:#f6e1dc; --star:#a87a1e; --ok:#2f7a4f; --warn:#94650f; --warn-soft:#f6ecd6;
   --me:#1c3f66; --me-fg:#ffffff;
@@ -19,14 +21,16 @@
   --body:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#0f141b; --surface:#161d27; --sunk:#1e2733; --line:#2b3644;
+  --bg:#0f141b; --surface:#161d27; --sunk:#1c2430; --line:#2b3644; --soft:#131a23;
   --fg:#e6ecf3; --mute:#9aa7b8; --accent:#8db4e0; --accent-fg:#0d1520; --accent-soft:#1d2d42;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 18px rgba(0,0,0,.25);
   --band:#0b1622; --band-fg:#e6ecf3; --band-mute:#93a4b8; --band-line:#22344a; --seal:#7fcf9c; --seal-soft:#1b3326;
   --urgent:#ec8a76; --urgent-soft:#3a221d; --star:#e0b45a; --ok:#7fcf9c; --warn:#e3b45c; --warn-soft:#3a2f18;
   --me:#2a4c75; --me-fg:#f0f5fb; color-scheme:dark}}
 :root[data-theme="dark"]{
-  --bg:#0f141b; --surface:#161d27; --sunk:#1e2733; --line:#2b3644;
+  --bg:#0f141b; --surface:#161d27; --sunk:#1c2430; --line:#2b3644; --soft:#131a23;
   --fg:#e6ecf3; --mute:#9aa7b8; --accent:#8db4e0; --accent-fg:#0d1520; --accent-soft:#1d2d42;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 18px rgba(0,0,0,.25);
   --band:#0b1622; --band-fg:#e6ecf3; --band-mute:#93a4b8; --band-line:#22344a; --seal:#7fcf9c; --seal-soft:#1b3326;
   --urgent:#ec8a76; --urgent-soft:#3a221d; --star:#e0b45a; --ok:#7fcf9c; --warn:#e3b45c; --warn-soft:#3a2f18;
   --me:#2a4c75; --me-fg:#f0f5fb; color-scheme:dark}
@@ -48,7 +52,7 @@ button,input,select,textarea{font:inherit;color:inherit}
 .mute{color:var(--mute)}
 .small{font-size:13px}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:1px solid var(--accent);background:var(--accent);color:var(--accent-fg);
-  padding:10px 16px;border-radius:8px;font-weight:600;cursor:pointer;text-decoration:none;white-space:nowrap}
+  padding:10px 16px;border-radius:10px;font-weight:600;cursor:pointer;text-decoration:none;white-space:nowrap}
 .btn:hover{filter:brightness(1.08)}
 .btn:disabled{opacity:.45;cursor:not-allowed;filter:none}
 .btn.ghost{background:transparent;color:var(--accent)}
@@ -59,7 +63,7 @@ button,input,select,textarea{font:inherit;color:inherit}
 .chip.w{background:var(--warn-soft);color:var(--warn)}
 .chip.n{background:var(--sunk);color:var(--mute)}
 .label{font-size:12px;letter-spacing:.06em;color:var(--mute);font-weight:500}
-.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px}
 
 /* header */
 .notice{background:var(--accent);color:var(--accent-fg);font-size:13px;text-align:center;padding:7px 8px;
@@ -79,6 +83,140 @@ header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;backgroun
 .navl a:hover{background:var(--sunk)}
 .navl a.on{color:var(--accent);font-weight:700}
 
+/* ===== redesign: marketplace shell ===== */
+header.top{box-shadow:0 1px 0 var(--line)}
+header.top{border-bottom:0}
+.util{background:var(--soft);border-bottom:1px solid var(--line);margin-inline:calc(-1 * max(16px,env(safe-area-inset-left,0px)));padding-inline:max(16px,env(safe-area-inset-left,0px))}
+.utilin{display:flex;justify-content:space-between;align-items:center;gap:12px;min-height:34px;font-size:12px;color:var(--mute)}
+.roles{display:flex;align-items:center;gap:2px;flex-wrap:wrap}
+.roles button{border:0;background:none;font-size:12px;color:var(--mute);padding:4px 8px;cursor:pointer;border-radius:6px}
+.roles button:hover{color:var(--fg)}
+.roles button[aria-pressed="true"]{color:var(--accent);font-weight:700}
+.roles .num{padding-left:8px;margin-left:4px;border-left:1px solid var(--line)}
+.bar{min-height:68px;gap:20px;flex-wrap:nowrap}
+.logo{font-size:22px;letter-spacing:-.02em}
+.roletag{font-size:12px;font-weight:600;background:var(--accent);color:var(--accent-fg);padding:2px 8px;border-radius:999px;margin-left:4px;letter-spacing:0}
+.hsearch{flex:1;display:flex;max-width:560px;height:46px;border:2px solid var(--accent);border-radius:12px;overflow:hidden;background:var(--surface)}
+.hsearch input{flex:1;min-width:0;border:0;padding:0 14px;background:transparent;font-size:15px}
+.hsearch input:focus{outline:none}
+.hsearch button{border:0;background:var(--accent);color:var(--accent-fg);padding:0 18px;font-weight:700;cursor:pointer}
+.acct{margin-left:auto;gap:10px}
+.pill{display:inline-flex;align-items:center;gap:6px;text-decoration:none;font-size:13px;font-weight:700;padding:7px 12px;border-radius:999px}
+.pill.urgent{background:var(--urgent-soft);color:var(--urgent)}
+.pill.urgent::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--urgent)}
+.toplink{text-decoration:none;font-size:14px;font-weight:500;padding:6px 4px;white-space:nowrap}
+.toplink.on{color:var(--accent);font-weight:700}
+.toplink b{display:inline-grid;place-items:center;min-width:18px;height:18px;border-radius:9px;background:var(--accent);color:var(--accent-fg);font-size:11px;padding:0 5px}
+.who{display:inline-flex;align-items:center;gap:6px}
+.av{display:inline-grid;place-items:center;width:44px;height:44px;border-radius:50%;background:var(--accent-soft);color:var(--accent);font-family:var(--display);font-weight:700;font-size:13px;flex:none}
+.av.sm{width:32px;height:32px;font-size:11px}
+.catbar{border-top:1px solid var(--line);margin-inline:calc(-1 * max(16px,env(safe-area-inset-left,0px)));padding-inline:max(16px,env(safe-area-inset-left,0px))}
+.catin{display:flex;align-items:center;gap:12px;min-height:46px}
+.hcats{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;flex:1;min-width:0}
+.hcats::-webkit-scrollbar{display:none}
+.hcats button{border:0;background:none;font-size:14px;font-weight:500;padding:12px 10px;cursor:pointer;white-space:nowrap;color:var(--fg);border-bottom:2px solid transparent}
+.hcats button:hover{color:var(--accent);border-bottom-color:var(--accent)}
+.catin .navl{margin-left:auto;flex-wrap:nowrap}
+body[data-role="customer"] .catin .navl{border-left:1px solid var(--line);padding-left:10px}
+body[data-role="customer"] .catin .navl a{color:var(--mute);font-size:13px}
+body[data-role="customer"] .catin .navl a.on{color:var(--accent)}
+body:not([data-role="customer"]) .hcats{display:none}
+body:not([data-role="customer"]) .catin .navl{margin-left:0;overflow-x:auto}
+body:not([data-role="customer"]) .catin .navl a{padding:12px 12px;border-radius:0;border-bottom:2px solid transparent}
+body:not([data-role="customer"]) .catin .navl a.on{border-bottom-color:var(--accent)}
+body:not([data-role="customer"]) .catin .navl a:hover{background:none;color:var(--accent)}
+/* hero */
+.eyebrow{display:inline-block;font-size:13px;font-weight:700;color:var(--accent);letter-spacing:.02em}
+.hero2{display:grid;grid-template-columns:1.25fr 1fr;gap:40px;align-items:center;padding:52px 0 36px;margin:0;background:none;color:var(--fg);border-radius:0}
+.hero2 .label{color:var(--mute)}
+.hero2 h1{font-size:clamp(28px,4.2vw,44px);line-height:1.3;margin-top:10px;letter-spacing:-.03em}
+.hero2 .lead{color:var(--mute);margin-top:14px;max-width:52ch}
+.bigsearch{display:flex;margin-top:24px;height:58px;border:2px solid var(--accent);border-radius:14px;overflow:hidden;background:var(--surface);box-shadow:var(--shadow);max-width:560px}
+.bigsearch input{flex:1;min-width:0;border:0;padding:0 18px;font-size:16px;background:transparent}
+.bigsearch input:focus{outline:none}
+.bigsearch button{border:0;background:var(--accent);color:var(--accent-fg);padding:0 22px;font-weight:700;font-size:15px;cursor:pointer;white-space:nowrap}
+.qchips{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:14px}
+.qchips button{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:5px 12px;font-size:13px;cursor:pointer}
+.qchips button:hover{border-color:var(--accent);color:var(--accent)}
+.urgentline{display:inline-flex;align-items:center;gap:8px;margin-top:22px;text-decoration:none;font-size:14px;color:var(--urgent);background:var(--urgent-soft);padding:10px 14px;border-radius:12px}
+.pulse{width:9px;height:9px;border-radius:50%;background:var(--urgent);box-shadow:0 0 0 0 var(--urgent);animation:pulse 2s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--urgent) 60%,transparent)}70%{box-shadow:0 0 0 9px transparent}100%{box-shadow:0 0 0 0 transparent}}
+.h2r{display:grid;gap:10px;background:var(--soft);border:1px solid var(--line);border-radius:20px;padding:22px}
+.demo{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px;display:grid;gap:2px;box-shadow:var(--shadow)}
+.demo.req1{border-left:4px solid var(--accent)}
+.demo.off{grid-template-columns:auto 1fr auto;gap:10px;align-items:center;margin-left:22px}
+.demo.off div{display:grid}
+.facts2{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border:1px solid var(--line);border-radius:16px;background:var(--soft)}
+.facts2 div{padding:18px 20px;display:grid;gap:2px}
+.facts2 div+div{border-left:1px solid var(--line)}
+.facts2 b{font-family:var(--display);font-size:22px;color:var(--accent)}
+.facts2 span{font-size:13px;color:var(--mute)}
+.hsec{padding-block:44px 4px}
+.hsec .sechead h2{font-size:clamp(20px,2.6vw,26px)}
+.hsec.soft{background:var(--soft);margin-top:44px;padding:40px clamp(16px,3vw,32px) 32px;border-radius:24px}
+.more{font-size:14px;text-decoration:none;color:var(--accent);font-weight:600;white-space:nowrap}
+.catgrid2{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.ctile{display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto auto;column-gap:12px;align-items:center;text-align:left;border:1px solid var(--line);background:var(--surface);border-radius:16px;padding:16px;cursor:pointer;transition:border-color .15s,box-shadow .15s,transform .15s}
+.ctile:hover{border-color:var(--accent);box-shadow:var(--shadow);transform:translateY(-2px)}
+.ctile .mono{grid-row:1/3;width:44px;height:44px;border-radius:12px;display:grid;place-items:center;background:var(--accent-soft);color:var(--accent);font-family:var(--display);font-weight:700;font-size:18px}
+.ctile b{font-family:var(--display);font-size:15px}
+.req{border-radius:16px;transition:box-shadow .15s,border-color .15s}
+.req:hover{box-shadow:var(--shadow)}
+.pminis{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.pmini{display:grid;gap:10px;text-decoration:none;border:1px solid var(--line);border-radius:16px;padding:18px;background:var(--surface);transition:box-shadow .15s,border-color .15s;min-width:0}
+.pmini:hover{box-shadow:var(--shadow);border-color:var(--accent)}
+.pmh{display:flex;gap:12px;align-items:center}
+.pmh div{display:grid}
+.pmr{font-size:14px;display:flex;flex-wrap:wrap;gap:4px;align-items:center}
+.pmr .dot{color:var(--line)}
+.pmq{color:var(--fg);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.flow2{display:grid;grid-template-columns:repeat(6,1fr);gap:0;padding:0;margin:0;counter-reset:s}
+.flow2 li{list-style:none;counter-increment:s;display:grid;gap:4px;padding:0 14px 0 0;position:relative}
+.flow2 li::before{content:counter(s);display:grid;place-items:center;width:32px;height:32px;border-radius:50%;background:var(--accent);color:var(--accent-fg);font-weight:700;font-size:14px;margin-bottom:8px;position:relative;z-index:1}
+.flow2 li:not(:last-child)::after{content:"";position:absolute;top:16px;left:34px;right:2px;height:2px;background:var(--line)}
+.flow2 b{font-family:var(--display);font-size:15px}
+.flow2 span{font-size:13px;color:var(--mute)}
+.recruit{margin-top:44px;background:var(--band);color:var(--band-fg);border-radius:24px;padding:36px clamp(20px,4vw,44px);display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap}
+.recruit .eyebrow{color:var(--band-mute)}
+.recruit h2{font-size:clamp(20px,2.8vw,28px);margin-top:6px}
+.recruit ul{margin:14px 0 0;padding:0;list-style:none;display:grid;gap:6px;color:var(--band-mute)}
+.recruit li::before{content:"✓";color:var(--band-fg);margin-right:8px;font-weight:700}
+.rbtns{display:flex;gap:8px;flex-wrap:wrap}
+.recruit .btn{background:var(--band-fg);color:var(--band);border-color:var(--band-fg)}
+.recruit .btn.ghost{background:transparent;color:var(--band-fg);border-color:var(--band-line)}
+.pwelcome{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;background:var(--soft);border:1px solid var(--line);border-radius:20px;padding:22px 24px;margin-bottom:22px}
+.pwelcome h1{font-size:clamp(20px,2.6vw,26px);margin-top:4px}
+.pwk{display:flex;gap:10px}
+.pwk div{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:10px 16px;display:grid;min-width:96px}
+.pwk b{font-family:var(--display);font-size:22px;color:var(--accent)}
+.pwk span{font-size:12px;color:var(--mute)}
+footer{border-top:0;margin-top:56px;background:var(--soft);margin-inline:calc(-1 * max(16px,env(safe-area-inset-left,0px)));padding:32px max(16px,env(safe-area-inset-right,0px)) 44px max(16px,env(safe-area-inset-left,0px))}
+@media (max-width:960px){
+  .hero2{grid-template-columns:1fr;gap:26px;padding-top:32px}
+  .catgrid2{grid-template-columns:repeat(2,1fr)} .pminis{grid-template-columns:1fr 1fr}
+  .flow2{grid-template-columns:repeat(3,1fr);row-gap:22px} .flow2 li:nth-child(3)::after{display:none}
+  .facts2{grid-template-columns:1fr 1fr} .facts2 div:nth-child(3){border-left:0} .facts2 div:nth-child(n+3){border-top:1px solid var(--line)}
+  .utilmsg{display:none} .utilin{justify-content:flex-end}
+}
+@media (max-width:680px){
+  :root{--hh:0px}
+  header.top{position:static}
+  .bar{flex-wrap:wrap;gap:10px;padding-block:10px}
+  .hsearch{order:3;max-width:none;flex-basis:100%}
+  .acct{gap:6px}
+  .toplink{font-size:13px}
+  .catin{flex-wrap:wrap;gap:0}
+  .hcats{flex:1 1 100%}
+  .roles .num{display:none}
+  .urgentline{display:flex;flex-wrap:wrap;column-gap:6px;row-gap:2px}
+  .urgentline b{white-space:nowrap}
+  body[data-role="customer"] .catin .navl{border-left:0;padding-left:0;width:100%;border-top:1px solid var(--line)}
+  .pminis{grid-template-columns:1fr} .flow2{grid-template-columns:1fr 1fr} .flow2 li::after{display:none}
+  .demo.off{margin-left:10px}
+  .bigsearch{height:52px} .bigsearch button{padding:0 14px}
+  .who .small{display:none}
+}
+@media (prefers-reduced-motion:reduce){.pulse{animation:none}.ctile:hover{transform:none}}
 /* home */
 .hero{display:grid;grid-template-columns:1.2fr 1fr;gap:28px;padding-block:34px 24px;align-items:center}
 .hero>*{min-width:0}
@@ -129,7 +267,7 @@ textarea{min-height:84px;resize:vertical}
 .ai .out{font-size:14px;background:var(--surface);border-radius:8px;padding:10px 12px}
 .money{display:flex;align-items:center;gap:8px}
 .money input{max-width:180px;font-family:var(--display);font-size:20px;font-weight:700;text-align:right}
-.side{position:sticky;top:calc(env(safe-area-inset-top,0px) + 80px);display:grid;gap:12px}
+.side{position:sticky;top:calc(env(safe-area-inset-top,0px) + var(--hh) + 16px);display:grid;gap:12px}
 .floor{display:grid;gap:6px}
 .floor .v{font-family:var(--display);font-size:24px;font-weight:700}
 .meter{height:8px;border-radius:4px;background:var(--sunk);position:relative;margin-top:6px}
@@ -351,7 +489,7 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding-block:22px 36px;
 .settle .no{color:var(--mute);text-decoration:line-through}
 .xform{display:grid;gap:8px;border-top:1px dashed var(--line);padding-top:12px}
 .admin{display:grid;grid-template-columns:210px minmax(0,1fr);gap:22px;padding-block:24px 40px;align-items:start}
-.atabs{display:grid;gap:2px;position:sticky;top:calc(env(safe-area-inset-top,0px) + 80px)}
+.atabs{display:grid;gap:2px;position:sticky;top:calc(env(safe-area-inset-top,0px) + var(--hh) + 16px)}
 .atabs button{border:0;background:none;text-align:left;padding:10px 12px;border-radius:8px;cursor:pointer;font-weight:500;display:flex;justify-content:space-between;gap:8px}
 .atabs button:hover{background:var(--sunk)}
 .atabs button[aria-pressed="true"]{background:var(--accent);color:var(--accent-fg)}
@@ -391,27 +529,36 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding-block:22px 36px;
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 
-<div class="notice">동행매치는 직접 검증을 마친 후불제 상조회사만 운영합니다 · 오픈 기념 12개월 이용료 0원</div>
 <header class="top">
+  <div class="util"><div class="wrap utilin">
+    <span class="utilmsg">직접 검증한 후불제 상조회사만 · 오픈 기념 12개월 이용료 0원</span>
+    <span class="roles" role="group" aria-label="화면 전환">
+      <button type="button" data-role="customer" aria-pressed="true">고객 화면</button>
+      <button type="button" data-role="partner" aria-pressed="false">상조회사 파트너센터</button>
+      <button type="button" data-role="admin" aria-pressed="false">운영자 (시연)</button>
+      <span class="num">고객센터 1600-0000</span>
+    </span>
+  </div></div>
   <div class="wrap bar">
-    <a class="logo" href="#home"><i aria-hidden="true"></i>동행매치</a>
-    <div class="seg" role="group" aria-label="화면 전환">
-      <button type="button" data-role="customer" aria-pressed="true">고객</button>
-      <button type="button" data-role="partner" aria-pressed="false">상조회사</button>
-      <button type="button" data-role="admin" aria-pressed="false">운영자</button>
-    </div>
-    <nav class="navl" id="nav" aria-label="주요 메뉴"></nav>
+    <a class="logo" href="#home"><i aria-hidden="true"></i>동행매치<span class="roletag" id="roleTag" hidden></span></a>
+    <form class="hsearch" id="hsearch" role="search"><input id="hq" type="search" placeholder="어떤 장례를 준비하세요? 예) 가족장 200만원 서울 송파구" aria-label="원하는 장례를 적어 견적 받기"><button type="submit">견적 받기</button></form>
     <div class="acct" id="acct"></div>
   </div>
+  <div class="catbar"><div class="wrap catin">
+    <div class="hcats" id="hcats"></div>
+    <nav class="navl" id="nav" aria-label="주요 메뉴"></nav>
+  </div></div>
 </header>
 <main class="wrap" id="app"></main>
-<footer class="wrap">
+<footer>
+  <div class="wrap">
   <div class="corp">
     <div><b>동행매치</b><p style="margin-top:6px">직접 검증한 후불제 상조회사와 유족을 연결하는 장례 매칭 플랫폼입니다. 동행매치는 통신판매중개자로서 장례 서비스의 당사자가 아니며, 확정 견적서와 다른 청구가 확인되면 운영 정책에 따라 보상을 지원합니다.</p></div>
     <div><b>회사 정보</b><ul><li>상호 (주)동행매치 · 대표 OOO</li><li>사업자등록번호 000-00-00000</li><li>통신판매중개업 신고 제0000-서울OO-0000호</li><li>서울특별시 OO구 OO로 00</li></ul></div>
     <div><b>고객센터 (24시간)</b><ul><li class="num">1600-0000</li><li><a href="#terms">이용약관</a> · <a href="#privacy">개인정보 처리방침</a></li><li><a href="#policy">파트너 운영정책 · 검증 기준</a></li></ul></div>
   </div>
   <p style="margin-top:14px">이 화면은 시연용입니다. 회사 정보, 업체, 요청, 점수, 전화번호는 모두 예시이며 실제로 전송되지 않습니다.</p>
+  </div>
 </footer>
 <div class="modal" id="modal" hidden role="dialog" aria-modal="true"></div>
 <div class="toast" id="toast" hidden role="status"></div>
@@ -636,15 +783,35 @@ function reqCard(r,forPartner){
     ${forPartner?(r.status!=='open'?`<span class="chip n">${{matched:'매칭 완료',closed:'마감',cancelled:'고객 취소'}[r.status]||'마감'}</span>`:mine?'<span class="chip">제안함</span>':r.timing==='urgent'&&!partner.avail?'<span class="chip n">출동 불가 상태</span>':`<button class="btn sm" type="button" data-propose="${r.id}">${r.timing==='urgent'?`제안하기 · 약 ${etaOf(partner,r.sido)}분`:'제안하기'}</button>`):''}</div>
   </article>`;
 }
+const HCATS=[['nobinso','무빈소장','빈소 없이 간소하게'],['family','가족장 2일장','가까운 가족·지인과'],['general','일반 3일장','조문객을 맞는 장례'],['home','자택장','집에서 모시는 장례'],['oneday','1일장','하루에 마치는 장례'],['relig','종교 장례','기독교·천주교·불교'],['nature','수목장·해양장','자연으로 돌아가는 장법'],['memorial','추모 영상·공연','고인을 기억하는 시간']];
+const HMONO={nobinso:'무',family:'가',general:'3',home:'자',oneday:'1',relig:'종',nature:'수',memorial:'추'};
+let pendingAI=null;
+function startCat(k){
+  draft=newDraft(); editId=null; svEditId=null; const lab=(HCATS.find(x=>x[0]===k)||[])[1];
+  if(['nobinso','family','general','home','oneday'].includes(k)){draft.type=k; if(k==='home') draft.place='home'; if(k==='nobinso') draft.guests='g0';}
+  if(k==='relig'){draft.type='general'; draft.religion='christian';}
+  if(k==='nature'){draft.burial='nature';}
+  if(k==='memorial'){draft.extras=['video','concert'];}
+  svNote=`'${lab}'(으)로 시작했어요. 나머지 조건을 고르면 예상 금액이 바로 계산돼요.${k==='relig'?' 종교를 맞게 바꿔 주세요.':''}`;
+  if(location.hash==='#request') route(); else location.hash='request';
+}
 function renderNav(){
   const h=location.hash.slice(1)||'home';
+  document.body.dataset.role=role;
+  $('#roleTag').hidden=role==='customer'; $('#roleTag').textContent=role==='partner'?'파트너센터':role==='admin'?'운영자':'';
+  $('#hsearch').hidden=role!=='customer'||h==='home';
+  $('#hcats').innerHTML=role==='customer'?HCATS.map(([k,l])=>`<button type="button" data-hcat="${k}">${l}</button>`).join(''):'';
   const items=role==='admin'?[['admin','운영 관리']]:role==='customer'
-    ?[['urgent','긴급 출동'],['home','서비스 소개'],['partners','검증 파트너'],['ranking','업체 순위'],['request','장례 요청하기'],['my','내 문의 내역'+(user?` (${myList().length})`:'')]]
+    ?[['request','장례 요청하기'],['partners','검증 파트너'],['ranking','업체 순위']]
     :[['board','요청 게시판'],['ptalk','내 제안·채팅'],['perf','내 실적'],['prices','내 단가표'],['ranking','업체 순위'],['join','파트너 검증 신청']];
   $('#nav').innerHTML=items.map(([k,v])=>`<a href="#${k}" class="${h===k||h.startsWith(k+'-')||(k==='my'&&h.startsWith('myreq-'))?'on':''}">${v}</a>`).join('');
-  document.querySelectorAll('.seg button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.role===role));
-  $('#acct').innerHTML=role!=='customer'?'':user?`<span class="small"><b>${esc(user.name)}</b>님</span><button class="btn sm ghost" type="button" data-logout>로그아웃</button>`
-    :`<button class="btn sm ghost" type="button" data-login>로그인</button><button class="btn sm" type="button" data-signup>회원가입</button>`;
+  document.querySelectorAll('.roles button[data-role]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.role===role));
+  const myOn=h==='my'||h.startsWith('myreq-');
+  $('#acct').innerHTML=role==='partner'?`<span class="who"><span class="av sm">${partner.code}</span><span class="small"><b>${partner.name}</b></span></span>`
+    :role==='admin'?'<span class="small mute">동행매치 운영팀</span>'
+    :`<a class="pill urgent" href="#urgent">긴급 출동</a><a class="toplink${myOn?' on':''}" href="#my">내 문의${user?` <b class="num">${myList().length}</b>`:''}</a>`+
+     (user?`<span class="small who"><b>${esc(user.name)}</b>님</span><button class="btn sm ghost" type="button" data-logout>로그아웃</button>`
+     :`<button class="btn sm ghost" type="button" data-login>로그인</button><button class="btn sm" type="button" data-signup>회원가입</button>`);
 }
 
 /* ---------- 고객: 홈 ---------- */
@@ -657,66 +824,93 @@ function pcard(c){
     ${(()=>{const rs=REVS.filter(x=>x.cid===c.id);return rs.length?`<div class="revsnip"><span class="small"><b>인증 리뷰 ${rs.length}개</b> · 평균 ★ ${(rs.reduce((a,x)=>a+x.stars,0)/rs.length).toFixed(1)}</span><p class="small">“${esc(rs[0].text)}”</p><span class="small mute">${rs[0].label} · ${rs[0].date}</span></div>`:'<p class="small mute">아직 인증 리뷰가 없어요.</p>'})()}
     <p class="small mute num">검증일 ${c.ver} · 재검증 예정 ${recheck(c.ver)}</p></article>`;
 }
+function pmini(c){
+  const sc=score(c), rs=REVS.filter(x=>x.cid===c.id), avg=rs.length?(rs.reduce((a,x)=>a+x.stars,0)/rs.length).toFixed(1):null;
+  return `<a class="pmini" href="#partners"><div class="pmh"><span class="av">${c.code}</span><div style="min-width:0"><b>검증 파트너 ${c.code}</b><span class="small mute">${c.area} · 업력 ${yrs(c)}</span></div></div>
+    <div class="pmr num">${avg?`<span class="stars-t">★</span> <b>${avg}</b> <span class="mute">(${rs.length})</span>`:'<span class="mute">리뷰 준비 중</span>'}<span class="dot">·</span>종합 <b>${sc??'신규'}</b><span class="dot">·</span>매칭 ${c.done}건</div>
+    ${rs.length?`<p class="small pmq">“${esc(rs[0].text)}”</p>`:'<p class="small pmq mute">첫 인증 리뷰를 기다리고 있어요.</p>'}
+    <div>${seal(c)}</div></a>`;
+}
 function vHome(){
   const open=R.filter(r=>r.status==='open').slice(0,3);
   const top=[...C].filter(c=>!c.isNew).sort((a,b)=>score(b)-score(a)).slice(0,3);
+  const Q=['가족장 2일장 200만원','무빈소장 100만원대','집에서 자택장','기독교 3일장','수목장 가족장'];
   return `
   ${refCode&&instOf(refCode)?`<div class="panel actbar refbar" style="margin-top:20px"><div><span class="chip">제휴 기관 소개</span><p style="margin-top:6px"><b>${instOf(refCode).name}</b> 소개로 오셨어요. 요청서를 올리면 소개 기관 정보가 함께 기록되고, 동행매치 상담사가 기관 담당자와 함께 도와드려요.</p></div><a class="btn sm" href="#request">장례 요청하기</a></div>`:''}
-  <section class="band">
-    <div>
-      <span class="label">서울 · 경기 · 인천 후불제 상조 매칭</span>
-      <h1 style="margin-top:10px">동행매치가 직접 검증한 상조회사만<br>고객의 조건에 맞춰 제안합니다</h1>
-      <p class="lead">원하는 장례와 희망 금액을 요청서로 올리면, 서류 심사와 현장 실사를 통과한 후불제 상조회사들이 제안을 보냅니다. 협의는 사이트 안에서 하고, 결제는 장례를 마친 뒤에 합니다.</p>
-      <div class="cta"><a class="btn urgent-fill" href="#urgent">지금 임종하셨나요? 긴급 출동</a><a class="btn" href="#request">무료로 장례 요청하기</a><a class="btn ghost" href="#partners">검증 파트너 보기</a></div>
-    </div>
-    <div class="facts num">
-      <div><b>8개 항목</b><span>입점 전 직접 검증</span></div>
-      <div><b>연 1회</b><span>전 파트너 재검증</span></div>
-      <div><b>0원</b><span>선납금, 100% 후불 결제</span></div>
-      <div><b>24시간</b><span>긴급 요청 상담 운영</span></div>
-    </div>
-  </section>
   ${user&&savedList().length?`<div class="panel actbar" style="margin-top:14px"><div><b>${esc(user.name)}님이 저장해 둔 요청서가 ${savedList().length}건 있어요</b><p class="small mute">필요할 때 버튼 하나로 지역 검증 파트너에게 보낼 수 있어요.</p></div><a class="btn sm" href="#my">저장한 요청서 보기</a></div>`:''}
 
-  <section class="blk">
-    <div class="sechead"><div><span class="label">PARTNER VERIFICATION</span><h2 style="margin-top:4px">상조회사 검증 절차</h2></div><a class="small" href="#join" data-role-link="partner">파트너 검증 신청 안내</a></div>
-    <ol class="vsteps">${VSTEPS.map(v=>`<li><b>${v[0]}</b><p>${v[1]}</p></li>`).join('')}</ol>
-    <p class="recheck"><span class="seal">동행매치 검증 완료</span> 표시는 다섯 단계를 모두 통과한 업체에만 붙습니다. 해피콜 점수가 기준에 못 미치거나 직거래 경고를 받으면 재심사합니다.</p>
+  <section class="hero2">
+    <div class="h2l">
+      <span class="eyebrow">서울 · 경기 · 인천 후불제 상조 매칭</span>
+      <h1>원하는 장례와 금액을 말씀하세요.<br>검증된 상조회사가 맞춰 제안합니다.</h1>
+      <p class="lead">원하는 장례와 희망 금액을 요청서로 올리면, 서류 심사와 현장 실사를 통과한 후불제 상조회사들이 제안을 보냅니다. 협의는 사이트 안에서 하고, 결제는 장례를 마친 뒤에 합니다.</p>
+      <form class="bigsearch" id="heroSearch" role="search"><input id="heroQ" type="search" placeholder="예) 50만원에 집에서 가족끼리 자택장으로" aria-label="원하는 장례를 말로 적기"><button type="submit">무료 견적 받기</button></form>
+      <div class="qchips"><span class="small mute">자주 찾는 요청</span>${Q.map(q=>`<button type="button" data-q="${q}">${q}</button>`).join('')}</div>
+      <a class="urgentline" href="#urgent"><span class="pulse" aria-hidden="true"></span><b>지금 임종하셨나요?</b> 출동 가능한 파트너를 바로 찾아 드려요 <span aria-hidden="true">→</span></a>
+    </div>
+    <div class="h2r" aria-label="요청과 제안 예시">
+      <div class="demo req1"><span class="small mute">고객 요청 · 예시</span><b>가족장 2일장 · 서울 송파구</b><span class="small">기독교 · 50명 이하 · 희망 <b class="num">200만원</b></span></div>
+      <div class="demo off"><span class="av sm">A-17</span><div><b>검증 파트너 A-17</b><span class="small mute">★ 5.0 · 약 35분</span></div><b class="num">192만원</b></div>
+      <div class="demo off"><span class="av sm">D-09</span><div><b>검증 파트너 D-09</b><span class="small mute">★ 4.8 · 약 45분</span></div><b class="num">176만원</b></div>
+      <div class="demo off"><span class="av sm">C-21</span><div><b>검증 파트너 C-21</b><span class="small mute">★ 4.0 · 약 60분</span></div><b class="num">181만원</b></div>
+      <p class="small mute" style="text-align:right">같은 항목으로 나눈 견적을 나란히 비교해요</p>
+    </div>
   </section>
 
-  <section class="blk">
-    <div class="sechead"><h2>운영 원칙</h2></div>
+  <div class="facts2 num">
+    <div><b>8개 항목</b><span>입점 전 직접 검증</span></div>
+    <div><b>연 1회</b><span>전 파트너 재검증</span></div>
+    <div><b>0원</b><span>선납금, 100% 후불 결제</span></div>
+    <div><b>24시간</b><span>긴급 요청 상담 운영</span></div>
+  </div>
+
+  <section class="hsec">
+    <div class="sechead"><div><h2>어떤 장례를 준비하세요?</h2><p class="small mute">고르면 요청서가 그 조건으로 시작돼요.</p></div></div>
+    <div class="catgrid2">${HCATS.map(([k,l,d])=>`<button type="button" class="ctile" data-hcat="${k}"><span class="mono">${HMONO[k]}</span><b>${l}</b><span class="small mute">${d}</span></button>`).join('')}</div>
+  </section>
+
+  <section class="hsec">
+    <div class="sechead"><div><h2>지금 올라온 요청</h2><p class="small mute">이름과 연락처는 공개되지 않습니다</p></div><a class="more" href="#request">나도 요청하기 →</a></div>
+    <div class="reqs">${open.map(r=>reqCard(r,false)).join('')}</div>
+  </section>
+
+  <section class="hsec">
+    <div class="sechead"><div><h2>우수 검증 파트너</h2><p class="small mute">해피콜 만족도와 인증 리뷰로 정한 순위예요</p></div><a class="more" href="#partners">전체 파트너 보기 →</a></div>
+    <div class="pminis">${top.map(pmini).join('')}</div>
+  </section>
+
+  <section class="hsec">
+    <div class="sechead"><h2>이용 절차</h2></div>
+    <ol class="flow2">
+      <li><b>요청서 작성</b><span>형태, 장소, 종교, 희망 금액을 고릅니다</span></li>
+      <li><b>검증 업체 제안</b><span>지역 파트너가 금액과 조건을 보냅니다</span></li>
+      <li><b>채팅 협의</b><span>사이트 채팅과 050 안심번호로 이야기합니다</span></li>
+      <li><b>매칭 확정</b><span>협의 내용이 확정 견적서가 됩니다</span></li>
+      <li><b>장례·후불 정산</b><span>발인 후 확정 금액으로 결제합니다</span></li>
+      <li><b>해피콜 평가</b><span>만족도 점수가 업체 순위에 반영됩니다</span></li>
+    </ol>
+  </section>
+
+  <section class="hsec soft">
+    <div class="sechead"><div><span class="label">WHY 동행매치</span><h2 style="margin-top:4px">믿고 맡길 수 있는 이유</h2></div></div>
     <div class="principles">
       <div><b>100% 후불 결제</b><p>선납금과 월 납입이 없습니다. 발인 후 확정 견적서 금액으로 결제합니다.</p></div>
       <div><b>현실적인 최소 금액</b><p>선택한 인력, 용품, 차량을 실제로 제공할 수 있는 금액부터 요청할 수 있습니다.</p></div>
       <div><b>사이트 안에서만 협의</b><p>매칭 확정 전 연락은 채팅과 050 안심번호로만 합니다. 직거래 유도는 제재합니다.</p></div>
       <div><b>유족이 매기는 순위</b><p>상담사가 장례 후 직접 전화로 만족도를 조사하고, 그 점수로 업체 순위를 정합니다.</p></div>
     </div>
+    <h3 style="margin-top:28px">상조회사 검증 절차</h3>
+    <ol class="vsteps" style="margin-top:12px">${VSTEPS.map(v=>`<li><b>${v[0]}</b><p>${v[1]}</p></li>`).join('')}</ol>
+    <p class="recheck"><span class="seal">동행매치 검증 완료</span> 표시는 다섯 단계를 모두 통과한 업체에만 붙습니다. 해피콜 점수가 기준에 못 미치거나 직거래 경고를 받으면 재심사합니다.</p>
   </section>
 
-  <section class="blk">
-    <div class="sechead"><h2>이용 절차</h2></div>
-    <ol class="flow">
-      <li><b>요청서 작성</b>형태, 장소, 종교, 희망 금액을 고릅니다</li>
-      <li><b>검증 업체 제안</b>지역 파트너가 금액과 조건을 보냅니다</li>
-      <li><b>채팅 협의</b>사이트 채팅과 050 안심번호로 이야기합니다</li>
-      <li><b>매칭 확정</b>협의 내용이 확정 견적서가 됩니다</li>
-      <li><b>장례·후불 정산</b>발인 후 확정 금액으로 결제합니다</li>
-      <li><b>해피콜 평가</b>만족도 점수가 업체 순위에 반영됩니다</li>
-    </ol>
+  <section class="recruit">
+    <div><span class="eyebrow">상조회사이신가요?</span><h2>영업비 없이, 검증된 고객 요청을 받아 보세요</h2>
+      <ul><li>오픈 기념 12개월 입점·제안·매칭 수수료 0원</li><li>단가표만 등록하면 항목별 견적이 자동 작성</li><li>광고가 아니라 유족 평가로 올라가는 순위</li></ul></div>
+    <div class="rbtns"><a class="btn" href="#join" data-role-link="partner">파트너 검증 신청</a><a class="btn ghost" href="#policy">파트너 운영정책 보기</a></div>
   </section>
 
-  <section class="blk">
-    <div class="sechead"><h2>우수 검증 파트너</h2><a class="small" href="#partners">전체 파트너 보기</a></div>
-    <div class="pcards">${top.map(pcard).join('')}</div>
-  </section>
-
-  <section class="blk">
-    <div class="sechead"><h2>지금 올라온 요청</h2><span class="mute small">이름과 연락처는 공개되지 않습니다</span></div>
-    <div class="reqs">${open.map(r=>reqCard(r,false)).join('')}</div>
-  </section>
-
-  <section class="blk">
+  <section class="hsec">
     <div class="sechead"><h2>자주 묻는 질문</h2></div>
     <div class="faq">
       <details><summary>상조회사는 어떻게 선정하나요?</summary><p>동행매치 담당자가 서류 심사, 현장 실사, 대면 면접, 유족 레퍼런스 통화를 직접 진행하고, 모두 통과한 업체와만 파트너 계약을 맺습니다. 신청한다고 모두 입점되지 않으며, 입점 후에도 매년 다시 검증합니다.</p></details>
@@ -1425,7 +1619,9 @@ function happyCall(){
 function vBoard(){
   const list=R.filter(r=>r.status!=='closed'&&r.status!=='cancelled'&&!((r.stage??0)>=7)).filter(r=>boardFilter==='전체'||r.sido===boardFilter||(boardFilter==='긴급'&&r.timing==='urgent'));
   return `<section class="blk">
-    <div class="sechead"><div><span class="label">${partner.name} 님으로 보는 중</span><h1 style="font-size:clamp(22px,3vw,28px);margin-top:4px">고객 요청 게시판</h1></div>
+    <div class="pwelcome"><div><span class="eyebrow">파트너센터</span><h1>안녕하세요, ${partner.name}님</h1><p class="small mute">검증 파트너 ${partner.code} · 종합 ${score(partner)??'신규'}점 · 오픈 기념 12개월 수수료 0원</p></div>
+      <div class="pwk num"><div><b>${R.filter(r=>r.status==='open').length}</b><span>제안 가능한 요청</span></div><div><b>${allOffers().filter(o=>o.cid===partner.id&&o.status==='open').length}</b><span>협의 중</span></div><div><b>${allOffers().filter(o=>o.cid===partner.id&&o.status==='matched').length}</b><span>매칭 확정</span></div></div></div>
+    <div class="sechead"><div><h2>고객 요청 게시판</h2></div>
       <div class="filters" role="group" aria-label="지역 필터">${['전체','서울','경기','인천','긴급'].map(f=>`<button type="button" data-bf="${f}" aria-pressed="${boardFilter===f}">${f}</button>`).join('')}</div></div>
     <div class="availbox ${partner.avail?'on':''}"><div><b>${partner.avail?'지금 출동 가능':'지금 출동 불가'}</b><p class="small mute">출동 가능 상태일 때만 긴급 요청 알림을 받고 긴급 제안을 보낼 수 있어요. 예상 도착: ${Object.entries(partner.eta||{}).map(([k,v])=>`${k} ${v}분`).join(' · ')}</p></div>
       <button class="btn sm ${partner.avail?'ghost':''}" type="button" data-avail>${partner.avail?'출동 불가로 바꾸기':'출동 가능으로 바꾸기'}</button></div>
@@ -1759,7 +1955,7 @@ function route(){
   else html=({admin:vAdmin,urgent:vUrgent,perf:vPerf,prices:vPrices,home:vHome,partners:vPartners,request:vRequest,my:vMy,board:vBoard,ptalk:vPtalk,ranking:vRanking,join:vJoin}[h]||vHome)();
   const keep=h===route.last; route.last=h;
   app.innerHTML=html; renderNav();
-  if(h==='request'){updateFloor()}
+  if(h==='request'){updateFloor(); if(pendingAI){const q=pendingAI; pendingAI=null; $('#aiText').value=q; $('#aiBtn').click();}}
   const ms=$('#msgs'); if(ms) ms.scrollTop=ms.scrollHeight;
   if(!keep) window.scrollTo(0,0);
   if(h.startsWith('chat-')&&keep){const i=$('#msgIn'); i&&i.focus()}
@@ -1777,6 +1973,8 @@ document.addEventListener('click',e=>{
   if(d.authmode){auth(d.authmode,auth.after);return}
   if(t.hasAttribute('data-logout')){user=null; myReq=null; histLoaded=histLoaded; toast('로그아웃했어요.'); location.hash='home'; route(); return}
   if(d.myf){myFilter=d.myf; route(); return}
+  if(d.hcat){startCat(d.hcat); return}
+  if(d.q!==undefined&&t.closest('.qchips')){const i=$('#heroQ'); if(i){i.value=d.q; i.focus()} return}
   if(d.obcopy){const r=R.find(x=>x.id===+location.hash.slice(6)); if(d.obcopy==='link') copyText($('#obLink').value,'부고장 링크를 복사했어요.'); else copyText(obitText(r),'문자·카톡용 문구를 복사했어요.'); return}
   if(d.accopy!==undefined){const r=R.find(x=>x.id===+location.hash.split('-')[1]); const a=(r.obit.acc||'').split('\n').map(t=>t.trim()).filter(Boolean)[+d.accopy]; const num=(a.match(/[0-9][0-9-]{5,}/)||[a])[0]; copyText(num,`계좌번호 ${num}를 복사했어요.`); return}
   if(d.refcopy){copyText(`${SITE}#ref-${d.refcopy.toLowerCase()}`,'소개 링크를 복사했어요. 기관 담당자에게 전해 주세요.'); return}
@@ -1874,6 +2072,9 @@ document.addEventListener('change',e=>{
 document.addEventListener('input',e=>{ if(e.target.id==='refIn'){const v=e.target.value.trim(), i=instOf(v), m=$('#refMsg'); m.innerHTML=!v?'<span class="mute">소개받은 곳이 있다면 적어 주세요. 기관 담당자와 함께 도와드려요.</span>':i?`<span class="okm">확인됐어요: ${i.name} (${i.type})</span>`:'<span class="err">등록되지 않은 코드예요. 다시 확인해 주세요.</span>'; return} if(e.target.dataset.ob){const r=R.find(x=>x.id===+location.hash.slice(6)); if(r&&r.obitDraft){r.obitDraft[e.target.dataset.ob]=e.target.value; $('#obPrev').innerHTML=obitCard(r,r.obitDraft,false);} return} if(e.target.dataset.staff){const [t,gi,fi]=e.target.dataset.staff.split(':'); STAFF[t].rows[+gi][+fi]=Math.max(0,parseInt(e.target.value)||0); return}
   if(e.target.dataset.sdays){STAFF[e.target.dataset.sdays].days=Math.max(0,parseInt(e.target.value)||0); return} if(e.target.id==='budget'||e.target.id==='memo'){readForm(); updateFloor();} });
 document.addEventListener('submit',e=>{
+  if(e.target.id==='hsearch'||e.target.id==='heroSearch'){e.preventDefault(); const q=(e.target.querySelector('input').value||'').trim();
+    draft=newDraft(); editId=null; svEditId=null; svNote=q?'적어 주신 내용을 AI가 요청서로 정리했어요. 확인하고 빠진 항목만 골라 주세요.':''; pendingAI=q||null; e.target.querySelector('input').value='';
+    if(location.hash==='#request') route(); else location.hash='request'; return}
   if(e.target.id==='obitForm'){e.preventDefault(); const r=R.find(x=>x.id===+location.hash.slice(6)); if(!r.obitDraft.name.trim()||!r.obitDraft.hall.trim()){toast('고인 성함과 빈소는 꼭 적어 주세요.');return}
     const first=!r.obit; r.obit={...r.obitDraft}; obitLink(r); toast(first?'부고장을 만들었어요. 링크를 복사해 보내 주세요.':'부고장을 수정했어요. 같은 링크에 반영됩니다.'); route(); return}
   if(e.target.id==='instForm'){e.preventDefault(); const n=$('#iName').value.trim(); if(!n){toast('기관 이름을 적어 주세요.');return}
