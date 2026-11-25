@@ -923,7 +923,7 @@ function renderNav(){
   $('#hcats').innerHTML=role==='customer'?HCATS.map(([k,l])=>`<button type="button" data-hcat="${k}">${l}</button>`).join(''):'';
   const items=role==='admin'?[['admin','운영 관리']]:role==='customer'
     ?[['request','장례 요청하기'],['partners','검증 파트너'],['ranking','업체 순위']]
-    :[['board','요청 게시판'],['ptalk','내 제안·채팅'],['perf','내 실적'],['prices','내 단가표'],['ranking','업체 순위'],['join','파트너 검증 신청']];
+    :[['join','입점신청'],['board','요청 게시판'],['ptalk','내 제안·채팅'],['perf','내 실적'],['prices','내 단가표'],['ranking','업체 순위']];
   $('#nav').innerHTML=items.map(([k,v])=>`<a href="#${k}" class="${h===k||h.startsWith(k+'-')||(k==='my'&&h.startsWith('myreq-'))?'on':''}">${v}</a>`).join('');
   document.querySelectorAll('.roles button[data-role]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.role===role));
   const myOn=h==='my'||h.startsWith('myreq-');
@@ -1027,7 +1027,7 @@ function vHome(){
   <section class="recruit">
     <div><span class="eyebrow">상조회사이신가요?</span><h2>영업비 없이, 검증된 고객 요청을 받아 보세요</h2>
       <ul><li>오픈 기념 12개월 입점·제안·매칭 수수료 0원</li><li>단가표만 등록하면 항목별 견적이 자동 작성</li><li>광고가 아니라 유족 평가로 올라가는 순위</li></ul></div>
-    <div class="rbtns"><a class="btn" href="#join" data-role-link="partner">파트너 검증 신청</a><a class="btn ghost" href="#policy">파트너 운영정책 보기</a></div>
+    <div class="rbtns"><a class="btn" href="#join" data-role-link="partner">입점신청</a><a class="btn ghost" href="#policy">파트너 운영정책 보기</a></div>
   </section>
 
   <section class="hsec">
@@ -1893,7 +1893,7 @@ function vRanking(){
 /* ---------- 업체: 검증 신청 ---------- */
 function vJoin(){
   return `<div class="formgrid"><form class="panel" id="joinForm">
-    <span class="eyebrow">상조회사 입점</span><h1 style="font-size:clamp(22px,3vw,28px);margin-top:4px">파트너 검증 신청</h1>
+    <span class="eyebrow">상조회사 파트너</span><h1 style="font-size:clamp(22px,3vw,28px);margin-top:4px">입점신청</h1>
     <p class="mute small" style="margin:6px 0 18px">호상은 직접 검증한 상조회사만 고객 요청을 볼 수 있습니다. 신청서를 받으면 담당자가 연락해 서류 심사, 현장 실사, 대면 면접 일정을 잡습니다. 검증 결과에 따라 승인되지 않을 수 있습니다.</p>
     <div style="display:grid;gap:12px">
     <section class="fgroup" style="display:grid;gap:12px;margin-top:4px"><div class="fgh"><span class="fgn">1</span><div><b>업체 정보</b><span>실사와 계약에 쓰이는 기본 정보예요</span></div></div>
@@ -1917,7 +1917,7 @@ function vJoin(){
       <p class="small mute">서류는 담당자 연락 후 제출합니다. 검증은 보통 2주 안에 마칩니다.</p></fieldset>
     <label class="check"><input type="checkbox" id="jAgree"> <span>[필수] 파트너 운영정책(하단 메뉴에서 전문 확인)과 현장 실사, 유족 레퍼런스 확인, 매칭 확정 전 직접 연락 금지와 단계별 제재 규정에 동의합니다.</span></label>
     </section>
-    <button class="btn block big" type="submit">검증 신청서 제출</button></div></form>
+    <button class="btn block big" type="submit">입점신청서 제출</button></div></form>
     <aside class="side">
       <div class="panel" style="display:grid;gap:10px"><h3>검증 항목</h3><ul class="checks" style="grid-template-columns:1fr">${CHECKS.map(x=>`<li>${x}</li>`).join('')}</ul></div>
       <div class="panel" style="display:grid;gap:8px"><h3>창립 파트너 혜택</h3>
@@ -2239,7 +2239,7 @@ document.addEventListener('submit',e=>{
   if(e.target.id==='myPriceForm'){e.preventDefault(); PRICE[partner.id]=readPriceForm('mp'); toast('단가표를 저장했어요. 다음 제안부터 새 단가로 견적이 작성됩니다.'); return}
   if(e.target.id==='joinForm'){e.preventDefault(); if(!$('#jAgree').checked){toast('검증 절차와 제재 규정에 동의해 주세요.');return} const area=[...document.querySelectorAll('#joinForm input[name="area"]:checked')].map(i=>i.value);
     APPS.push({id:Math.max(0,...APPS.map(a=>a.id))+1,name:$('#jName').value.trim()||'신규 신청 업체',area:area.join('·')||'서울 전역',applied:'2026.11.19',steps:[false,false,false,false,false],price:readPriceForm('jp')});
-    toast('검증 신청서와 단가표를 받았어요. 담당자가 3일 안에 연락해 실사 일정을 잡습니다. (시연)');}
+    toast('입점신청서와 단가표를 받았어요. 담당자가 3일 안에 연락해 실사 일정을 잡습니다. (시연)');}
 });
 $('#modal').addEventListener('click',e=>{if(e.target.id==='modal') e.currentTarget.hidden=true});
 document.addEventListener('keydown',e=>{if(e.key==='Escape') $('#modal').hidden=true});
