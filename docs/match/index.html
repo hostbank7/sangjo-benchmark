@@ -129,6 +129,7 @@ body:not([data-role="customer"]) .catin .navl a:hover{background:none;color:var(
 /* hero */
 .eyebrow{display:inline-block;font-size:13px;font-weight:700;color:var(--accent);letter-spacing:.02em}
 .hero2{display:grid;grid-template-columns:1.25fr 1fr;gap:40px;align-items:center;padding:52px 0 36px;margin:0;background:none;color:var(--fg);border-radius:0}
+.hero2>*{min-width:0}
 .hero2 .label{color:var(--mute)}
 .hero2 h1{font-size:clamp(28px,4.2vw,44px);line-height:1.3;margin-top:10px;letter-spacing:-.03em}
 .hero2 .lead{color:var(--mute);margin-top:14px;max-width:52ch}
@@ -218,6 +219,43 @@ footer{border-top:0;margin-top:56px;background:var(--soft);margin-inline:calc(-1
   .who .small{display:none}
 }
 @media (prefers-reduced-motion:reduce){.pulse{animation:none}.ctile:hover{transform:none}}
+/* ===== polish pass ===== */
+html{scroll-padding-top:calc(var(--hh) + 16px)}
+body[data-role="admin"] .catbar{display:none}
+.whoname{white-space:nowrap}
+.opts span{padding:8px 14px;border-radius:10px;transition:border-color .12s,background .12s}
+.opts label:hover span{border-color:var(--accent)}
+.opts input:checked+span{box-shadow:inset 0 0 0 1px var(--accent);font-weight:700}
+#reqForm{padding:28px}
+.fgroup{border-top:1px solid var(--line);padding-top:22px;margin-top:22px}
+.fgroup .fs:last-child{margin-bottom:6px}
+.fgh{display:flex;gap:12px;align-items:center;margin-bottom:16px}
+.fgn{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--accent);color:var(--accent-fg);font-weight:700;font-size:13px;flex:none}
+.fgh div{display:grid}
+.fgh b{font-family:var(--display);font-size:17px}
+.fgh span:not(.fgn){font-size:13px;color:var(--mute)}
+.fnote{margin:-6px 0 6px}
+.btn.big{padding:15px 18px;font-size:16px;border-radius:12px;margin-top:22px}
+.offer{border-radius:16px;padding:18px;gap:10px;transition:box-shadow .15s}
+.offer:hover{box-shadow:var(--shadow)}
+.oh{display:flex;gap:12px;align-items:center;min-width:0}
+.ohn{display:grid;gap:2px;min-width:0}
+.offer .p{font-size:24px;letter-spacing:-.02em}
+.pht{display:flex;gap:12px;align-items:center}
+.pcard .ph{flex-direction:column;align-items:flex-start;gap:10px}
+.pcard{border-radius:18px;padding:22px;transition:box-shadow .15s}
+.pcard:hover{box-shadow:var(--shadow)}
+.ckd summary{cursor:pointer;font-size:14px;font-weight:600;list-style:none;display:flex;gap:8px;align-items:center}
+.ckd summary::-webkit-details-marker{display:none}
+.ckd summary .mute{font-weight:400;font-size:13px;margin-left:auto}
+.ckd[open] summary .mute{visibility:hidden}
+.ckd .checks{margin-top:10px}
+.ckok{display:grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--seal);color:var(--surface);font-size:11px}
+.chat{border-radius:18px}
+.m{border-radius:16px;padding:10px 14px}
+.qlist,.settle,.slines{border-radius:12px}
+.tblwrap{border-radius:14px}
+@media (max-width:680px){.whoname{display:none} #reqForm{padding:20px}}
 /* home */
 .hero{display:grid;grid-template-columns:1.2fr 1fr;gap:28px;padding-block:34px 24px;align-items:center}
 .hero>*{min-width:0}
@@ -811,7 +849,7 @@ function renderNav(){
   $('#acct').innerHTML=role==='partner'?`<span class="who"><span class="av sm">${partner.code}</span><span class="small"><b>${partner.name}</b></span></span>`
     :role==='admin'?'<span class="small mute">동행매치 운영팀</span>'
     :`<a class="pill urgent" href="#urgent">긴급 출동</a><a class="toplink${myOn?' on':''}" href="#my">내 문의${user?` <b class="num">${myList().length}</b>`:''}</a>`+
-     (user?`<span class="small who"><b>${esc(user.name)}</b>님</span><button class="btn sm ghost" type="button" data-logout>로그아웃</button>`
+     (user?`<span class="small whoname"><b>${esc(user.name)}</b>님</span><button class="btn sm ghost" type="button" data-logout>로그아웃</button>`
      :`<button class="btn sm ghost" type="button" data-login>로그인</button><button class="btn sm" type="button" data-signup>회원가입</button>`);
 }
 
@@ -819,9 +857,9 @@ function renderNav(){
 const VSTEPS=[['서류 심사','사업자·인허가, 장례지도사 자격, 배상책임보험 증권을 확인합니다.'],['현장 실사','사무실, 안치·의전 장비, 의전 차량을 직접 방문해 확인합니다.'],['대면 면접','대표와 소속 장례지도사를 만나 의전 역량과 종교 의전 경험을 봅니다.'],['레퍼런스 확인','최근 장례를 맡긴 유족에게 직접 전화해 이용 경험을 묻습니다.'],['파트너 계약','추가금 0원, 직거래 금지 서약을 포함한 계약을 맺습니다.']];
 function pcard(c){
   const s=score(c);
-  return `<article class="pcard"><div class="ph"><div><h3>검증 파트너 ${c.code}</h3><p class="small mute">${c.area} · 업력 ${yrs(c)}</p></div>${seal(c)}</div>
+  return `<article class="pcard"><div class="ph"><div class="pht"><span class="av">${c.code}</span><div><h3>검증 파트너 ${c.code}</h3><p class="small mute">${c.area} · 업력 ${yrs(c)}</p></div></div>${seal(c)}</div>
     <div class="stats num"><div><b>${s??'신규'}</b><span>종합 점수</span></div><div><b>${c.done}건</b><span>매칭 완료</span></div><div><b>${dirR(c)}</b><span>장례지도사</span></div></div>
-    <ul class="checks">${CHECKS.map(x=>`<li>${x}</li>`).join('')}</ul>
+    <details class="ckd"><summary><span class="ckok">✓</span> 검증 ${CHECKS.length}개 항목 모두 통과 <span class="mute">자세히</span></summary><ul class="checks">${CHECKS.map(x=>`<li>${x}</li>`).join('')}</ul></details>
     ${(()=>{const rs=REVS.filter(x=>x.cid===c.id);return rs.length?`<div class="revsnip"><span class="small"><b>인증 리뷰 ${rs.length}개</b> · 평균 ★ ${(rs.reduce((a,x)=>a+x.stars,0)/rs.length).toFixed(1)}</span><p class="small">“${esc(rs[0].text)}”</p><span class="small mute">${rs[0].label} · ${rs[0].date}</span></div>`:'<p class="small mute">아직 인증 리뷰가 없어요.</p>'})()}
     <p class="small mute num">검증일 ${c.ver} · 재검증 예정 ${recheck(c.ver)}</p></article>`;
 }
@@ -954,11 +992,17 @@ function vRequest(){
       <div><button class="btn sm" type="button" id="aiBtn">AI로 요청서 채우기</button></div>
       <div class="out" id="aiOut" hidden></div>
     </div>
+    <section class="fgroup"><div class="fgh"><span class="fgn">1</span><div><b>기본 정보</b><span>지역과 시점, 장례 형태를 골라 주세요</span></div></div>
     <fieldset class="fs"><legend>지역</legend><div class="row2">
       <select id="sido" aria-label="시·도">${Object.keys(SIDO).map(s=>`<option ${draft.sido===s?'selected':''}>${s}</option>`).join('')}</select>
       <select id="gu" aria-label="시·군·구">${SIDO[draft.sido].map(g=>`<option ${draft.gu===g?'selected':''}>${g}</option>`).join('')}</select></div></fieldset>
-    ${['timing','type','place','religion','guests','burial','level','cars','extras'].map(optGroup).join('')}
-    <p class="small mute" style="margin:-10px 0 20px">장례지도사와 의전도우미 인원은 고르지 않아도 됩니다. 장례 형태와 조문객 수에 맞춰 동행매치 기준으로 정해집니다.</p>
+    ${['timing','type','place'].map(optGroup).join('')}</section>
+    <section class="fgroup"><div class="fgh"><span class="fgn">2</span><div><b>장례 조건</b><span>종교, 조문객 수, 장법과 원하는 수준이에요</span></div></div>
+    ${['religion','guests','burial','level'].map(optGroup).join('')}
+    <p class="small mute fnote">장례지도사와 의전도우미 인원은 고르지 않아도 됩니다. 장례 형태와 조문객 수에 맞춰 동행매치 기준으로 정해집니다.</p></section>
+    <section class="fgroup"><div class="fgh"><span class="fgn">3</span><div><b>더할 것 (선택)</b><span>필요한 차량과 추가 서비스만 골라 주세요</span></div></div>
+    ${['cars','extras'].map(optGroup).join('')}</section>
+    <section class="fgroup"><div class="fgh"><span class="fgn">4</span><div><b>금액과 요청 사항</b><span>오른쪽 예상 금액을 보고 희망 금액을 적어 주세요</span></div></div>
     <fieldset class="fs"><legend>희망 금액 (상조 서비스)</legend>
       <div class="money"><input class="txt num" id="budget" inputmode="numeric" value="${esc(draft.budget)}" aria-describedby="budgetMsg" placeholder="0"><b>만원</b></div>
       <p id="budgetMsg" class="small"></p></fieldset>
@@ -966,8 +1010,8 @@ function vRequest(){
       <textarea id="memo" placeholder="고인의 뜻, 꼭 필요한 것, 피하고 싶은 것을 적어 주세요.">${esc(draft.memo)}</textarea></fieldset>
     <fieldset class="fs"><legend>소개받은 기관 코드 (선택)</legend>
       <input class="txt" id="refIn" value="${esc(draft.ref||refCode||'')}" placeholder="요양병원·요양원·호스피스에서 받은 코드" aria-describedby="refMsg" style="text-transform:uppercase">
-      <p class="small" id="refMsg">${(()=>{const v=draft.ref||refCode;if(!v)return '<span class="mute">소개받은 곳이 있다면 적어 주세요. 기관 담당자와 함께 도와드려요.</span>';const i=instOf(v);return i?`<span class="okm">확인됐어요: ${i.name} (${i.type})</span>`:'<span class="err">등록되지 않은 코드예요. 다시 확인해 주세요.</span>'})()}</p></fieldset>
-    <button class="btn block" type="submit" id="submitReq">${editId?'수정 내용 저장':'무료로 요청서 올리기'}</button>
+      <p class="small" id="refMsg">${(()=>{const v=draft.ref||refCode;if(!v)return '<span class="mute">소개받은 곳이 있다면 적어 주세요. 기관 담당자와 함께 도와드려요.</span>';const i=instOf(v);return i?`<span class="okm">확인됐어요: ${i.name} (${i.type})</span>`:'<span class="err">등록되지 않은 코드예요. 다시 확인해 주세요.</span>'})()}</p></fieldset></section>
+    <button class="btn block big" type="submit" id="submitReq">${editId?'수정 내용 저장':'무료로 요청서 올리기'}</button>
     ${editId?'':`<button class="btn block ghost" type="button" data-savedraft style="margin-top:8px">${svEditId?'저장한 요청서 업데이트':'지금 보내지 않고 저장해 두기'}</button>
     <p class="small mute" style="margin-top:6px">미리 알아보는 중이라면 저장해 두세요. 필요할 때 문의 내역에서 버튼 하나로 요청을 보낼 수 있고, 예상 금액이 바뀌면 알려 드려요.</p>`}
   </form>
@@ -1368,7 +1412,7 @@ function vMy(){
     <div class="sechead" style="margin:0"><h2>받은 제안 <span class="num mute">${r.offers.length}</span></h2>
       ${r.offers.length?`<div class="acts">${r.offers.length>=2?`<a class="btn sm" href="#cmp-${r.id}">제안 비교표 보기</a>`:''}<button class="btn sm ghost" type="button" data-share="${r.id}">가족과 함께 보기${(r.family||[]).length?` (${r.family.length})`:''}</button></div>`:''}</div>
     ${famPanel(r)}
-    ${r.offers.map(o=>{const c=CID[o.cid],s=score(c);return `<div class="offer"><div class="h"><span><b>${dn(c,o.status==='matched')}</b> ${seal(c)} <span class="mute small">${c.area}</span></span>${s===null?'<span class="chip">신규 파트너</span>':`<span class="chip">만족도 점수 ${s}</span>`}</div>
+    ${r.offers.map(o=>{const c=CID[o.cid],s=score(c);return `<div class="offer"><div class="h"><span class="oh"><span class="av">${c.code}</span><span class="ohn"><span><b>${dn(c,o.status==='matched')}</b> ${seal(c)}</span><span class="small mute">${c.area}${revAvg(c.id)?` · <span class="stars-t">★</span> ${revAvg(c.id)} (${REVS.filter(x=>x.cid===c.id).length})`:''}</span></span></span>${s===null?'<span class="chip">신규 파트너</span>':`<span class="chip">만족도 점수 ${s}</span>`}</div>
       <div class="p num">${man(o.price)} ${o.eta?`<span class="chip u" style="vertical-align:middle">약 ${o.eta}분 후 도착 가능</span>`:''}</div><p class="small">${esc(o.note)}</p>
       ${o.staffNote?`<p class="small"><span class="chip w">인원 조정</span> ${esc(o.staffNote)}</p>`:''}
       <details class="qd"><summary>항목별 견적 보기</summary>${qlist(o)}</details>
