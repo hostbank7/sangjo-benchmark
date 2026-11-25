@@ -35,7 +35,7 @@ head = ('<!doctype html>\n<html lang="ko">\n<head>\n<meta charset="utf-8">\n'
         + NOCACHE + fresh_script('') +
         '<meta property="og:title" content="2026 하이난 미션힐스 한·중 파크골프 국제오픈대회">\n'
         '<meta property="og:description" content="12.27~1.1 4박6일 · 티웨이 직항 전세기 · 1인 159만원 · 우승 현금 300만원">\n'
-        f'<meta property="og:image" content="{url}img/hero.jpg">\n<meta property="og:url" content="{url}">\n'
+        f'<meta property="og:image" content="{url}img/og_event.jpg?v=1">\n<meta property="og:image:width" content="1200">\n<meta property="og:image:height" content="630">\n<meta property="og:type" content="website">\n<meta name="twitter:card" content="summary_large_image">\n<meta property="og:url" content="{url}">\n'
         '<style>:root{color-scheme:light} body{margin:0} img{max-width:100%} [hidden]{display:none!important}</style>\n')
 end = s.index('</style>') + 8
 html = head + s[:end] + '\n</head>\n<body>\n' + s[end:] + '\n</body>\n</html>\n'
