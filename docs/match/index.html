@@ -596,6 +596,13 @@ body[data-role="admin"] .catbar{display:none}
 .prog.ended i.on{background:var(--mute)}
 .hrow{border-radius:16px;padding:18px 20px;transition:box-shadow .15s}
 .hrow:hover{box-shadow:var(--shadow)}
+
+/* brand tagline */
+.brandtag{display:grid;gap:1px;padding-left:16px;border-left:1px solid var(--line);font-size:12px;line-height:1.45;color:var(--mute);white-space:nowrap;flex:none}
+.brandtag b{font-size:12.5px;font-weight:700;color:var(--fg);letter-spacing:-.01em}
+.brandtag span:last-child{color:var(--accent);font-weight:600}
+@media (max-width:1180px){.brandtag span{display:none}.brandtag{align-self:center}}
+@media (max-width:960px){.brandtag{display:none}}
 </style>
 
 <header class="top">
@@ -609,7 +616,8 @@ body[data-role="admin"] .catbar{display:none}
     </span>
   </div></div>
   <div class="wrap bar">
-    <a class="logo" href="#home"><i aria-hidden="true"></i>호상<small class="hanja" lang="zh-Hant">護喪</small><span class="roletag" id="roleTag" hidden></span></a>
+    <a class="logo" href="#home"><i aria-hidden="true"></i>호상<span class="roletag" id="roleTag" hidden></span></a>
+    <div class="brandtag"><b>지킬 호(護), 장례 상(喪) — 호상(護喪)</b><span>불투명한 상조 관행으로부터 유가족을 지킵니다.</span><span>AI 맞춤 후불제 상조 비교 매칭</span></div>
     <form class="hsearch" id="hsearch" role="search"><input id="hq" type="search" placeholder="어떤 장례를 준비하세요? 예) 가족장 200만원 서울 송파구" aria-label="원하는 장례를 적어 견적 받기"><button type="submit">견적 받기</button></form>
     <div class="acct" id="acct"></div>
   </div>
@@ -622,7 +630,7 @@ body[data-role="admin"] .catbar{display:none}
 <footer>
   <div class="wrap">
   <div class="corp">
-    <div><b>호상</b><p style="margin-top:6px">직접 검증한 후불제 상조회사와 유족을 연결하는 장례 매칭 플랫폼입니다. 호상은 통신판매중개자로서 장례 서비스의 당사자가 아니며, 확정 견적서와 다른 청구가 확인되면 운영 정책에 따라 보상을 지원합니다.</p></div>
+    <div><b>호상(護喪)</b><p style="margin-top:6px">지킬 호(護), 장례 상(喪). 불투명한 상조 관행으로부터 유가족을 지킵니다. AI 맞춤 후불제 상조 비교 매칭.</p><p style="margin-top:6px">직접 검증한 후불제 상조회사와 유족을 연결하는 장례 매칭 플랫폼입니다. 호상은 통신판매중개자로서 장례 서비스의 당사자가 아니며, 확정 견적서와 다른 청구가 확인되면 운영 정책에 따라 보상을 지원합니다.</p></div>
     <div><b>회사 정보</b><ul><li>상호 (주)호상 · 대표 OOO</li><li>사업자등록번호 000-00-00000</li><li>통신판매중개업 신고 제0000-서울OO-0000호</li><li>서울특별시 OO구 OO로 00</li></ul></div>
     <div><b>고객센터 (24시간)</b><ul><li class="num">1600-0000</li><li><a href="#terms">이용약관</a> · <a href="#privacy">개인정보 처리방침</a></li><li><a href="#policy">파트너 운영정책 · 검증 기준</a></li></ul></div>
   </div>
