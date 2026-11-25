@@ -608,6 +608,27 @@ body[data-role="admin"] .catbar{display:none}
   .brandtag span{display:inline}
   .hsearch{order:3}
 }
+
+/* ===== polish pass 3 ===== */
+.cmp col.hl{background:color-mix(in srgb,var(--seal-soft) 55%,transparent)}
+.cmp th .av{margin:6px 0 4px}
+.chip.ok2{background:var(--seal-soft);color:var(--seal);font-weight:700}
+.chn{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.av.xs{width:28px;height:28px;font-size:10px}
+.mrow{display:flex;gap:8px;align-items:flex-end;align-self:flex-start;max-width:82%}
+.mrow.me{align-self:flex-end}
+.mrow .m{max-width:100%;align-self:auto}
+.msgs{gap:12px;padding:18px}
+#myPriceForm .fs,#joinForm .pgrid{background:var(--soft);border:1px solid var(--line);border-radius:14px;padding:16px 18px}
+#myPriceForm .fs legend{float:left;width:100%;margin-bottom:12px}
+#myPriceForm .fs .pgrid{clear:both}
+#joinForm .fs legend{margin-bottom:10px}
+.pf .money input{background:var(--surface)}
+@media (max-width:680px){.mrow{max-width:94%}}
+
+#joinForm{padding:28px}
+#joinForm .fgroup{margin-top:10px}
+@media (max-width:680px){#joinForm{padding:20px}}
 </style>
 
 <header class="top">
@@ -991,7 +1012,7 @@ function vHome(){
   </section>
 
   <section class="hsec soft">
-    <div class="sechead"><div><span class="label">WHY 호상</span><h2 style="margin-top:4px">믿고 맡길 수 있는 이유</h2></div></div>
+    <div class="sechead"><div><span class="eyebrow">왜 호상인가요</span><h2 style="margin-top:4px">믿고 맡길 수 있는 이유</h2></div></div>
     <div class="principles">
       <div><span class="pi">${ICON.wallet}</span><b>100% 후불 결제</b><p>선납금과 월 납입이 없습니다. 발인 후 확정 견적서 금액으로 결제합니다.</p></div>
       <div><span class="pi">${ICON.tag}</span><b>현실적인 최소 금액</b><p>선택한 인력, 용품, 차량을 실제로 제공할 수 있는 금액부터 요청할 수 있습니다.</p></div>
@@ -1395,9 +1416,10 @@ function cmpTable(r,mode){
   const os=r.offers.filter(o=>o.status!=='withdrawn'); if(!os.length) return '<div class="waiting">아직 받은 제안이 없어요.</div>';
   const keys=[]; os.forEach(o=>o.items.forEach(([l])=>{const k=ikey(l); if(!keys.includes(k)) keys.push(k)}));
   const low=Math.min(...os.map(o=>o.price)), best=Math.max(...os.map(o=>score(CID[o.cid])??0));
-  const cell=(o,k)=>{const it=o.items.find(([l])=>ikey(l)===k); if(!it) return '<td class="r mute">-</td>'; const det=it[0].slice(k.length).trim(); return `<td class="r">${man(it[1])}${det?`<br><span class="small mute">${esc(det.replace(/^\(|\)$/g,''))}</span>`:''}</td>`};
+  const cell=(o,k)=>{const it=o.items.find(([l])=>ikey(l)===k); if(!it) return '<td class="r mute">-</td>'; const det=it[0].slice(k.length).trim(); return `<td class="r">${man(it[1])}${det?`<br><span class="small mute">${esc(det.startsWith('(')&&det.endsWith(')')&&det.indexOf('(',1)<0?det.slice(1,-1):det)}</span>`:''}</td>`};
   const v=r.votes||{};
-  return `<div class="tblwrap"><table class="adm num cmp"><thead><tr><th>항목</th>${os.map(o=>{const c=CID[o.cid],sc=score(c),ra=revAvg(c.id);return `<th class="r"><b>${dn(c,o.status==='matched')}</b><br><span class="small mute" style="font-weight:400">${sc===null?'신규 파트너':`점수 ${sc}`}${ra?` · ★ ${ra}`:''}</span>${o.eta?`<br><span class="chip u">약 ${o.eta}분 도착</span>`:''}${sc!==null&&sc===best?'<br><span class="chip">점수 최고</span>':''}</th>`}).join('')}</tr></thead><tbody>
+  const lowO=os.find(o=>o.price===low);
+  return `<div class="tblwrap"><table class="adm num cmp"><colgroup><col>${os.map(o=>`<col${o.price===low&&os.length>1?' class="hl"':''}>`).join('')}</colgroup><thead><tr><th>항목</th>${os.map(o=>{const c=CID[o.cid],sc=score(c),ra=revAvg(c.id);return `<th class="r"><span class="av sm">${c.code}</span><br><b>${dn(c,o.status==='matched')}</b><br><span class="small mute" style="font-weight:400">${sc===null?'신규 파트너':`점수 ${sc}`}${ra?` · ★ ${ra}`:''}</span>${o.eta?`<br><span class="chip u">약 ${o.eta}분 도착</span>`:''}${o.price===low&&os.length>1?'<br><span class="chip ok2">가장 낮은 견적</span>':''}${sc!==null&&sc===best?'<br><span class="chip">점수 최고</span>':''}</th>`}).join('')}</tr></thead><tbody>
     ${keys.map(k=>`<tr><td>${k}</td>${os.map(o=>cell(o,k)).join('')}</tr>`).join('')}
     ${os.some(o=>o.adj)?`<tr><td>업체 조정</td>${os.map(o=>`<td class="r">${o.adj?`${o.adj>0?'+':''}${man(o.adj)}`:'-'}</td>`).join('')}</tr>`:''}
     <tr class="sum"><td><b>합계 (발인 후 결제)</b></td>${os.map(o=>`<td class="r"${o.price===low?' style="color:var(--seal)"':''}><b>${man(o.price)}</b>${o.price===low?'<br><span class="small">가장 낮음</span>':''}</td>`).join('')}</tr>
@@ -1650,11 +1672,11 @@ function vChat(oid){
   const r=RIDX()[o.rid], c=CID[o.cid], me=role==='customer'?'u':'p';
   const matched=o.status==='matched';
   return `<div class="two"><div class="chat">
-    <div class="ch"><div><b>${role==='customer'?dn(c,matched):r.who+'님'}</b> ${role==='customer'?seal(c):''} <span class="mute small">${r.sido} ${r.gu} · ${F.type.o[r.type]}</span></div>
+    <div class="ch"><div class="chn"><span class="av sm">${role==='customer'?c.code:'고객'}</span><b>${role==='customer'?dn(c,matched):r.who+'님'}</b> ${role==='customer'?seal(c):''} <span class="mute small">${r.sido} ${r.gu} · ${F.type.o[r.type]}</span></div>
       <button class="btn sm ghost" type="button" data-call="${o.id}">050 안심번호로 통화</button></div>
     <div class="msgs" id="msgs">
       <div class="m sys">매칭 확정 전에는 이 채팅과 050 안심번호로만 연락할 수 있어요. 전화번호, 카톡 아이디, 계좌번호, 상호는 자동으로 가려집니다.</div>
-      ${o.msgs.map(m=>m.from==='sys'?`<div class="m sys">${esc(m.text)}</div>`:`<div class="m ${m.from===me?'me':''}"><span class="who">${m.from==='p'?dn(c,matched||role==='partner'):r.who+'님'}</span>${esc(m.text)}</div>`).join('')}
+      ${o.msgs.map(m=>m.from==='sys'?`<div class="m sys">${esc(m.text)}</div>`:`<div class="mrow ${m.from===me?'me':''}">${m.from!==me?`<span class="av xs">${m.from==='p'?c.code:'고객'}</span>`:''}<div class="m ${m.from===me?'me':''}"><span class="who">${m.from==='p'?dn(c,matched||role==='partner'):r.who+'님'}</span>${esc(m.text)}</div></div>`).join('')}
     </div>
     <form class="send" id="sendForm"><input class="txt" id="msgIn" placeholder="메시지를 입력하세요" aria-label="메시지" autocomplete="off"><button class="btn" type="submit">보내기</button></form>
   </div>
@@ -1871,25 +1893,31 @@ function vRanking(){
 /* ---------- 업체: 검증 신청 ---------- */
 function vJoin(){
   return `<div class="formgrid"><form class="panel" id="joinForm">
-    <span class="label">PARTNER APPLICATION</span><h1 style="font-size:clamp(22px,3vw,28px);margin-top:4px">파트너 검증 신청</h1>
+    <span class="eyebrow">상조회사 입점</span><h1 style="font-size:clamp(22px,3vw,28px);margin-top:4px">파트너 검증 신청</h1>
     <p class="mute small" style="margin:6px 0 18px">호상은 직접 검증한 상조회사만 고객 요청을 볼 수 있습니다. 신청서를 받으면 담당자가 연락해 서류 심사, 현장 실사, 대면 면접 일정을 잡습니다. 검증 결과에 따라 승인되지 않을 수 있습니다.</p>
     <div style="display:grid;gap:12px">
-    <div class="row2"><div><label class="small" for="jName">상호</label><input class="txt" id="jName" placeholder="예) 동행후불상조"></div>
+    <section class="fgroup" style="display:grid;gap:12px;margin-top:4px"><div class="fgh"><span class="fgn">1</span><div><b>업체 정보</b><span>실사와 계약에 쓰이는 기본 정보예요</span></div></div>
+    <div class="row2"><div><label class="small" for="jName">상호</label><input class="txt" id="jName" placeholder="예) 행복후불상조"></div>
       <div><label class="small" for="jBiz">사업자등록번호</label><input class="txt" id="jBiz" placeholder="000-00-00000" inputmode="numeric"></div></div>
     <div class="row2"><div><label class="small" for="jCeo">대표자</label><input class="txt" id="jCeo"></div>
       <div><label class="small" for="jTel">담당자 연락처</label><input class="txt" id="jTel" inputmode="tel" placeholder="010-0000-0000"></div></div>
     <div><label class="small" for="jAddr">사무실 주소 (현장 실사 장소)</label><input class="txt" id="jAddr"></div>
     <fieldset class="fs"><legend>활동 지역</legend><div class="opts">${['서울 전역','서울 동부','서울 서부','경기 북부','경기 남부','인천'].map(a=>`<label><input type="checkbox" name="area" value="${a}"><span>${a}</span></label>`).join('')}</div></fieldset>
+    </section>
+    <section class="fgroup" style="display:grid;gap:12px"><div class="fgh"><span class="fgn">2</span><div><b>인력과 차량</b><span>현장 실사 때 함께 확인합니다</span></div></div>
     <div class="row2"><div><label class="small" for="jDir">장례지도사 인원</label><input class="txt" id="jDir" inputmode="numeric" placeholder="명"></div>
       <div><label class="small" for="jCar">보유 의전 차량</label><input class="txt" id="jCar" inputmode="numeric" placeholder="대"></div></div>
-    <div style="border-top:1px solid var(--line);padding-top:16px"><h2 style="font-size:19px">단가표</h2>
-      <p class="small mute" style="margin:4px 0 14px">항목별 금액을 만원 단위로 적어 주세요. 예시 금액이 들어가 있습니다. 실사 때 최근 정산 내역과 비교해 확인하며, 고객에게는 공개되지 않습니다.</p>
-      ${priceForm(PT,'jp')}</div>
+    </section>
+    <section class="fgroup"><div class="fgh"><span class="fgn">3</span><div><b>단가표</b><span>고객에게는 공개되지 않고 견적 자동 작성에 쓰여요</span></div></div>
+      <p class="small mute" style="margin:-6px 0 14px">항목별 금액을 만원 단위로 적어 주세요. 예시 금액이 들어가 있습니다. 실사 때 최근 정산 내역과 비교해 확인하며, 고객에게는 공개되지 않습니다.</p>
+      ${priceForm(PT,'jp')}</section>
+    <section class="fgroup" style="display:grid;gap:12px"><div class="fgh"><span class="fgn">4</span><div><b>서류와 동의</b><span>준비 서류를 확인하고 운영정책에 동의해 주세요</span></div></div>
     <fieldset class="fs"><legend>준비 서류</legend><div class="opts">
       <label><input type="checkbox" checked><span>사업자등록증</span></label><label><input type="checkbox" checked><span>장례지도사 자격증</span></label><label><input type="checkbox" checked><span>배상책임보험 증권</span></label><label><input type="checkbox"><span>최근 정산 내역 3건</span></label></div>
       <p class="small mute">서류는 담당자 연락 후 제출합니다. 검증은 보통 2주 안에 마칩니다.</p></fieldset>
     <label class="check"><input type="checkbox" id="jAgree"> <span>[필수] 파트너 운영정책(하단 메뉴에서 전문 확인)과 현장 실사, 유족 레퍼런스 확인, 매칭 확정 전 직접 연락 금지와 단계별 제재 규정에 동의합니다.</span></label>
-    <button class="btn block" type="submit">검증 신청서 제출</button></div></form>
+    </section>
+    <button class="btn block big" type="submit">검증 신청서 제출</button></div></form>
     <aside class="side">
       <div class="panel" style="display:grid;gap:10px"><h3>검증 항목</h3><ul class="checks" style="grid-template-columns:1fr">${CHECKS.map(x=>`<li>${x}</li>`).join('')}</ul></div>
       <div class="panel" style="display:grid;gap:8px"><h3>창립 파트너 혜택</h3>
